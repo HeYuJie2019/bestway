@@ -1,0 +1,4 @@
+[console_scripts]
+keyboard_control_node = sbus_control.keyboard_control_node:main
+sbus_control_node = sbus_control.sbus_control_node:main
+

@@ -1,0 +1,24 @@
+[2.651s] Invoking command in '/home/bestway/bestway_ws/src/sbus_control': PYTHONPATH=/home/bestway/bestway_ws/build/sbus_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/sbus_control build --build-base /home/bestway/bestway_ws/build/sbus_control/build install --record /home/bestway/bestway_ws/build/sbus_control/install.log --single-version-externally-managed install_data
+[3.222s] running egg_info
+[3.224s] writing ../../build/sbus_control/sbus_control.egg-info/PKG-INFO
+[3.224s] writing dependency_links to ../../build/sbus_control/sbus_control.egg-info/dependency_links.txt
+[3.225s] writing entry points to ../../build/sbus_control/sbus_control.egg-info/entry_points.txt
+[3.225s] writing requirements to ../../build/sbus_control/sbus_control.egg-info/requires.txt
+[3.226s] writing top-level names to ../../build/sbus_control/sbus_control.egg-info/top_level.txt
+[3.230s] reading manifest file '../../build/sbus_control/sbus_control.egg-info/SOURCES.txt'
+[3.231s] writing manifest file '../../build/sbus_control/sbus_control.egg-info/SOURCES.txt'
+[3.232s] running build
+[3.232s] running build_py
+[3.232s] copying sbus_control/sbus_control_node.py -> /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control
+[3.233s] running install
+[3.233s] running install_lib
+[3.235s] copying /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control/sbus_control_node.py -> /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control
+[3.237s] byte-compiling /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/sbus_control_node.py to sbus_control_node.cpython-310.pyc
+[3.242s] running install_data
+[3.243s] running install_egg_info
+[3.248s] removing '/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control-0.0.0-py3.10.egg-info' (and everything under it)
+[3.249s] Copying ../../build/sbus_control/sbus_control.egg-info to /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control-0.0.0-py3.10.egg-info
+[3.250s] running install_scripts
+[3.299s] Installing sbus_control_node script to /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control
+[3.300s] writing list of installed files to '/home/bestway/bestway_ws/build/sbus_control/install.log'
+[3.397s] Invoked command in '/home/bestway/bestway_ws/src/sbus_control' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/sbus_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/sbus_control build --build-base /home/bestway/bestway_ws/build/sbus_control/build install --record /home/bestway/bestway_ws/build/sbus_control/install.log --single-version-externally-managed install_data

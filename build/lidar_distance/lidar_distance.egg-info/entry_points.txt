@@ -1,0 +1,3 @@
+[console_scripts]
+lidar_distance = lidar_distance.lidar_distance:main
+
