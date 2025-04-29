@@ -17,8 +17,8 @@ class KeyboardControlNode(Node):
         self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)
 
         # 初始化速度
-        self.linear_speed = 0.5  # 默认线速度
-        self.angular_speed = 0.5  # 默认角速度
+        self.linear_speed = 2.0  # 默认线速度
+        self.angular_speed = 4.0  # 默认角速度
         self.current_twist = Twist()  # 当前速度消息
         self.key_pressed = None  # 当前按下的键
 

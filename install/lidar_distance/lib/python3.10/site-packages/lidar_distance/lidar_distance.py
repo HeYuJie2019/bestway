@@ -53,8 +53,9 @@ class PointCloudDistance(Node):
         distance_msg.data = averaged_distances
         self.publisher_.publish(distance_msg)
 
-        # 打印正前方的距离（调试用）
-        self.get_logger().info(f'正前方距离: {averaged_distances[self.num_intervals // 2]:.2f} 米')
+        # 打印从右到左的全部距离（调试用）
+        distances_str = ", ".join(f"{d:.2f}" for d in averaged_distances)
+        self.get_logger().info(f'从右到左的距离: [{distances_str}]')
 
 def main(args=None):
     rclpy.init(args=args)
