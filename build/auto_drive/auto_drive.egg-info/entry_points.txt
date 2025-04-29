@@ -1,0 +1,3 @@
+[console_scripts]
+auto_drive_node = auto_drive.auto_drive_node:main
+

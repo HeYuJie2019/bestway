@@ -26,7 +26,7 @@ class KeyboardControlNode(Node):
         self.print_instructions()
 
         # 定时器，用于持续发布当前速度
-        self.timer = self.create_timer(0.1, self.publish_twist)  # 每 0.1 秒发布一次
+        self.timer = self.create_timer(0.02, self.publish_twist)  # 每 0.1 秒发布一次
 
         # 启动键盘监听线程
         self.keyboard_thread = threading.Thread(target=self.run, daemon=True)
@@ -111,11 +111,12 @@ class KeyboardControlNode(Node):
             self.publisher.publish(self.current_twist)
             self.get_logger().info(f"发布速度: 线速度={self.current_twist.linear.x:.2f}, 角速度={self.current_twist.angular.z:.2f}")
         else:
+            pass
             # 如果没有按键被按下，发布停止消息
-            self.current_twist.linear.x = 0.0
-            self.current_twist.angular.z = 0.0
-            self.publisher.publish(self.current_twist)
-            self.get_logger().info("发布停止消息: 线速度=0.0, 角速度=0.0")
+            # self.current_twist.linear.x = 0.0
+            # self.current_twist.angular.z = 0.0
+            # self.publisher.publish(self.current_twist)
+            # self.get_logger().info("发布停止消息: 线速度=0.0, 角速度=0.0")
 
 def main(args=None):
     rclpy.init(args=args)

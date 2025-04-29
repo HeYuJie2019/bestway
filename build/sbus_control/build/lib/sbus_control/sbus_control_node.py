@@ -4,7 +4,6 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import serial
-import threading
 
 def calculate_xor(data):
     xor = 0
@@ -37,7 +36,10 @@ class SbusControlNode(Node):
         baudrate = self.get_parameter('baudrate').get_parameter_value().integer_value
 
         # 初始化串口
-        self.channels = [1002] * 16
+        self.channels = [
+            1002, 1002, 1002, 1002, 1002, 1002, 282, 282,
+            282, 282, 1002, 1002, 1002, 1002, 1002, 1002
+        ]
         self.default_channels = [
             1002, 1002, 1002, 1002, 1002, 1002, 282, 282,
             282, 282, 1002, 1002, 1002, 1002, 1002, 1002
@@ -58,10 +60,9 @@ class SbusControlNode(Node):
             10
         )
 
-        # 先不用检测数据停止
-        # # 定时器，用于检测是否停止发布
-        # self.last_cmd_time = self.get_clock().now()
-        # self.timer = self.create_timer(0.02, self.check_timeout)  # 每 0.02 秒触发一次
+        # 定时器，用于检测是否停止发布
+        self.last_cmd_time = self.get_clock().now()
+        self.timer = self.create_timer(0.02, self.check_timeout)  # 每 0.02 秒触发一次
     def cmd_vel_callback(self, msg):
         """
         当接收到 /cmd_vel 消息时，更新 channels 数据
@@ -97,7 +98,7 @@ class SbusControlNode(Node):
         """
         now = self.get_clock().now()
         # 检查是否超时
-        if (now - self.last_cmd_time).nanoseconds > 300_000_000:  # 超过 0.3 秒未接收到消息
+        if (now - self.last_cmd_time).nanoseconds > 500_000_000:  # 超过 0.5 秒未接收到消息
             self.channels = self.default_channels.copy()
             self.send_sbus_frame()
 
