@@ -1,0 +1,16 @@
+/home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher
+/home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/package_run_dependencies/temperature_publisher
+/home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/parent_prefix_path/temperature_publisher
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.sh
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.dsv
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.sh
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.dsv
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.bash
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.sh
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.zsh
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.dsv
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.dsv
+/home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/packages/temperature_publisher
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig.cmake
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig-version.cmake
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.xml

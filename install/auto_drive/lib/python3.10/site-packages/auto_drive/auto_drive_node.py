@@ -7,6 +7,8 @@ from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist
 import math
 import time  # 添加时间模块
+import pyzed.sl as sl  # 导入 ZED SDK
+import numpy as np
 
 class AutoDriveNode(Node):
     def __init__(self):
@@ -23,11 +25,60 @@ class AutoDriveNode(Node):
             10
         )
 
+        # 初始化 ZED 相机
+        self.zed = sl.Camera()
+        self.init_zed_camera()
+
         # 初始化状态
-        self.safe_distance = 3.0  # 安全距离，单位：米
+        self.safe_distance = 1.0  # 安全距离，单位：米
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.turning_left = None  # 当前转向方向
         self.front_avg = 0.0  # 前方距离
+        self.front_zed = 0.0  # 前方距离
+        self.left_distance = 0.0  # 左边距离
+        self.right_distance = 0.0  # 右边距离
+
+    def init_zed_camera(self):
+        """
+        初始化 ZED 深度相机
+        """
+        init_params = sl.InitParameters()
+        init_params.camera_resolution = sl.RESOLUTION.HD720  # 设置分辨率
+        init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # 设置深度模式
+        init_params.coordinate_units = sl.UNIT.METER  # 深度单位为米
+
+        status = self.zed.open(init_params)
+        if status != sl.ERROR_CODE.SUCCESS:
+            self.get_logger().error(f"无法打开 ZED 相机: {status}")
+            exit(1)
+
+        # 创建深度图像对象
+        self.depth = sl.Mat()
+
+    def get_front_distance(self):
+        """
+        获取前方距离（使用 ZED 深度相机）
+        """
+        if self.zed.grab() == sl.ERROR_CODE.SUCCESS:
+            # 获取深度图
+            self.zed.retrieve_measure(self.depth, sl.MEASURE.DEPTH)
+
+            # 将深度数据转换为 numpy 数组
+            depth_numpy = self.depth.get_data()
+
+            # 过滤无效值（例如 -inf, inf）
+            depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
+
+            # 获取深度矩阵的最小值（忽略 NaN）
+            if np.isnan(depth_numpy).all():
+                self.get_logger().warn("深度矩阵中没有有效值")
+                return float('inf')  # 如果没有有效值，返回无穷大
+            else:
+                min_depth = np.nanmin(depth_numpy)
+                return min_depth
+        else:
+            self.get_logger().warn("无法捕获 ZED 深度数据")
+            return float('inf')  # 如果无法捕获数据，返回无穷大
 
     def imu_callback(self, msg):
         """
@@ -68,40 +119,51 @@ class AutoDriveNode(Node):
             return
 
         # 获取前方、左侧和右侧的平均距离
-        front_distances = self.latest_distances[9:12]  # 正前方范围
-        left_distances = self.latest_distances[12:]  # 左侧范围
-        right_distances = self.latest_distances[:9]  # 右侧范围
+        front_distances = self.latest_distances[8:13]  # 正前方范围
+        left_distances = self.latest_distances[13:]  # 左侧范围
+        right_distances = self.latest_distances[:8]  # 右侧范围
 
-        self.front_avg = sum(front_distances) / len(front_distances)
-        left_avg = sum(left_distances) / len(left_distances)
-        right_avg = sum(right_distances) / len(right_distances)
+        # self.front_avg = sum(front_distances) / len(front_distances)
+        # 更新前方距离为前方区间中的最小值
+        self.front_avg = min(front_distances)
+        # left_avg = sum(left_distances) / len(left_distances)
+        # right_avg = sum(right_distances) / len(right_distances)
+        self.left_distance = min(left_distances)
+        self.right_distance = min(right_distances)
 
         self.get_logger().info(
-            f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            f"前方平均距离: {self.front_zed:.2f} 米, 左侧平均距离: {self.left_distance:.2f} 米, 右侧平均距离: {self.right_distance:.2f} 米"
         )
 
-        # 判断转向方向
-        if self.front_avg <= self.safe_distance:
-            self.turning_left = left_avg > right_avg
+        # # 判断转向方向
+        # if self.front_avg <= self.safe_distance:
+        #     self.turning_left = self.left_distance > self.right_distance
     
     def control_loop(self):
         """
         主控制循环
         """
+        # 获取前方距离（使用 ZED 深度相机）
+        self.front_zed = self.get_front_distance()
+
         if self.latest_distances is None:
             return  # 如果没有激光雷达数据，什么都不做
 
-        if self.front_avg > self.safe_distance:
+        # if self.front_avg > self.safe_distance:
+        if self.front_zed > self.safe_distance:
             # 前方安全，继续前进
             self.drive_forward()
         else:
             # 前方不安全，停止并转向
             self.stop()
-            time.sleep(2)
+            time.sleep(0.5)
 
             # 持续转向，直到前方距离大于安全距离
-            while self.front_avg <= self.safe_distance:
-                if self.turning_left:
+            # while self.front_avg <= self.safe_distance:
+            while self.front_zed <= self.safe_distance:
+                if self.left_distance > self.right_distance:
+                    # 如果左侧距离大于右侧距离，向右转
                     self.turn_left()
                 else:
                     self.turn_right()
@@ -110,11 +172,12 @@ class AutoDriveNode(Node):
                 rclpy.spin_once(self, timeout_sec=0.1)
 
                 # 打印调整过程中的前方距离
-                self.get_logger().info(f"调整中，前方距离: {self.front_avg:.2f} 米")
-
+                # self.get_logger().info(f"调整中，前方距离: {self.front_avg:.2f} 米")
+                self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米")
+                self.front_zed = self.get_front_distance()
             # 停止转向，停顿1秒
             self.stop()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def drive_forward(self):
         """
@@ -167,8 +230,12 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
 
-    node.destroy_node()
-    rclpy.shutdown()
+    finally:
+        # 确保在退出时关闭 ZED 相机
+        node.zed.close()
+        node.get_logger().info("ZED 相机已关闭")
+        node.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

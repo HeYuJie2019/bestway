@@ -1,0 +1,257 @@
+[0.377s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.378s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0xffffb6d75120>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffb6d74c10>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffb6d74c10>>)
+[0.854s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.854s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.855s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.855s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.855s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.855s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.855s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/bestway/bestway_ws'
+[0.855s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.856s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.881s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.881s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.881s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.881s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.881s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.882s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.883s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.884s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extensions ['ignore', 'ignore_ament_install']
+[0.885s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extension 'ignore'
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extension 'ignore_ament_install'
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extensions ['colcon_pkg']
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extension 'colcon_pkg'
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extensions ['colcon_meta']
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extension 'colcon_meta'
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extensions ['ros']
+[0.886s] Level 1:colcon.colcon_core.package_identification:_identify(src/auto_drive) by extension 'ros'
+[0.893s] DEBUG:colcon.colcon_core.package_identification:Package 'src/auto_drive' with type 'ros.ament_python' and name 'auto_drive'
+[0.893s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extensions ['ignore', 'ignore_ament_install']
+[0.893s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extension 'ignore'
+[0.893s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extension 'ignore_ament_install'
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extensions ['colcon_pkg']
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extension 'colcon_pkg'
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extensions ['colcon_meta']
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extension 'colcon_meta'
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extensions ['ros']
+[0.894s] Level 1:colcon.colcon_core.package_identification:_identify(src/lidar_distance) by extension 'ros'
+[0.896s] DEBUG:colcon.colcon_core.package_identification:Package 'src/lidar_distance' with type 'ros.ament_python' and name 'lidar_distance'
+[0.896s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extensions ['ignore', 'ignore_ament_install']
+[0.896s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extension 'ignore'
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extension 'ignore_ament_install'
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extensions ['colcon_pkg']
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extension 'colcon_pkg'
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extensions ['colcon_meta']
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extension 'colcon_meta'
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extensions ['ros']
+[0.897s] Level 1:colcon.colcon_core.package_identification:_identify(src/sbus_control) by extension 'ros'
+[0.899s] DEBUG:colcon.colcon_core.package_identification:Package 'src/sbus_control' with type 'ros.ament_python' and name 'sbus_control'
+[0.899s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extensions ['ignore', 'ignore_ament_install']
+[0.899s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extension 'ignore'
+[0.899s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extension 'ignore_ament_install'
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extensions ['colcon_pkg']
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extension 'colcon_pkg'
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extensions ['colcon_meta']
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extension 'colcon_meta'
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extensions ['ros']
+[0.900s] Level 1:colcon.colcon_core.package_identification:_identify(src/temperature_publisher) by extension 'ros'
+[0.902s] DEBUG:colcon.colcon_core.package_identification:Package 'src/temperature_publisher' with type 'ros.ament_cmake' and name 'temperature_publisher'
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extensions ['ignore', 'ignore_ament_install']
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extension 'ignore'
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extension 'ignore_ament_install'
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extensions ['colcon_pkg']
+[0.902s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extension 'colcon_pkg'
+[0.903s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extensions ['colcon_meta']
+[0.903s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extension 'colcon_meta'
+[0.903s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extensions ['ros']
+[0.903s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_control) by extension 'ros'
+[0.904s] DEBUG:colcon.colcon_core.package_identification:Package 'src/yuntai_control' with type 'ros.ament_python' and name 'yuntai_control'
+[0.905s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['ignore', 'ignore_ament_install']
+[0.905s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'ignore'
+[0.905s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'ignore_ament_install'
+[0.905s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['colcon_pkg']
+[0.905s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'colcon_pkg'
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['colcon_meta']
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'colcon_meta'
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['ros']
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'ros'
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['cmake', 'python']
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'cmake'
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'python'
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extensions ['python_setup_py']
+[0.906s] Level 1:colcon.colcon_core.package_identification:_identify(src/yuntai_test) by extension 'python_setup_py'
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['ignore', 'ignore_ament_install']
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'ignore'
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'ignore_ament_install'
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['colcon_pkg']
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'colcon_pkg'
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['colcon_meta']
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'colcon_meta'
+[0.907s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['ros']
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'ros'
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['cmake', 'python']
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'cmake'
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'python'
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extensions ['python_setup_py']
+[0.908s] Level 1:colcon.colcon_core.package_identification:_identify(src/zed_test) by extension 'python_setup_py'
+[0.908s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.908s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.908s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.909s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.909s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.995s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.995s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[1.003s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 5 installed packages in /home/bestway/bestway_ws/install
+[1.004s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /home/bestway/ws_livox/install
+[1.006s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 17 installed packages in /home/bestway/ZED_ws/install
+[1.009s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 301 installed packages in /opt/ros/humble
+[1.012s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_args' from command line to 'None'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_target' from command line to 'None'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_clean_cache' from command line to 'False'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_clean_first' from command line to 'False'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'cmake_force_configure' from command line to 'False'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'ament_cmake_args' from command line to 'None'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'catkin_cmake_args' from command line to 'None'
+[1.119s] Level 5:colcon.colcon_core.verb:set package 'auto_drive' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.119s] DEBUG:colcon.colcon_core.verb:Building package 'auto_drive' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bestway/bestway_ws/build/auto_drive', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bestway/bestway_ws/install/auto_drive', 'merge_install': False, 'path': '/home/bestway/bestway_ws/src/auto_drive', 'symlink_install': False, 'test_result_base': None}
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_args' from command line to 'None'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_target' from command line to 'None'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_clean_cache' from command line to 'False'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_clean_first' from command line to 'False'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'cmake_force_configure' from command line to 'False'
+[1.120s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'ament_cmake_args' from command line to 'None'
+[1.121s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'catkin_cmake_args' from command line to 'None'
+[1.121s] Level 5:colcon.colcon_core.verb:set package 'lidar_distance' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.121s] DEBUG:colcon.colcon_core.verb:Building package 'lidar_distance' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bestway/bestway_ws/build/lidar_distance', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bestway/bestway_ws/install/lidar_distance', 'merge_install': False, 'path': '/home/bestway/bestway_ws/src/lidar_distance', 'symlink_install': False, 'test_result_base': None}
+[1.121s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_args' from command line to 'None'
+[1.121s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_target' from command line to 'None'
+[1.121s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_clean_cache' from command line to 'False'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_clean_first' from command line to 'False'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'cmake_force_configure' from command line to 'False'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'ament_cmake_args' from command line to 'None'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'catkin_cmake_args' from command line to 'None'
+[1.122s] Level 5:colcon.colcon_core.verb:set package 'sbus_control' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.122s] DEBUG:colcon.colcon_core.verb:Building package 'sbus_control' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bestway/bestway_ws/build/sbus_control', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bestway/bestway_ws/install/sbus_control', 'merge_install': False, 'path': '/home/bestway/bestway_ws/src/sbus_control', 'symlink_install': False, 'test_result_base': None}
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_args' from command line to 'None'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_target' from command line to 'None'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_clean_cache' from command line to 'False'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_clean_first' from command line to 'False'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'cmake_force_configure' from command line to 'False'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'ament_cmake_args' from command line to 'None'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'catkin_cmake_args' from command line to 'None'
+[1.123s] Level 5:colcon.colcon_core.verb:set package 'temperature_publisher' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.123s] DEBUG:colcon.colcon_core.verb:Building package 'temperature_publisher' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bestway/bestway_ws/build/temperature_publisher', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bestway/bestway_ws/install/temperature_publisher', 'merge_install': False, 'path': '/home/bestway/bestway_ws/src/temperature_publisher', 'symlink_install': False, 'test_result_base': None}
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_args' from command line to 'None'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_target' from command line to 'None'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_clean_cache' from command line to 'False'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_clean_first' from command line to 'False'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'cmake_force_configure' from command line to 'False'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'ament_cmake_args' from command line to 'None'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'catkin_cmake_args' from command line to 'None'
+[1.124s] Level 5:colcon.colcon_core.verb:set package 'yuntai_control' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.124s] DEBUG:colcon.colcon_core.verb:Building package 'yuntai_control' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/bestway/bestway_ws/build/yuntai_control', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/bestway/bestway_ws/install/yuntai_control', 'merge_install': False, 'path': '/home/bestway/bestway_ws/src/yuntai_control', 'symlink_install': False, 'test_result_base': None}
+[1.125s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.127s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.127s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/bestway/bestway_ws/src/auto_drive' with build type 'ament_python'
+[1.128s] Level 1:colcon.colcon_core.shell:create_environment_hook('auto_drive', 'ament_prefix_path')
+[1.135s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.136s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/auto_drive/share/auto_drive/hook/ament_prefix_path.ps1'
+[1.138s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bestway/bestway_ws/install/auto_drive/share/auto_drive/hook/ament_prefix_path.dsv'
+[1.139s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/auto_drive/share/auto_drive/hook/ament_prefix_path.sh'
+[1.141s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.141s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.152s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/bestway/bestway_ws/src/lidar_distance' with build type 'ament_python'
+[1.152s] Level 1:colcon.colcon_core.shell:create_environment_hook('lidar_distance', 'ament_prefix_path')
+[1.153s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/lidar_distance/share/lidar_distance/hook/ament_prefix_path.ps1'
+[1.154s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bestway/bestway_ws/install/lidar_distance/share/lidar_distance/hook/ament_prefix_path.dsv'
+[1.155s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/lidar_distance/share/lidar_distance/hook/ament_prefix_path.sh'
+[1.156s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.157s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.167s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/bestway/bestway_ws/src/sbus_control' with build type 'ament_python'
+[1.167s] Level 1:colcon.colcon_core.shell:create_environment_hook('sbus_control', 'ament_prefix_path')
+[1.168s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/sbus_control/share/sbus_control/hook/ament_prefix_path.ps1'
+[1.169s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/bestway/bestway_ws/install/sbus_control/share/sbus_control/hook/ament_prefix_path.dsv'
+[1.169s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/bestway/bestway_ws/install/sbus_control/share/sbus_control/hook/ament_prefix_path.sh'
+[1.171s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.171s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.181s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/bestway/bestway_ws/src/temperature_publisher' with build type 'ament_cmake'
+[1.181s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/bestway/bestway_ws/src/temperature_publisher'
+[1.182s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.182s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.782s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/bestway/bestway_ws/src/auto_drive'
+[1.783s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.784s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.392s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/bestway/bestway_ws/src/lidar_distance'
+[2.393s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.393s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.996s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/bestway/bestway_ws/src/sbus_control'
+[2.997s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.997s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.024s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/bestway/bestway_ws/build/temperature_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --build /home/bestway/bestway_ws/build/temperature_publisher -- -j4 -l4
+[3.860s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/bestway/bestway_ws/build/temperature_publisher' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --build /home/bestway/bestway_ws/build/temperature_publisher -- -j4 -l4
+[3.862s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(temperature_publisher)
+[3.872s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher' for CMake module files
+[3.873s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher' for CMake config files
+[3.874s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher/bin'
+[3.874s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher/lib/pkgconfig/temperature_publisher.pc'
+[3.875s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher/lib/python3.10/site-packages'
+[3.876s] Level 1:colcon.colcon_core.environment:checking '/home/bestway/bestway_ws/install/temperature_publisher/bin'
+[3.877s] INFO:colcon.colcon_core.shell:Creating package script '/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.ps1'
+[3.883s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.dsv'
+[3.886s] INFO:colcon.colcon_core.shell:Creating package script '/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.sh'
+[3.890s] INFO:colcon.colcon_core.shell:Creating package script '/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.bash'
+[3.894s] INFO:colcon.colcon_core.shell:Creating package script '/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.zsh'
+[3.900s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/bestway/bestway_ws/install/temperature_publisher/share/colcon-core/packages/temperature_publisher)
+[4.268s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[4.269s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[4.270s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '2'
+[4.271s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[4.287s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[4.287s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[4.287s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[4.316s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.Spawn.ChildExited: Process org.freedesktop.Notifications exited with status 1
+[4.316s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[4.317s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bestway/bestway_ws/install/local_setup.ps1'
+[4.320s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/bestway/bestway_ws/install/_local_setup_util_ps1.py'
+[4.325s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bestway/bestway_ws/install/setup.ps1'
+[4.332s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bestway/bestway_ws/install/local_setup.sh'
+[4.334s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/bestway/bestway_ws/install/_local_setup_util_sh.py'
+[4.337s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bestway/bestway_ws/install/setup.sh'
+[4.344s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bestway/bestway_ws/install/local_setup.bash'
+[4.346s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bestway/bestway_ws/install/setup.bash'
+[4.353s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/bestway/bestway_ws/install/local_setup.zsh'
+[4.356s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/bestway/bestway_ws/install/setup.zsh'

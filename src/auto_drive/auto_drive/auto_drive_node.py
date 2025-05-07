@@ -30,11 +30,13 @@ class AutoDriveNode(Node):
         self.init_zed_camera()
 
         # 初始化状态
-        self.safe_distance = 0.5  # 安全距离，单位：米
+        self.safe_distance = 1.0  # 安全距离，单位：米
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.turning_left = None  # 当前转向方向
         self.front_avg = 0.0  # 前方距离
         self.front_zed = 0.0  # 前方距离
+        self.left_distance = 0.0  # 左边距离
+        self.right_distance = 0.0  # 右边距离
 
     def init_zed_camera(self):
         """
@@ -126,16 +128,17 @@ class AutoDriveNode(Node):
         self.front_avg = min(front_distances)
         # left_avg = sum(left_distances) / len(left_distances)
         # right_avg = sum(right_distances) / len(right_distances)
-        left_avg = min(left_distances)
-        right_avg = min(right_distances)
+        self.left_distance = min(left_distances)
+        self.right_distance = min(right_distances)
 
         self.get_logger().info(
-            f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            f"前方平均距离: {self.front_zed:.2f} 米, 左侧平均距离: {self.left_distance:.2f} 米, 右侧平均距离: {self.right_distance:.2f} 米"
         )
 
-        # 判断转向方向
-        if self.front_avg <= self.safe_distance:
-            self.turning_left = left_avg > right_avg
+        # # 判断转向方向
+        # if self.front_avg <= self.safe_distance:
+        #     self.turning_left = self.left_distance > self.right_distance
     
     def control_loop(self):
         """
@@ -154,12 +157,13 @@ class AutoDriveNode(Node):
         else:
             # 前方不安全，停止并转向
             self.stop()
-            time.sleep(2)
+            time.sleep(0.5)
 
             # 持续转向，直到前方距离大于安全距离
             # while self.front_avg <= self.safe_distance:
             while self.front_zed <= self.safe_distance:
-                if self.turning_left:
+                if self.left_distance > self.right_distance:
+                    # 如果左侧距离大于右侧距离，向右转
                     self.turn_left()
                 else:
                     self.turn_right()
@@ -170,10 +174,10 @@ class AutoDriveNode(Node):
                 # 打印调整过程中的前方距离
                 # self.get_logger().info(f"调整中，前方距离: {self.front_avg:.2f} 米")
                 self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米")
-
+                self.front_zed = self.get_front_distance()
             # 停止转向，停顿1秒
             self.stop()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def drive_forward(self):
         """
