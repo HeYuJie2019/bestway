@@ -11,7 +11,7 @@ public:
     TemperaturePublisher() : Node("temperature_publisher")
     {
         // 创建发布者
-        temp_publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("temperature_matrix", 10);
+        temp_publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("temperature_matrix", 10000);
 
         // 初始化设备
         if (init_lib() != 0)
@@ -122,9 +122,9 @@ private:
             int tempVal = 0;
             int minVal = 16383;
             int maxVal = -1000;
-            for (int i = 0; i < unHeight; i+=2)
+            for (int i = 0; i < unHeight; i++)
             {
-                for (int j = 0; j < unWidth; j+=2)
+                for (int j = 0; j < unWidth; j++)
                 {
                     temp_msg.data[i * unWidth + j] = static_cast<float>(ptrS16TempVal[i * unWidth + j]);
                     if (ptrS16TempVal[i * unWidth + j] > maxVal)

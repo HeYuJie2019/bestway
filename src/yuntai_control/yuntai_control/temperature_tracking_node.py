@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray, String
 import numpy as np
+import time
 
 
 class TemperatureTrackingNode(Node):
@@ -28,7 +29,18 @@ class TemperatureTrackingNode(Node):
         self.vertical_angle_limit = 88
 
         # 最大步长
-        self.max_step_size = 10  # 最大每次调整的角度
+        self.max_step_size = 12  # 最大每次调整的角度
+
+        # 温差阈值
+        self.temperature_threshold = 200
+
+        # 搜索模式参数
+        self.search_step = 5  # 每次转动的角度
+        self.search_delay = 0.5  # 每次转动后的延时（秒）
+        self.search_vertical_step = 10  # 垂直方向每次抬高的角度
+
+        # 搜索状态
+        self.searching = False  # 是否处于搜索模式
 
         self.get_logger().info("Temperature Tracking Node has been started.")
 
@@ -43,6 +55,24 @@ class TemperatureTrackingNode(Node):
 
             # 将温度数据转换为 NumPy 数组
             temperature_matrix = np.array(msg.data).reshape((rows, cols))
+            # self.get_logger().info(f"Received temperature matrix: {temperature_matrix}")
+
+            # 找到最高温度和最低温度
+            max_temp = np.max(temperature_matrix)
+            min_temp = np.min(temperature_matrix)
+            self.get_logger().info(f"Max Temp: {max_temp:.2f}, Min Temp: {min_temp:.2f}")
+            # 判断温差是否达到阈值
+            if max_temp - min_temp < self.temperature_threshold:
+                # 如果温差不足，进入搜索模式
+                self.search_mode()
+                return
+            
+            # 如果温差足够，退出搜索模式
+            if self.searching:
+                self.exit_search_mode()
+            
+            # 如果温差足够，退出搜索模式
+            self.searching = False
 
             # 找到最高温度的位置
             max_temp = np.max(temperature_matrix)
@@ -115,6 +145,54 @@ class TemperatureTrackingNode(Node):
             self.publisher.publish(vertical_msg)
         except Exception as e:
             self.get_logger().error(f"Error controlling yuntai: {e}")
+
+    def search_mode(self):
+        """
+        搜索模式：云台水平旋转一圈，若未找到目标则抬高垂直角度继续搜索
+        """
+        if not self.searching:
+            self.get_logger().info("Entering search mode...")
+            self.searching = True
+
+        # 水平旋转一圈
+        if self.current_horizontal_angle < self.horizontal_angle_limit:
+            self.current_horizontal_angle += self.search_step
+        else:
+            self.current_horizontal_angle = -self.horizontal_angle_limit
+            # 抬高垂直角度
+            if self.current_vertical_angle < self.vertical_angle_limit:
+                self.current_vertical_angle += self.search_vertical_step
+            else:
+                self.current_vertical_angle = -self.vertical_angle_limit
+
+        # 限制角度范围
+        self.current_horizontal_angle = max(-self.horizontal_angle_limit, min(self.horizontal_angle_limit, self.current_horizontal_angle))
+        self.current_vertical_angle = max(-self.vertical_angle_limit, min(self.vertical_angle_limit, self.current_vertical_angle))
+
+        # 发布云台控制指令
+        self.control_yuntai(self.current_horizontal_angle, self.current_vertical_angle)
+
+        # 延时以放慢搜索速度
+        time.sleep(self.search_delay)
+    
+    def exit_search_mode(self):
+        """
+        平滑退出搜索模式
+        """
+        self.get_logger().info("Exiting search mode...")
+        self.searching = False
+
+        # 平滑调整垂直角度到目标位置
+        if self.current_vertical_angle > 0:
+            self.current_vertical_angle -= self.search_vertical_step
+        elif self.current_vertical_angle < 0:
+            self.current_vertical_angle += self.search_vertical_step
+
+        # 确保角度在范围内
+        self.current_vertical_angle = max(-self.vertical_angle_limit, min(self.vertical_angle_limit, self.current_vertical_angle))
+
+        # 发布云台控制指令
+        self.control_yuntai(self.current_horizontal_angle, self.current_vertical_angle)
 
 
 def main(args=None):
