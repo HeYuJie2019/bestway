@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'yuntai_controller_node = yuntai_control.yuntai_control_node:main',
+            'temperature_tracking_node = yuntai_control.temperature_tracking_node:main',
         ],
     },
 )

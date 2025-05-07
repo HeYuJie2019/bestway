@@ -38,14 +38,14 @@ class ServoController:
                 current_angle = 0  # 如果当前角度为 None，假设为 0
 
             # 计算角度差
-            angle_difference = abs(target_angle - current_angle)
+            # angle_difference = abs(target_angle - current_angle)
 
             # 设置舵机角度
             self.kit.servo[servo_index].angle = target_angle
 
             # 根据角度差延时，假设每移动 1 度延时 10 毫秒
-            delay = angle_difference * 0.01
-            sleep(delay)
+            # delay = angle_difference * 0.01
+            # sleep(delay)
 
     def get_angle(self, servo_index):
         """
