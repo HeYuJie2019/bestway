@@ -26,31 +26,31 @@ class AutoDriveNode(Node):
         )
 
         # 订阅 /servo_position 话题
-        self.servo_position_subscription = self.create_subscription(
-            String,
-            '/servo_position',
-            self.servo_position_callback,
-            100
-        )
+        # self.servo_position_subscription = self.create_subscription(
+        #     String,
+        #     '/servo_position',
+        #     self.servo_position_callback,
+        #     100
+        # )
 
         # 订阅 /search_mode_status 话题
-        self.search_mode_subscription = self.create_subscription(
-            Bool,
-            '/search_mode_status',
-            self.search_mode_callback,
-            100
-        )
+        # self.search_mode_subscription = self.create_subscription(
+        #     Bool,
+        #     '/search_mode_status',
+        #     self.search_mode_callback,
+        #     100
+        # )
 
         # 初始化 ZED 相机
         self.zed = sl.Camera()
         self.init_zed_camera()
 
         # 初始化状态
-        self.base_safe_distance = 0.5  # 基础安全距离，单位：米
+        self.base_safe_distance = 1.0  # 基础安全距离，单位：米
         self.base_speed = 1.5  # 基础速度，单位：米/秒
         self.max_speed = 5.0  # 最大速度
         self.max_safe_distance = 2.5  # 最大安全距离
-        self.safe_distance = 0.5  # 安全距离，单位：米
+        self.safe_distance = 1.0  # 安全距离，单位：米
         self.speed = 1.5  # 当前速度
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.front_avg = 0.0  # 前方距离
@@ -125,6 +125,13 @@ class AutoDriveNode(Node):
             # 过滤无效值（例如 -inf, inf）
             depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
 
+            # 裁剪矩阵，只保留中间部分（左右裁剪）
+            height, width = depth_numpy.shape
+            crop_left = int(width * 0.3)  # 左边界，裁剪掉 20%
+            crop_right = int(width * 0.7)  # 右边界，裁剪掉 20%
+
+            depth_numpy = depth_numpy[:, crop_left:crop_right]  # 仅裁剪列，保留所有行
+
             # 获取深度矩阵的最小值（忽略 NaN）
             if np.isnan(depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
@@ -192,9 +199,9 @@ class AutoDriveNode(Node):
         主控制循环
         """
         # 如果处于搜索模式，停止运动
-        if self.search_mode:
-            self.stop()
-            return
+        # if self.search_mode:
+        #     self.stop()
+        #     return
 
         # 获取前方距离（使用 ZED 深度相机）
         self.front_zed = self.get_front_distance()
@@ -212,10 +219,11 @@ class AutoDriveNode(Node):
         if self.front_zed > self.safe_distance:
             # 前方安全，继续前进
             self.drive_forward(self.speed)
+            # self.move_to_target()
         else:
             # 前方不安全，停止并转向
             self.stop()
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             # 持续转向，直到前方距离大于安全距离
             # while self.front_avg <= self.safe_distance:
@@ -235,17 +243,17 @@ class AutoDriveNode(Node):
                 self.front_zed = self.get_front_distance()
             # 停止转向，停顿0.5秒
             self.stop()
-            time.sleep(0.5)
+            time.sleep(0.2)
     
     def move_to_target(self):
         """
         根据舵机指向的位置移动机器人
         """
         # 简单示例：根据水平角度调整机器人方向
-        if self.target_horizontal_position > 5.0:  # 偏右
-            self.turn_right()
-        elif self.target_horizontal_position < -5.0:  # 偏左
+        if self.target_horizontal_position > 20.0:  # 偏左
             self.turn_left()
+        elif self.target_horizontal_position < -20.0:  # 偏右
+            self.turn_right()
         else:
             self.drive_forward(self.speed)
     
@@ -261,8 +269,8 @@ class AutoDriveNode(Node):
         )
 
         # 计算动态速度和安全距离
-        speed = self.base_speed + (front_distance - self.safe_distance)* 0.1 * (self.max_speed - self.base_speed)
-        safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.1 * (self.max_safe_distance - self.base_safe_distance)
+        speed = self.base_speed + (front_distance - self.safe_distance)* 1.0 * (self.max_speed - self.base_speed)
+        safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.2 * (self.max_safe_distance - self.base_safe_distance)
         self.speed = max(0.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
         self.safe_distance = max(0.0, min(safe_distance, self.max_safe_distance))  # 限制安全距离在 0 到 max_safe_distance 之间
 
