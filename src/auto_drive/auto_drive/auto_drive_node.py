@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, String, Bool
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist
 import math
@@ -25,18 +25,45 @@ class AutoDriveNode(Node):
             10
         )
 
+        # 订阅 /servo_position 话题
+        self.servo_position_subscription = self.create_subscription(
+            String,
+            '/servo_position',
+            self.servo_position_callback,
+            100
+        )
+
+        # 订阅 /search_mode_status 话题
+        self.search_mode_subscription = self.create_subscription(
+            Bool,
+            '/search_mode_status',
+            self.search_mode_callback,
+            100
+        )
+
         # 初始化 ZED 相机
         self.zed = sl.Camera()
         self.init_zed_camera()
 
         # 初始化状态
-        self.safe_distance = 1.0  # 安全距离，单位：米
+        self.base_safe_distance = 0.5  # 基础安全距离，单位：米
+        self.base_speed = 1.5  # 基础速度，单位：米/秒
+        self.max_speed = 5.0  # 最大速度
+        self.max_safe_distance = 2.5  # 最大安全距离
+        self.safe_distance = 0.5  # 安全距离，单位：米
+        self.speed = 1.5  # 当前速度
         self.latest_distances = None  # 存储最新的激光雷达数据
-        self.turning_left = None  # 当前转向方向
         self.front_avg = 0.0  # 前方距离
         self.front_zed = 0.0  # 前方距离
         self.left_distance = 0.0  # 左边距离
         self.right_distance = 0.0  # 右边距离
+
+        # 搜索模式状态
+        self.search_mode = False
+
+        # 舵机指向的位置
+        self.target_horizontal_position = 0.0
+        self.target_vertical_position = 0.0
 
     def init_zed_camera(self):
         """
@@ -54,6 +81,35 @@ class AutoDriveNode(Node):
 
         # 创建深度图像对象
         self.depth = sl.Mat()
+    
+    def servo_position_callback(self, msg):
+        """
+        处理 /servo_position 话题的回调函数
+        """
+        try:
+            # 解析舵机指向的位置
+            servo_data = msg.data.split(':')
+            if len(servo_data) == 2:
+                servo_id = int(servo_data[0])
+                position = float(servo_data[1])
+
+                if servo_id == 0:  # 水平舵机
+                    self.target_horizontal_position = position
+                elif servo_id == 1:  # 垂直舵机
+                    self.target_vertical_position = position
+
+                self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
+        except Exception as e:
+            self.get_logger().error(f"解析舵机指向失败: {e}")
+
+    def search_mode_callback(self, msg):
+        """
+        处理 /search_mode_status 话题的回调函数
+        """
+        self.search_mode = msg.data
+        if self.search_mode:
+            self.get_logger().info("进入搜索模式，机器人停止运动")
+            self.stop()
 
     def get_front_distance(self):
         """
@@ -130,30 +186,32 @@ class AutoDriveNode(Node):
         # right_avg = sum(right_distances) / len(right_distances)
         self.left_distance = min(left_distances)
         self.right_distance = min(right_distances)
-
-        self.get_logger().info(
-            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
-            f"前方平均距离: {self.front_zed:.2f} 米, 左侧平均距离: {self.left_distance:.2f} 米, 右侧平均距离: {self.right_distance:.2f} 米"
-        )
-
-        # # 判断转向方向
-        # if self.front_avg <= self.safe_distance:
-        #     self.turning_left = self.left_distance > self.right_distance
     
     def control_loop(self):
         """
         主控制循环
         """
+        # 如果处于搜索模式，停止运动
+        if self.search_mode:
+            self.stop()
+            return
+
         # 获取前方距离（使用 ZED 深度相机）
         self.front_zed = self.get_front_distance()
 
         if self.latest_distances is None:
             return  # 如果没有激光雷达数据，什么都不做
+        if self.front_zed is None:
+            return  # 如果没有深度相机数据，什么都不做
+        
+        # 动态调整速度和安全距离
+        self.calculate_dynamic_speed_and_distance(self.front_zed)
+        self.get_logger().info(f"动态调整速度: {self.speed:.2f} m/s, 安全距离: {self.safe_distance:.2f} 米")
 
         # if self.front_avg > self.safe_distance:
         if self.front_zed > self.safe_distance:
             # 前方安全，继续前进
-            self.drive_forward()
+            self.drive_forward(self.speed)
         else:
             # 前方不安全，停止并转向
             self.stop()
@@ -175,19 +233,48 @@ class AutoDriveNode(Node):
                 # self.get_logger().info(f"调整中，前方距离: {self.front_avg:.2f} 米")
                 self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米")
                 self.front_zed = self.get_front_distance()
-            # 停止转向，停顿1秒
+            # 停止转向，停顿0.5秒
             self.stop()
             time.sleep(0.5)
+    
+    def move_to_target(self):
+        """
+        根据舵机指向的位置移动机器人
+        """
+        # 简单示例：根据水平角度调整机器人方向
+        if self.target_horizontal_position > 5.0:  # 偏右
+            self.turn_right()
+        elif self.target_horizontal_position < -5.0:  # 偏左
+            self.turn_left()
+        else:
+            self.drive_forward(self.speed)
+    
+    def calculate_dynamic_speed_and_distance(self, front_distance):
+        """
+        根据前方距离动态计算速度和安全距离
+        :param front_distance: 前方距离
+        :return: 动态速度和安全距离
+        """
+        self.get_logger().info(
+            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            f"前方最小距离: {self.front_zed:.2f} 米, 左侧最小距离: {self.left_distance:.2f} 米, 右侧最小距离: {self.right_distance:.2f} 米"
+        )
 
-    def drive_forward(self):
+        # 计算动态速度和安全距离
+        speed = self.base_speed + (front_distance - self.safe_distance)* 0.1 * (self.max_speed - self.base_speed)
+        safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.1 * (self.max_safe_distance - self.base_safe_distance)
+        self.speed = max(0.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
+        self.safe_distance = max(0.0, min(safe_distance, self.max_safe_distance))  # 限制安全距离在 0 到 max_safe_distance 之间
+
+    def drive_forward(self, speed):
         """
         前进
         """
         twist = Twist()
-        twist.linear.x = 2.0  # 设置前进速度
+        twist.linear.x = float(speed)
         twist.angular.z = 0.0
         self.cmd_vel_publisher.publish(twist)
-        self.get_logger().info("前进中...")
+        self.get_logger().info(f"前进中，速度: {speed:.2f} m/s")
 
     def turn_left(self):
         """

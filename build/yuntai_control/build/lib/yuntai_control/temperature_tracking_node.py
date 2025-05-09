@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray, String
+from std_msgs.msg import Float32MultiArray, String, Bool
 import numpy as np
 import time
 
@@ -18,7 +18,10 @@ class TemperatureTrackingNode(Node):
         )
 
         # 发布云台控制指令
-        self.publisher = self.create_publisher(String, '/servo_position', 10)
+        self.publisher = self.create_publisher(String, '/servo_position', 100)
+
+        # 发布搜索模式状态
+        self.search_mode_publisher = self.create_publisher(Bool, '/search_mode_status', 100)
 
         # 云台当前角度
         self.current_horizontal_angle = 0
@@ -29,20 +32,31 @@ class TemperatureTrackingNode(Node):
         self.vertical_angle_limit = 88
 
         # 最大步长
-        self.max_step_size = 12  # 最大每次调整的角度
+        self.max_step_size = 10  # 最大每次调整的角度
 
         # 温差阈值
-        self.temperature_threshold = 300
+        self.temperature_threshold = 200
 
         # 搜索模式参数
-        self.search_step = 5  # 每次转动的角度
-        self.search_delay = 0.5  # 每次转动后的延时（秒）
+        self.search_step = 15  # 每次转动的角度
+        self.search_delay = 0.3  # 每次转动后的延时（秒）
         self.search_vertical_step = 10  # 垂直方向每次抬高的角度
 
         # 搜索状态
         self.searching = False  # 是否处于搜索模式
+        self.search_mode_msg = Bool()
+        self.search_mode_msg.data = self.searching
+        self.timer = self.create_timer(0.1, self.publish_search_mode_status)
+
 
         self.get_logger().info("Temperature Tracking Node has been started.")
+
+    def publish_search_mode_status(self):
+        """
+        发布当前是否处于搜索模式的信息
+        """
+        self.search_mode_msg.data = self.searching
+        self.search_mode_publisher.publish(self.search_mode_msg)
 
     def temperature_callback(self, msg):
         """
@@ -55,19 +69,23 @@ class TemperatureTrackingNode(Node):
 
             # 将温度数据转换为 NumPy 数组
             temperature_matrix = np.array(msg.data).reshape((rows, cols))
+            # self.get_logger().info(f"Received temperature matrix: {temperature_matrix}")
 
             # 找到最高温度和最低温度
             max_temp = np.max(temperature_matrix)
             min_temp = np.min(temperature_matrix)
             self.get_logger().info(f"Max Temp: {max_temp:.2f}, Min Temp: {min_temp:.2f}")
+
             # 判断温差是否达到阈值
             if max_temp - min_temp < self.temperature_threshold:
                 # 如果温差不足，进入搜索模式
+                self.searching = True
                 self.search_mode()
                 return
             
             # 如果温差足够，退出搜索模式
-            self.searching = False
+            if self.searching:
+                self.searching = False
 
             # 找到最高温度的位置
             max_temp = np.max(temperature_matrix)
@@ -155,21 +173,20 @@ class TemperatureTrackingNode(Node):
         else:
             self.current_horizontal_angle = -self.horizontal_angle_limit
             # 抬高垂直角度
-            if self.current_vertical_angle < self.vertical_angle_limit:
+            if self.current_vertical_angle < 10:
                 self.current_vertical_angle += self.search_vertical_step
             else:
-                self.current_vertical_angle = -self.vertical_angle_limit
+                self.current_vertical_angle = -10
 
         # 限制角度范围
         self.current_horizontal_angle = max(-self.horizontal_angle_limit, min(self.horizontal_angle_limit, self.current_horizontal_angle))
-        self.current_vertical_angle = max(-self.vertical_angle_limit, min(self.vertical_angle_limit, self.current_vertical_angle))
+        self.current_vertical_angle = max(-10, min(10, self.current_vertical_angle))
 
         # 发布云台控制指令
         self.control_yuntai(self.current_horizontal_angle, self.current_vertical_angle)
 
         # 延时以放慢搜索速度
         time.sleep(self.search_delay)
-
 
 def main(args=None):
     rclpy.init(args=args)

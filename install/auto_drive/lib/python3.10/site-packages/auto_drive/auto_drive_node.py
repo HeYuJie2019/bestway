@@ -30,9 +30,13 @@ class AutoDriveNode(Node):
         self.init_zed_camera()
 
         # 初始化状态
-        self.safe_distance = 1.0  # 安全距离，单位：米
+        self.base_safe_distance = 0.5  # 基础安全距离，单位：米
+        self.base_speed = 1.5  # 基础速度，单位：米/秒
+        self.max_speed = 5.0  # 最大速度
+        self.max_safe_distance = 2.5  # 最大安全距离
+        self.safe_distance = 0.5  # 安全距离，单位：米
+        self.speed = 1.5  # 当前速度
         self.latest_distances = None  # 存储最新的激光雷达数据
-        self.turning_left = None  # 当前转向方向
         self.front_avg = 0.0  # 前方距离
         self.front_zed = 0.0  # 前方距离
         self.left_distance = 0.0  # 左边距离
@@ -130,15 +134,6 @@ class AutoDriveNode(Node):
         # right_avg = sum(right_distances) / len(right_distances)
         self.left_distance = min(left_distances)
         self.right_distance = min(right_distances)
-
-        self.get_logger().info(
-            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
-            f"前方平均距离: {self.front_zed:.2f} 米, 左侧平均距离: {self.left_distance:.2f} 米, 右侧平均距离: {self.right_distance:.2f} 米"
-        )
-
-        # # 判断转向方向
-        # if self.front_avg <= self.safe_distance:
-        #     self.turning_left = self.left_distance > self.right_distance
     
     def control_loop(self):
         """
@@ -149,11 +144,17 @@ class AutoDriveNode(Node):
 
         if self.latest_distances is None:
             return  # 如果没有激光雷达数据，什么都不做
+        if self.front_zed is None:
+            return  # 如果没有深度相机数据，什么都不做
+        
+        # 动态调整速度和安全距离
+        self.calculate_dynamic_speed_and_distance(self.front_zed)
+        self.get_logger().info(f"动态调整速度: {self.speed:.2f} m/s, 安全距离: {self.safe_distance:.2f} 米")
 
         # if self.front_avg > self.safe_distance:
         if self.front_zed > self.safe_distance:
             # 前方安全，继续前进
-            self.drive_forward()
+            self.drive_forward(self.speed)
         else:
             # 前方不安全，停止并转向
             self.stop()
@@ -178,16 +179,33 @@ class AutoDriveNode(Node):
             # 停止转向，停顿1秒
             self.stop()
             time.sleep(0.5)
+    
+    def calculate_dynamic_speed_and_distance(self, front_distance):
+        """
+        根据前方距离动态计算速度和安全距离
+        :param front_distance: 前方距离
+        :return: 动态速度和安全距离
+        """
+        self.get_logger().info(
+            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
+            f"前方最小距离: {self.front_zed:.2f} 米, 左侧最小距离: {self.left_distance:.2f} 米, 右侧最小距离: {self.right_distance:.2f} 米"
+        )
 
-    def drive_forward(self):
+        # 计算动态速度和安全距离
+        speed = self.base_speed + (front_distance - self.safe_distance)* 0.1 * (self.max_speed - self.base_speed)
+        safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.1 * (self.max_safe_distance - self.base_safe_distance)
+        self.speed = max(0.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
+        self.safe_distance = max(0.0, min(safe_distance, self.max_safe_distance))  # 限制安全距离在 0 到 max_safe_distance 之间
+
+    def drive_forward(self, speed):
         """
         前进
         """
         twist = Twist()
-        twist.linear.x = 2.0  # 设置前进速度
+        twist.linear.x = float(speed)
         twist.angular.z = 0.0
         self.cmd_vel_publisher.publish(twist)
-        self.get_logger().info("前进中...")
+        self.get_logger().info(f"前进中，速度: {speed:.2f} m/s")
 
     def turn_left(self):
         """
