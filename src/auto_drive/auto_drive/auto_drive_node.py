@@ -55,6 +55,8 @@ class AutoDriveNode(Node):
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.front_avg = 0.0  # 前方距离
         self.front_zed = 0.0  # 前方距离
+        self.front_zed_near = 0.0  # 前方较近距离
+        self.front_zed_far = 0.0  # 前方较远距离
         self.left_distance = 0.0  # 左边距离
         self.right_distance = 0.0  # 右边距离
 
@@ -127,17 +129,27 @@ class AutoDriveNode(Node):
 
             # 裁剪矩阵，只保留中间部分（左右裁剪）
             height, width = depth_numpy.shape
-            crop_left = int(width * 0.3)  # 左边界，裁剪掉 20%
-            crop_right = int(width * 0.7)  # 右边界，裁剪掉 20%
+            crop_left = int(width * 0.30)  # 左边界，裁剪掉 15%
+            crop_right = int(width * 0.70)  # 右边界，裁剪掉 15%
 
-            depth_numpy = depth_numpy[:, crop_left:crop_right]  # 仅裁剪列，保留所有行
+            depth_numpy_far = depth_numpy[:, crop_left:crop_right]  # 仅裁剪列，保留所有行
 
             # 获取深度矩阵的最小值（忽略 NaN）
             if np.isnan(depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
                 return float('inf')  # 如果没有有效值，返回无穷大
             else:
-                min_depth = np.nanmin(depth_numpy)
+                self.front_zed_near = np.nanmin(depth_numpy)
+                self.front_zed_far = np.nanmin(depth_numpy_far)
+                min_depth = 0.0
+                if self.front_zed_far < 1.0:
+                    self.get_logger().warn("前方距离过近，使用较近的深度值")
+                    min_depth = self.front_zed_near
+                elif self.front_zed_far > 1.0 and self.front_zed_near > 0.65:
+                    self.get_logger().info("前方距离正常，使用较远的深度值")
+                    min_depth = self.front_zed_near
+                else:
+                    min_depth = self.front_zed_near
                 return min_depth
         else:
             self.get_logger().warn("无法捕获 ZED 深度数据")
@@ -271,7 +283,7 @@ class AutoDriveNode(Node):
         # 计算动态速度和安全距离
         speed = self.base_speed + (front_distance - self.safe_distance)* 1.0 * (self.max_speed - self.base_speed)
         safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.2 * (self.max_safe_distance - self.base_safe_distance)
-        self.speed = max(0.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
+        self.speed = max(1.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
         self.safe_distance = max(0.0, min(safe_distance, self.max_safe_distance))  # 限制安全距离在 0 到 max_safe_distance 之间
 
     def drive_forward(self, speed):
