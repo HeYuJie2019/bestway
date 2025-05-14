@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/imu_odometry/imu_odometry.egg-info
+writing ../../build/imu_odometry/imu_odometry.egg-info/PKG-INFO
+writing dependency_links to ../../build/imu_odometry/imu_odometry.egg-info/dependency_links.txt
+writing entry points to ../../build/imu_odometry/imu_odometry.egg-info/entry_points.txt
+writing requirements to ../../build/imu_odometry/imu_odometry.egg-info/requires.txt
+writing top-level names to ../../build/imu_odometry/imu_odometry.egg-info/top_level.txt
+writing manifest file '../../build/imu_odometry/imu_odometry.egg-info/SOURCES.txt'
+reading manifest file '../../build/imu_odometry/imu_odometry.egg-info/SOURCES.txt'
+writing manifest file '../../build/imu_odometry/imu_odometry.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/bestway/bestway_ws/build/imu_odometry/build
+creating /home/bestway/bestway_ws/build/imu_odometry/build/lib
+creating /home/bestway/bestway_ws/build/imu_odometry/build/lib/imu_odometry
+copying imu_odometry/imu_odometry_node.py -> /home/bestway/bestway_ws/build/imu_odometry/build/lib/imu_odometry
+copying imu_odometry/__init__.py -> /home/bestway/bestway_ws/build/imu_odometry/build/lib/imu_odometry
+running install
+running install_lib
+creating /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry
+copying /home/bestway/bestway_ws/build/imu_odometry/build/lib/imu_odometry/imu_odometry_node.py -> /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry
+copying /home/bestway/bestway_ws/build/imu_odometry/build/lib/imu_odometry/__init__.py -> /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry
+byte-compiling /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry/imu_odometry_node.py to imu_odometry_node.cpython-310.pyc
+byte-compiling /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/bestway/bestway_ws/install/imu_odometry/share/ament_index
+creating /home/bestway/bestway_ws/install/imu_odometry/share/ament_index/resource_index
+creating /home/bestway/bestway_ws/install/imu_odometry/share/ament_index/resource_index/packages
+copying resource/imu_odometry -> /home/bestway/bestway_ws/install/imu_odometry/share/ament_index/resource_index/packages
+copying package.xml -> /home/bestway/bestway_ws/install/imu_odometry/share/imu_odometry
+running install_egg_info
+Copying ../../build/imu_odometry/imu_odometry.egg-info to /home/bestway/bestway_ws/install/imu_odometry/lib/python3.10/site-packages/imu_odometry-0.0.0-py3.10.egg-info
+running install_scripts
+Installing imu_odometry_node script to /home/bestway/bestway_ws/install/imu_odometry/lib/imu_odometry
+writing list of installed files to '/home/bestway/bestway_ws/build/imu_odometry/install.log'

@@ -2,7 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray, String, Bool
+from std_msgs.msg import Float32MultiArray, String, Bool, Int32
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist
 import math
@@ -26,44 +26,66 @@ class AutoDriveNode(Node):
         )
 
         # 订阅 /servo_position 话题
-        # self.servo_position_subscription = self.create_subscription(
-        #     String,
-        #     '/servo_position',
-        #     self.servo_position_callback,
-        #     100
-        # )
+        self.servo_position_subscription = self.create_subscription(
+            String,
+            '/servo_position',
+            self.servo_position_callback,
+            100
+        )
 
         # 订阅 /search_mode_status 话题
-        # self.search_mode_subscription = self.create_subscription(
-        #     Bool,
-        #     '/search_mode_status',
-        #     self.search_mode_callback,
-        #     100
-        # )
+        self.search_mode_subscription = self.create_subscription(
+            Bool,
+            '/search_mode_status',
+            self.search_mode_callback,
+            100
+        )
+
+        # 订阅 /count_above_1000 话题
+        self.count_above_1000_subscription = self.create_subscription(
+            Int32,
+            '/count_above_1000',
+            self.count_above_1000_callback,
+            10
+        )
 
         # 初始化 ZED 相机
         self.zed = sl.Camera()
         self.init_zed_camera()
 
         # 初始化状态
-        self.base_safe_distance = 1.0  # 基础安全距离，单位：米
+        self.base_safe_distance = 0.85  # 基础安全距离，单位：米
         self.base_speed = 1.5  # 基础速度，单位：米/秒
         self.max_speed = 5.0  # 最大速度
         self.max_safe_distance = 2.5  # 最大安全距离
-        self.safe_distance = 1.0  # 安全距离，单位：米
+        self.safe_distance = 0.85  # 安全距离，单位：米
         self.speed = 1.5  # 当前速度
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.front_avg = 0.0  # 前方距离
         self.front_zed = 0.0  # 前方距离
+        self.front_zed_near = 0.0  # 前方较近距离
+        self.front_zed_far = 0.0  # 前方较远距离
+        self.left_zed = 0.0  # 左侧距离
+        self.right_zed = 0.0 # 右侧距离
         self.left_distance = 0.0  # 左边距离
         self.right_distance = 0.0  # 右边距离
 
         # 搜索模式状态
-        self.search_mode = False
+        self.search_mode = True  # 初始状态为寻找模式
+        self.avoid_obstacle = False  # 避障状态
 
         # 舵机指向的位置
         self.target_horizontal_position = 0.0
         self.target_vertical_position = 0.0
+
+        self.count_above_1000 = 0
+
+    def count_above_1000_callback(self, msg):
+        """
+        处理 /count_above_1000 话题的回调函数
+        """
+        self.count_above_1000 = msg.data
+        # self.get_logger().info(f"接收到 /count_above_1000 数据: {self.count_above_1000}")
 
     def init_zed_camera(self):
         """
@@ -94,9 +116,15 @@ class AutoDriveNode(Node):
                 position = float(servo_data[1])
 
                 if servo_id == 0:  # 水平舵机
-                    self.target_horizontal_position = position
+                    if self.search_mode == False:
+                        self.target_horizontal_position = position
+                    else:
+                        self.target_horizontal_position = 0.0
                 elif servo_id == 1:  # 垂直舵机
-                    self.target_vertical_position = position
+                    if self.search_mode == False:
+                        self.target_vertical_position = position
+                    else:
+                        self.target_vertical_position = 0.0
 
                 self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
         except Exception as e:
@@ -125,12 +153,31 @@ class AutoDriveNode(Node):
             # 过滤无效值（例如 -inf, inf）
             depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
 
+            # 裁剪矩阵，只保留中间部分（左右裁剪）
+            height, width = depth_numpy.shape
+            crop_left = int(width * 0.35)  # 左边界，裁剪掉 30%
+            crop_right = int(width * 0.65)  # 右边界，裁剪掉 30%
+
+            depth_numpy_far = depth_numpy[:, crop_left:crop_right]  # 仅裁剪列，保留所有行
+
             # 获取深度矩阵的最小值（忽略 NaN）
             if np.isnan(depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
                 return float('inf')  # 如果没有有效值，返回无穷大
             else:
-                min_depth = np.nanmin(depth_numpy)
+                self.front_zed_near = np.nanmin(depth_numpy)
+                self.front_zed_far = np.nanmin(depth_numpy_far)
+                self.left_zed = np.nanmean(depth_numpy[:, :crop_left])
+                self.right_zed = np.nanmean(depth_numpy[:, crop_right:])
+                min_depth = 0.0
+                if self.front_zed_far < 1.0:
+                    self.get_logger().warn("前方距离过近，使用较近的深度值")
+                    min_depth = self.front_zed_near
+                elif self.front_zed_far >= 1.0 and self.front_zed_near > 0.7:
+                    self.get_logger().info("前方距离正常，使用较远的深度值")
+                    min_depth = self.front_zed_near
+                else:
+                    min_depth = self.front_zed_near
                 return min_depth
         else:
             self.get_logger().warn("无法捕获 ZED 深度数据")
@@ -192,9 +239,10 @@ class AutoDriveNode(Node):
         主控制循环
         """
         # 如果处于搜索模式，停止运动
-        # if self.search_mode:
-        #     self.stop()
-        #     return
+        if self.search_mode:
+            self.stop()
+            self.get_logger().info("搜索模式中，停止运动")
+            return
 
         # 获取前方距离（使用 ZED 深度相机）
         self.front_zed = self.get_front_distance()
@@ -211,42 +259,85 @@ class AutoDriveNode(Node):
         # if self.front_avg > self.safe_distance:
         if self.front_zed > self.safe_distance:
             # 前方安全，继续前进
-            self.drive_forward(self.speed)
-            # self.move_to_target()
+            t1 = time.time()
+            while self.front_zed > self.safe_distance and self.avoid_obstacle == True and time.time() - t1 < 1.0:
+                self.move_to_target()
+                rclpy.spin_once(self, timeout_sec=0.1)
+                self.front_zed = self.get_front_distance()
+                return
+            
+            self.avoid_obstacle = False  # 重置避障状态
+
+            if self.search_mode:
+                self.stop()
+                self.get_logger().info("搜索模式中，停止运动")
+                return
+            
+            self.move_to_target()
         else:
             # 前方不安全，停止并转向
             self.stop()
-            time.sleep(0.5)
-
+            time.sleep(0.2)
+            if abs(self.target_horizontal_position) < 30:
+                return
             # 持续转向，直到前方距离大于安全距离
-            # while self.front_avg <= self.safe_distance:
-            while self.front_zed <= self.safe_distance:
-                if self.left_distance > self.right_distance:
-                    # 如果左侧距离大于右侧距离，向右转
-                    self.turn_left()
-                else:
-                    self.turn_right()
-
+            self.avoid_obstacle = True
+            while self.front_zed <= self.safe_distance and ((self.left_zed*0.4 + self.left_distance*0.6) - (self.right_zed*0.4 + self.right_distance*0.6)) > 0:
+                self.turn_left()
+                
                 # 等待新的激光雷达数据
                 rclpy.spin_once(self, timeout_sec=0.1)
 
                 # 打印调整过程中的前方距离
                 # self.get_logger().info(f"调整中，前方距离: {self.front_avg:.2f} 米")
-                self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米")
+                self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米，安全距离: {self.safe_distance:.2f} 米， 左侧距离: {self.left_zed*0.4 + self.left_distance*0.6:.2f} 米，右侧距离: {self.right_zed*0.4 + self.right_distance*0.6:.2f} 米")
                 self.front_zed = self.get_front_distance()
+                if self.search_mode:
+                    self.stop()
+                    self.get_logger().info("搜索模式中，停止运动")
+                    return
+            while self.front_zed <= self.safe_distance and ((self.left_zed*0.4 + self.left_distance*0.6) - (self.right_zed*0.4 + self.right_distance*0.6)) <= 0:
+                self.turn_right()
+
+                # 等待新的激光雷达数据
+                rclpy.spin_once(self, timeout_sec=0.1)
+
+                # 打印调整过程中的前方距离
+                self.get_logger().info(f"调整中，前方距离: {self.front_zed:.2f} 米，安全距离: {self.safe_distance:.2f} 米， 左侧距离: {self.left_zed*0.4 + self.left_distance*0.6:.2f} 米，右侧距离: {self.right_zed*0.4 + self.right_distance*0.6:.2f} 米")
+                self.front_zed = self.get_front_distance()
+                if self.search_mode:
+                    self.stop()
+                    self.get_logger().info("搜索模式中，停止运动")
+                    return
             # 停止转向，停顿0.5秒
             self.stop()
-            time.sleep(0.5)
+            time.sleep(0.2)
     
     def move_to_target(self):
         """
         根据舵机指向的位置移动机器人
         """
         # 简单示例：根据水平角度调整机器人方向
-        if self.target_horizontal_position > 20.0:  # 偏左
-            self.turn_left()
-        elif self.target_horizontal_position < -20.0:  # 偏右
-            self.turn_right()
+        if self.target_horizontal_position > 30.0:  # 偏左
+            t1 = time.time()
+            while time.time() - t1 < abs(self.target_horizontal_position)*0.01:
+                self.turn_left()
+                rclpy.spin_once(self, timeout_sec=0.1)
+                self.front_zed = self.get_front_distance()
+                if self.search_mode:
+                    self.stop()
+                    self.get_logger().info("搜索模式中，停止运动")
+                    return
+        elif self.target_horizontal_position < -30.0:  # 偏右
+            t1 = time.time()
+            while time.time() - t1 < abs(self.target_horizontal_position)*0.01:
+                self.turn_right()
+                rclpy.spin_once(self, timeout_sec=0.1)
+                self.front_zed = self.get_front_distance()
+                if self.search_mode:
+                    self.stop()
+                    self.get_logger().info("搜索模式中，停止运动")
+                    return
         else:
             self.drive_forward(self.speed)
     
@@ -257,14 +348,13 @@ class AutoDriveNode(Node):
         :return: 动态速度和安全距离
         """
         self.get_logger().info(
-            # f"前方平均距离: {self.front_avg:.2f} 米, 左侧平均距离: {left_avg:.2f} 米, 右侧平均距离: {right_avg:.2f} 米"
-            f"前方最小距离: {self.front_zed:.2f} 米, 左侧最小距离: {self.left_distance:.2f} 米, 右侧最小距离: {self.right_distance:.2f} 米"
+            f"前方最小距离: {self.front_zed:.2f} 米, 左侧距离: {self.left_zed*0.4 + self.left_distance*0.6:.2f} 米, 右侧距离: {self.right_zed*0.4+self.right_distance*0.6:.2f} 米"
         )
 
         # 计算动态速度和安全距离
-        speed = self.base_speed + (front_distance - self.safe_distance)* 0.2 * (self.max_speed - self.base_speed)
+        speed = self.base_speed + (front_distance - self.safe_distance)* 1.0 * (self.max_speed - self.base_speed)
         safe_distance = self.base_safe_distance + (front_distance - self.safe_distance)* 0.2 * (self.max_safe_distance - self.base_safe_distance)
-        self.speed = max(0.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
+        self.speed = max(1.0, min(speed, self.max_speed))  # 限制速度在 0 到 max_speed 之间
         self.safe_distance = max(0.0, min(safe_distance, self.max_safe_distance))  # 限制安全距离在 0 到 max_safe_distance 之间
 
     def drive_forward(self, speed):
@@ -296,6 +386,26 @@ class AutoDriveNode(Node):
         twist.angular.z = -4.0  # 设置右转角速度
         self.cmd_vel_publisher.publish(twist)
         self.get_logger().info("右转中...")
+
+    def turn_around(self):
+        """
+        掉头
+        """
+        self.get_logger().info("触发掉头操作...")
+        twist = Twist()
+        twist.linear.x = 0.0
+        twist.angular.z = 6.0  # 设置较大的角速度进行掉头
+        turn_duration = 2.0  # 掉头持续时间（秒）
+
+        start_time = time.time()
+        while time.time() - start_time < turn_duration:
+            self.cmd_vel_publisher.publish(twist)
+            time.sleep(0.1)  # 控制发布频率
+
+        # 停止机器人
+        self.stop()
+        self.get_logger().info("掉头完成")
+        self.turn_switch_count = 0  # 重置切换计数
 
     def stop(self):
         """

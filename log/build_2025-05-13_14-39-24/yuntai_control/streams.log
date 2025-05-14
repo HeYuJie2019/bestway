@@ -1,0 +1,22 @@
+[1.721s] Invoking command in '/home/bestway/bestway_ws/src/yuntai_control': PYTHONPATH=/home/bestway/bestway_ws/build/yuntai_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/yuntai_control build --build-base /home/bestway/bestway_ws/build/yuntai_control/build install --record /home/bestway/bestway_ws/build/yuntai_control/install.log --single-version-externally-managed install_data
+[2.346s] running egg_info
+[2.348s] writing ../../build/yuntai_control/yuntai_control.egg-info/PKG-INFO
+[2.348s] writing dependency_links to ../../build/yuntai_control/yuntai_control.egg-info/dependency_links.txt
+[2.349s] writing entry points to ../../build/yuntai_control/yuntai_control.egg-info/entry_points.txt
+[2.349s] writing requirements to ../../build/yuntai_control/yuntai_control.egg-info/requires.txt
+[2.349s] writing top-level names to ../../build/yuntai_control/yuntai_control.egg-info/top_level.txt
+[2.354s] reading manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'
+[2.356s] writing manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'
+[2.356s] running build
+[2.356s] running build_py
+[2.357s] running install
+[2.358s] running install_lib
+[2.361s] running install_data
+[2.362s] running install_egg_info
+[2.369s] removing '/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control-0.0.0-py3.10.egg-info' (and everything under it)
+[2.370s] Copying ../../build/yuntai_control/yuntai_control.egg-info to /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control-0.0.0-py3.10.egg-info
+[2.372s] running install_scripts
+[2.424s] Installing temperature_tracking_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control
+[2.424s] Installing yuntai_controller_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control
+[2.425s] writing list of installed files to '/home/bestway/bestway_ws/build/yuntai_control/install.log'
+[2.508s] Invoked command in '/home/bestway/bestway_ws/src/yuntai_control' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/yuntai_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/yuntai_control build --build-base /home/bestway/bestway_ws/build/yuntai_control/build install --record /home/bestway/bestway_ws/build/yuntai_control/install.log --single-version-externally-managed install_data

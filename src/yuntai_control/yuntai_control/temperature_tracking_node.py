@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray, String, Bool
+from std_msgs.msg import Float32MultiArray, String, Bool, Int32
 import numpy as np
 import time
 
@@ -23,6 +23,9 @@ class TemperatureTrackingNode(Node):
         # 发布搜索模式状态
         self.search_mode_publisher = self.create_publisher(Bool, '/search_mode_status', 100)
 
+        # 发布大于 1000 的温度计数值
+        self.count_publisher = self.create_publisher(Int32, '/count_above_1000', 10)
+
         # 云台当前角度
         self.current_horizontal_angle = 0
         self.current_vertical_angle = 0
@@ -35,7 +38,7 @@ class TemperatureTrackingNode(Node):
         self.max_step_size = 10  # 最大每次调整的角度
 
         # 温差阈值
-        self.temperature_threshold = 200
+        self.temperature_threshold = 400
 
         # 搜索模式参数
         self.search_step = 15  # 每次转动的角度
@@ -74,7 +77,16 @@ class TemperatureTrackingNode(Node):
             # 找到最高温度和最低温度
             max_temp = np.max(temperature_matrix)
             min_temp = np.min(temperature_matrix)
-            self.get_logger().info(f"Max Temp: {max_temp:.2f}, Min Temp: {min_temp:.2f}")
+
+            # 计算大于 1000 的温度计数
+            count_above_1000 = int(np.sum(temperature_matrix > 1000))
+
+            # 发布大于 1000 的温度计数
+            count_msg = Int32()
+            count_msg.data = count_above_1000
+            self.count_publisher.publish(count_msg)
+
+            self.get_logger().info(f"Max Temp: {max_temp:.2f}, Min Temp: {min_temp:.2f}, count_above_1000: {count_above_1000}")
 
             # 判断温差是否达到阈值
             if max_temp - min_temp < self.temperature_threshold:
