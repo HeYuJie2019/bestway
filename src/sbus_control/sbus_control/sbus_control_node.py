@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import serial
+import time
 
 def calculate_xor(data):
     xor = 0
@@ -52,6 +53,9 @@ class SbusControlNode(Node):
             stopbits=serial.STOPBITS_TWO
         )
 
+        self.boss = serial.Serial('/dev/ttyTHS1', 115200, timeout=1)
+        self.BOSS = None
+
         # 订阅 /cmd_vel 话题
         self.subscription = self.create_subscription(
             Twist,
@@ -63,6 +67,22 @@ class SbusControlNode(Node):
         # 定时器，用于检测是否停止发布
         self.last_cmd_time = self.get_clock().now()
         self.timer = self.create_timer(0.02, self.check_timeout)  # 每 0.02 秒触发一次
+
+        self.serial_timer = self.create_timer(0.05, self.serial_send_and_read)
+
+    def serial_send_and_read(self):
+        hex_data = '01'  # 你要发送的十六进制内容
+        self.boss.reset_output_buffer()  # 清空输入缓冲区
+        self.boss.write(bytes.fromhex(hex_data))
+        self.get_logger().info(f"串口发送: {hex_data}")
+        # 读取串口数据
+        if self.boss.in_waiting:
+            data = self.boss.read(self.boss.in_waiting).hex()
+            if data == '01':
+                self.BOSS = False
+            elif data == '02':
+                self.BOSS = True
+
     def cmd_vel_callback(self, msg):
         """
         当接收到 /cmd_vel 消息时，更新 channels 数据
@@ -89,7 +109,8 @@ class SbusControlNode(Node):
             self.channels[0] = 1002
 
         # 发送 SBUS 数据帧
-        self.send_sbus_frame()
+        if self.BOSS is not True:
+            self.send_sbus_frame()
 
     def check_timeout(self):
         """
@@ -100,7 +121,8 @@ class SbusControlNode(Node):
         # 检查是否超时
         if (now - self.last_cmd_time).nanoseconds > 500_000_000:  # 超过 0.5 秒未接收到消息
             self.channels = self.default_channels.copy()
-            self.send_sbus_frame()
+            if self.BOSS is not True:
+                self.send_sbus_frame()
 
     def send_sbus_frame(self):
         """
