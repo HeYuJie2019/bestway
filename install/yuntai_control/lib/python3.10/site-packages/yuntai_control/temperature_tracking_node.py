@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32MultiArray, String, Bool, Int32
+from std_msgs.msg import Float32MultiArray, String, Bool, Int32, Float32
 import numpy as np
 import time
 
@@ -38,7 +38,7 @@ class TemperatureTrackingNode(Node):
         self.max_step_size = 10  # 最大每次调整的角度
 
         # 温差阈值
-        self.temperature_threshold = 400
+        self.temperature_threshold = 800
 
         # 搜索模式参数
         self.search_step = 15  # 每次转动的角度
@@ -50,6 +50,12 @@ class TemperatureTrackingNode(Node):
         self.search_mode_msg = Bool()
         self.search_mode_msg.data = self.searching
         self.timer = self.create_timer(0.1, self.publish_search_mode_status)
+
+        # 发布温度均值
+        self.average_temperature_publisher = self.create_publisher(Float32, '/average_temperature', 10)
+
+        # 用于存储一圈的温度数据
+        self.temperature_data = []
 
 
         self.get_logger().info("Temperature Tracking Node has been started.")
@@ -71,15 +77,15 @@ class TemperatureTrackingNode(Node):
             cols = msg.layout.dim[1].size
 
             # 将温度数据转换为 NumPy 数组
-            temperature_matrix = np.array(msg.data).reshape((rows, cols))
+            self.temperature_matrix = np.array(msg.data).reshape((rows, cols))
             # self.get_logger().info(f"Received temperature matrix: {temperature_matrix}")
 
             # 找到最高温度和最低温度
-            max_temp = np.max(temperature_matrix)
-            min_temp = np.min(temperature_matrix)
+            max_temp = np.max(self.temperature_matrix)
+            min_temp = np.min(self.temperature_matrix)
 
             # 计算大于 1000 的温度计数
-            count_above_1000 = int(np.sum(temperature_matrix > 1000))
+            count_above_1000 = int(np.sum(self.temperature_matrix > 1000))
 
             # 发布大于 1000 的温度计数
             count_msg = Int32()
@@ -100,8 +106,8 @@ class TemperatureTrackingNode(Node):
                 self.searching = False
 
             # 找到最高温度的位置
-            max_temp = np.max(temperature_matrix)
-            max_index = np.unravel_index(np.argmax(temperature_matrix), temperature_matrix.shape)
+            max_temp = np.max(self.temperature_matrix)
+            max_index = np.unravel_index(np.argmax(self.temperature_matrix), self.temperature_matrix.shape)
             max_row, max_col = max_index
 
             # 计算目标位置（矩阵中心）
@@ -178,10 +184,18 @@ class TemperatureTrackingNode(Node):
         if not self.searching:
             self.get_logger().info("Entering search mode...")
             self.searching = True
+            self.temperature_data = []  # 清空上一圈的温度数据
 
         # 水平旋转一圈
         if self.current_horizontal_angle < self.horizontal_angle_limit:
             self.current_horizontal_angle += self.search_step
+
+            # 温度矩阵数据
+            current_temperature_matrix = self.temperature_matrix
+            non_zero_values = current_temperature_matrix[current_temperature_matrix > 0]
+            if non_zero_values.size > 0:
+                self.temperature_data.append(np.mean(non_zero_values))
+
         else:
             self.current_horizontal_angle = -self.horizontal_angle_limit
             # 抬高垂直角度
@@ -189,6 +203,14 @@ class TemperatureTrackingNode(Node):
                 self.current_vertical_angle += self.search_vertical_step
             else:
                 self.current_vertical_angle = -10
+
+            # 计算一圈的温度均值并发布
+            if self.temperature_data:
+                average_temperature = float(np.mean(self.temperature_data))
+                avg_temp_msg = Float32()
+                avg_temp_msg.data = average_temperature
+                self.average_temperature_publisher.publish(avg_temp_msg)
+                self.get_logger().info(f"Published average temperature for one rotation: {average_temperature:.2f}")
 
         # 限制角度范围
         self.current_horizontal_angle = max(-self.horizontal_angle_limit, min(self.horizontal_angle_limit, self.current_horizontal_angle))

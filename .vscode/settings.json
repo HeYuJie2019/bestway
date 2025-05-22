@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/bestway/bestway_ws/src/temperature_publisher"
+    "cmake.sourceDirectory": "/home/bestway/bestway_ws/src/temperature_publisher",
+    "window.zoomLevel": 1
 }

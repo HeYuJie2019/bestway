@@ -9,6 +9,7 @@ import math
 import time  # 添加时间模块
 import pyzed.sl as sl  # 导入 ZED SDK
 import numpy as np
+from nav_msgs.msg import Odometry
 
 class AutoDriveNode(Node):
     def __init__(self):
@@ -49,6 +50,18 @@ class AutoDriveNode(Node):
             10
         )
 
+        # 订阅 /Odometry 话题
+        self.odom_sub = self.create_subscription(
+            Odometry,
+            '/Odometry',
+            self.odom_callback,
+            10
+        )
+
+        # 初始化odom的位姿
+        self.odom_position = None
+        self.odom_orientation = None
+
         # 初始化 ZED 相机
         self.zed = sl.Camera()
         self.init_zed_camera()
@@ -80,6 +93,17 @@ class AutoDriveNode(Node):
         self.target_vertical_position = 0.0
 
         self.count_above_1000 = 0
+    
+    def odom_callback(self, msg):
+        """
+        处理 /Odometry 消息，保存位置和姿态
+        """
+        self.odom_position = msg.pose.pose.position
+        self.odom_orientation = msg.pose.pose.orientation
+        # self.get_logger().info(
+        #     f"收到Odom: pos=({self.odom_position.x:.3f}, {self.odom_position.y:.3f}, {self.odom_position.z:.3f}), "
+        #     f"ori=({self.odom_orientation.x:.3f}, {self.odom_orientation.y:.3f}, {self.odom_orientation.z:.3f}, {self.odom_orientation.w:.3f})"
+        # )
 
     def count_above_1000_callback(self, msg):
         """
@@ -127,7 +151,7 @@ class AutoDriveNode(Node):
                     else:
                         self.target_vertical_position = 0.0
 
-                self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
+                # self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
         except Exception as e:
             self.get_logger().error(f"解析舵机指向失败: {e}")
 

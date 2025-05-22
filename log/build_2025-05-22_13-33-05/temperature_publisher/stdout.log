@@ -1,0 +1,21 @@
+[ 50%] [32mBuilding CXX object CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o[0m
+[100%] [32m[1mLinking CXX executable temperature_publisher[0m
+[100%] Built target temperature_publisher
+-- Install configuration: ""
+-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher
+-- Set runtime path of "/home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher" to ""
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/package_run_dependencies/temperature_publisher
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/parent_prefix_path/temperature_publisher
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.sh
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.sh
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.dsv
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.bash
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.sh
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.zsh
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.dsv
+-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.dsv
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/packages/temperature_publisher
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig.cmake
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig-version.cmake
+-- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.xml

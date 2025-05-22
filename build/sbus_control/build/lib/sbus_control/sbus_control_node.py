@@ -72,6 +72,7 @@ class SbusControlNode(Node):
 
     def serial_send_and_read(self):
         hex_data = '01'  # 你要发送的十六进制内容
+        self.boss.reset_output_buffer()  # 清空输入缓冲区
         self.boss.write(bytes.fromhex(hex_data))
         self.get_logger().info(f"串口发送: {hex_data}")
         # 读取串口数据

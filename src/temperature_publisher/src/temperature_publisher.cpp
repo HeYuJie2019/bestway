@@ -122,9 +122,9 @@ private:
             int tempVal = 0;
             int minVal = 16383;
             int maxVal = -1000;
-            for (int i = 0; i < unHeight; i++)
+            for (int i = 0; i < unHeight; i+=4)
             {
-                for (int j = 0; j < unWidth; j++)
+                for (int j = 0; j < unWidth; j+=4)
                 {
                     temp_msg.data[i * unWidth + j] = static_cast<float>(ptrS16TempVal[i * unWidth + j]);
                     if (ptrS16TempVal[i * unWidth + j] > maxVal)

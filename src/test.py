@@ -1,28 +1,46 @@
-import serial
-import time
+from nav_msgs.msg import Odometry
+import rclpy
+from rclpy.node import Node
 
-# 打开串口
-ser = serial.Serial('/dev/ttyTHS1', 115200, timeout=1)  # 端口和波特率请根据实际情况修改
+class TestNode(Node):
+    def __init__(self):
+        super().__init__('test_node')
 
-try:
-    while True:
-        # 发送十六进制数据
-        hex_data = '01'  # 你要发送的十六进制内容
-        ser.write(bytes.fromhex(hex_data))
-        print(f"发送: {hex_data}")
-        time.sleep(0.1)
+        # 储存odom的位姿
+        self.odom_position = None
+        self.odom_orientation = None
 
-        # 读串口数据
-        if ser.in_waiting:
-            data = ser.read(ser.in_waiting)
-            if data.hex() == '01':
-                print("自动控制")
-            elif data.hex() == '02':
-                print("手动控制")
-            print(f"接收: {data.hex()}")  # 以十六进制显示接收内容
+        # 订阅 /Odometry 话题
+        self.odom_sub = self.create_subscription(
+            Odometry,
+            '/Odometry',
+            self.odom_callback,
+            1000
+        )
+        self.get_logger().info("订阅 /Odometry 话题")
 
-except KeyboardInterrupt:
-    print("退出程序")
+    def odom_callback(self, msg):
+        """
+        处理 /Odometry 消息，保存位置和姿态
+        """
+        self.odom_position = msg.pose.pose.position
+        self.odom_orientation = msg.pose.pose.orientation
+        self.get_logger().info(
+            f"收到Odom: pos=({self.odom_position.x:.3f}, {self.odom_position.y:.3f}, {self.odom_position.z:.3f}), "
+            f"ori=({self.odom_orientation.x:.3f}, {self.odom_orientation.y:.3f}, {self.odom_orientation.z:.3f}, {self.odom_orientation.w:.3f})"
+        )
 
-finally:
-    ser.close()
+def main(args=None):
+    rclpy.init(args=args)
+
+    test_node = TestNode()
+
+    try:
+        rclpy.spin(test_node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        test_node.destroy_node()
+        rclpy.shutdown()
+if __name__ == '__main__':
+    main()

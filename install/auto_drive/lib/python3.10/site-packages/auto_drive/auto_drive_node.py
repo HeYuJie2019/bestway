@@ -9,6 +9,7 @@ import math
 import time  # 添加时间模块
 import pyzed.sl as sl  # 导入 ZED SDK
 import numpy as np
+from nav_msgs.msg import Odometry
 
 class AutoDriveNode(Node):
     def __init__(self):
@@ -49,6 +50,18 @@ class AutoDriveNode(Node):
             10
         )
 
+        # 订阅 /Odometry 话题
+        self.odom_sub = self.create_subscription(
+            Odometry,
+            '/Odometry',
+            self.odom_callback,
+            10
+        )
+
+        # 初始化odom的位姿
+        self.odom_position = None
+        self.odom_orientation = None
+
         # 初始化 ZED 相机
         self.zed = sl.Camera()
         self.init_zed_camera()
@@ -80,13 +93,24 @@ class AutoDriveNode(Node):
         self.target_vertical_position = 0.0
 
         self.count_above_1000 = 0
+    
+    def odom_callback(self, msg):
+        """
+        处理 /Odometry 消息，保存位置和姿态
+        """
+        self.odom_position = msg.pose.pose.position
+        self.odom_orientation = msg.pose.pose.orientation
+        # self.get_logger().info(
+        #     f"收到Odom: pos=({self.odom_position.x:.3f}, {self.odom_position.y:.3f}, {self.odom_position.z:.3f}), "
+        #     f"ori=({self.odom_orientation.x:.3f}, {self.odom_orientation.y:.3f}, {self.odom_orientation.z:.3f}, {self.odom_orientation.w:.3f})"
+        # )
 
     def count_above_1000_callback(self, msg):
         """
         处理 /count_above_1000 话题的回调函数
         """
         self.count_above_1000 = msg.data
-        # self.get_logger().info(f"接收到 /count_above_1000 数据: {self.count_above_1000}")
+        self.get_logger().info(f"接收到 /count_above_1000 数据: {self.count_above_1000}")
 
     def init_zed_camera(self):
         """
@@ -127,7 +151,7 @@ class AutoDriveNode(Node):
                     else:
                         self.target_vertical_position = 0.0
 
-                self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
+                # self.get_logger().info(f"舵机指向更新: 水平角度={self.target_horizontal_position}, 垂直角度={self.target_vertical_position}")
         except Exception as e:
             self.get_logger().error(f"解析舵机指向失败: {e}")
 
@@ -274,10 +298,10 @@ class AutoDriveNode(Node):
         self.get_logger().info(f"动态调整速度: {self.speed:.2f} m/s, 安全距离: {self.safe_distance:.2f} 米")
 
         # 检查前方是否安全
-        if self.front_zed > self.safe_distance and self.count_above_1000 < 5000:
+        if self.front_zed > self.safe_distance and self.count_above_1000 < 4000:
             # 前方安全，继续前进
             t1 = time.time()
-            while self.front_zed > self.safe_distance and self.avoid_obstacle is True and time.time() - t1 < 1.0:
+            while self.front_zed > self.safe_distance and self.avoid_obstacle is True and time.time() - t1 < 2.0:
                 self.drive_forward(self.speed)
                 self.get_logger().info(f"避障之后前进一小段")
                 rclpy.spin_once(self, timeout_sec=0.1)
@@ -286,7 +310,7 @@ class AutoDriveNode(Node):
                 if self.search_mode:
                     self.stop()
                     return
-                if self.count_above_1000 >= 5000:
+                if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
@@ -299,7 +323,7 @@ class AutoDriveNode(Node):
                 self.stop()
                 self.get_logger().info("搜索模式中，停止运动")
                 return
-            if self.count_above_1000 >= 5000:
+            if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
@@ -321,7 +345,7 @@ class AutoDriveNode(Node):
                     self.turn_right()
                 
                 # 如果检测到起火点，立即停止运动
-                if self.count_above_1000 >= 5000:
+                if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
@@ -337,7 +361,7 @@ class AutoDriveNode(Node):
                 if self.search_mode:
                     self.stop()
                     return
-                if self.count_above_1000 >= 5000:
+                if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
@@ -357,7 +381,7 @@ class AutoDriveNode(Node):
         # 简单示例：根据水平角度调整机器人方向
         if self.target_horizontal_position > 30.0:  # 偏左
             t1 = time.time()
-            t2 = abs(self.target_horizontal_position)*0.05
+            t2 = abs(self.target_horizontal_position)*0.01
             while time.time() - t1 < t2:
                 self.get_logger().info(f"左转时间: {t2:.2f} 秒") 
                 self.turn_left()
@@ -366,13 +390,13 @@ class AutoDriveNode(Node):
                     self.stop()
                     self.get_logger().info("搜索模式中，停止运动")
                     return
-                if self.count_above_1000 >= 5000:
+                if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
         elif self.target_horizontal_position < -30.0:  # 偏右
             t1 = time.time()
-            t2 = abs(self.target_horizontal_position)*0.05
+            t2 = abs(self.target_horizontal_position)*0.01
             while time.time() - t1 < t2:
                 self.get_logger().info(f"右转时间: {t2:.2f} 秒") 
                 self.turn_right()
@@ -381,13 +405,13 @@ class AutoDriveNode(Node):
                     self.stop()
                     self.get_logger().info("搜索模式中，停止运动")
                     return
-                if self.count_above_1000 >= 5000:
+                if self.count_above_1000 >= 4000:
                     self.stop()
                     self.get_logger().info("找到起火点，停止运动")
                     return
         else:
             self.drive_forward(self.speed)
-            if self.count_above_1000 >= 5000:
+            if self.count_above_1000 >= 4000:
                 self.stop()
                 self.get_logger().info("找到起火点，停止运动")
                 return
