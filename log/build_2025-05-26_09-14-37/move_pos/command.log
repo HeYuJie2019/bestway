@@ -1,0 +1,2 @@
+Invoking command in '/home/bestway/bestway_ws/build/move_pos': /usr/bin/cmake /home/bestway/bestway_ws/src/move_pos -DCMAKE_INSTALL_PREFIX=/home/bestway/bestway_ws/install/move_pos
+Invoked command in '/home/bestway/bestway_ws/build/move_pos' returned '1': /usr/bin/cmake /home/bestway/bestway_ws/src/move_pos -DCMAKE_INSTALL_PREFIX=/home/bestway/bestway_ws/install/move_pos

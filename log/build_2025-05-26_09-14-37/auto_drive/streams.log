@@ -1,0 +1,20 @@
+[3.201s] Invoking command in '/home/bestway/bestway_ws/src/auto_drive': PYTHONPATH=/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/auto_drive build --build-base /home/bestway/bestway_ws/build/auto_drive/build install --record /home/bestway/bestway_ws/build/auto_drive/install.log --single-version-externally-managed install_data
+[3.960s] running egg_info
+[3.962s] writing ../../build/auto_drive/auto_drive.egg-info/PKG-INFO
+[3.963s] writing dependency_links to ../../build/auto_drive/auto_drive.egg-info/dependency_links.txt
+[3.963s] writing entry points to ../../build/auto_drive/auto_drive.egg-info/entry_points.txt
+[3.963s] writing requirements to ../../build/auto_drive/auto_drive.egg-info/requires.txt
+[3.963s] writing top-level names to ../../build/auto_drive/auto_drive.egg-info/top_level.txt
+[3.968s] reading manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[3.970s] writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[3.970s] running build
+[3.970s] running build_py
+[3.971s] running install
+[3.972s] running install_lib
+[3.975s] running install_data
+[3.975s] running install_egg_info
+[3.979s] removing '/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info' (and everything under it)
+[3.980s] Copying ../../build/auto_drive/auto_drive.egg-info to /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info
+[3.983s] running install_scripts
+[4.031s] Installing auto_drive_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[4.032s] writing list of installed files to '/home/bestway/bestway_ws/build/auto_drive/install.log'

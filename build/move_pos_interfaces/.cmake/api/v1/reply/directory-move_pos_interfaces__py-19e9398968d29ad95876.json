@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "move_pos_interfaces__py",
+		"source" : "/home/bestway/bestway_ws/build/move_pos_interfaces/move_pos_interfaces__py"
+	}
+}

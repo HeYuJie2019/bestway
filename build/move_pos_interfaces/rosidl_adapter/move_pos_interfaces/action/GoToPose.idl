@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from move_pos_interfaces/action/GoToPose.action
+// generated code does not contain a copyright notice
+
+
+module move_pos_interfaces {
+  module action {
+    struct GoToPose_Goal {
+      float target_x;
+
+      float target_y;
+    };
+    struct GoToPose_Result {
+      boolean success;
+
+      string message;
+    };
+    struct GoToPose_Feedback {
+      uint8 structure_needs_at_least_one_member;
+    };
+  };
+};

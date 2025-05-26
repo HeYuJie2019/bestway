@@ -1,0 +1,3 @@
+[console_scripts]
+move_pos_action_server = move_pos.move_pos:main
+
