@@ -9,6 +9,8 @@ import math
 import time
 import pyzed.sl as sl  # 导入 ZED SDK
 import numpy as np
+import asyncio
+from rclpy.executors import MultiThreadedExecutor
 
 class GoToPoseActionServer(Node):
     def __init__(self):
@@ -60,6 +62,7 @@ class GoToPoseActionServer(Node):
 
     def odom_callback(self, msg):
         self.current_pose = msg.pose.pose
+        self.get_logger().info(f"收到里程计: x={self.current_pose.position.x:.3f}, y={self.current_pose.position.y:.3f}")
     
     def lidar_callback(self, msg):
         """
@@ -128,9 +131,8 @@ class GoToPoseActionServer(Node):
             self.get_logger().warn("无法捕获 ZED 深度数据")
             return float('inf')  # 如果无法捕获数据，返回无穷大
 
-    async def execute_callback(self, goal_handle):
+    def execute_callback(self, goal_handle):
         self.get_logger().info(f'接收到目标: ({goal_handle.request.target_x}, {goal_handle.request.target_y})')
-        rate = self.create_rate(10)
         success = False
         message = ""
 
@@ -149,8 +151,8 @@ class GoToPoseActionServer(Node):
 
         while rclpy.ok():
             if self.current_pose is None:
-                # await rate.sleep()
                 self.get_logger().warn("当前位姿未更新，等待中...")
+                rclpy.spin_once(self, timeout_sec=0.1)
                 continue
 
             # 计算当前位置与目标点的距离和角度
@@ -191,6 +193,7 @@ class GoToPoseActionServer(Node):
                 twist.angular.z = 4.0 if turn_direction == "left" else -4.0
                 self.cmd_vel_pub.publish(twist)
                 self.get_logger().info(f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}")
+                rclpy.spin_once(self, timeout_sec=0.1)
                 continue
 
             # 到达目标
@@ -231,7 +234,8 @@ class GoToPoseActionServer(Node):
                 twist.angular.z = angular_speed
 
             self.cmd_vel_pub.publish(twist)
-            self.get_logger().info(f"当前速度: {linear_speed:.2f}, 角速度: {angular_speed:.2f}, 前方距离: {front_distance:.2f}, 安全距离: {safe_distance:.2f}")
+            self.get_logger().info(f"当前x位置: {self.current_pose.position.x}, 当前y位置: {self.current_pose.position.y}, 当前速度: {linear_speed:.2f}, 角速度: {angular_speed:.2f}, 前方距离: {front_distance:.2f}, 安全距离: {safe_distance:.2f}")
+            rclpy.spin_once(self, timeout_sec=0.1)
 
         goal_handle.succeed()
         result = GoToPose.Result()
@@ -242,7 +246,16 @@ class GoToPoseActionServer(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = GoToPoseActionServer()
-    rclpy.spin(node)
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # 确保在退出时关闭 ZED 相机
+        node.zed.close()
+        node.get_logger().info("ZED 相机已关闭")
+        node.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
