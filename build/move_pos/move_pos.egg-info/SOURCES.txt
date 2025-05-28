@@ -8,7 +8,6 @@ setup.py
 ../../build/move_pos/move_pos.egg-info/requires.txt
 ../../build/move_pos/move_pos.egg-info/top_level.txt
 ../../build/move_pos/move_pos.egg-info/zip-safe
-action/GoToPose.action
 move_pos/__init__.py
 move_pos/move_pos.py
 resource/move_pos

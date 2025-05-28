@@ -4,7 +4,6 @@
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/__pycache__/__init__.cpython-310.pyc
 /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index/packages/move_pos
 /home/bestway/bestway_ws/install/move_pos/share/move_pos/package.xml
-/home/bestway/bestway_ws/install/move_pos/share/move_pos/action/GoToPose.action
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/requires.txt
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/zip-safe
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/entry_points.txt
@@ -12,4 +11,4 @@
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/PKG-INFO
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/dependency_links.txt
 /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info/top_level.txt
-/home/bestway/bestway_ws/install/move_pos/lib/move_pos/move_pos_action_server
+/home/bestway/bestway_ws/install/move_pos/lib/move_pos/move_pos_topic_node
