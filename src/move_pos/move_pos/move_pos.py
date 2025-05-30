@@ -68,8 +68,10 @@ class GoToPoseTopicNode(Node):
         left_distances = self.latest_distances[13:]
         right_distances = self.latest_distances[:8]
         self.front_distance = min(front_distances)
-        self.left_distance = sum(left_distances) / len(left_distances)
-        self.right_distance = sum(right_distances) / len(right_distances)
+        self.left_distance = min(left_distances)
+        self.right_distance = min(right_distances)
+        # self.left_distance = sum(left_distances) / len(left_distances)
+        # self.right_distance = sum(right_distances) / len(right_distances)
 
     def get_front_distance(self):
         if self.zed.grab() == sl.ERROR_CODE.SUCCESS:
@@ -77,8 +79,8 @@ class GoToPoseTopicNode(Node):
             depth_numpy = self.depth.get_data()
             depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
             height, width = depth_numpy.shape
-            crop_left = int(width * 0.35)
-            crop_right = int(width * 0.65)
+            crop_left = int(width * 0.3)
+            crop_right = int(width * 0.7)
             depth_numpy_far = depth_numpy[:, crop_left:crop_right]
             if np.isnan(depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
@@ -86,8 +88,8 @@ class GoToPoseTopicNode(Node):
             else:
                 self.front_zed_near = np.nanmin(depth_numpy)
                 self.front_zed_far = np.nanmin(depth_numpy_far)
-                self.left_zed = np.nanmean(depth_numpy[:, :crop_left])
-                self.right_zed = np.nanmean(depth_numpy[:, crop_right:])
+                self.left_zed = np.nanmin(depth_numpy[:, :crop_left])
+                self.right_zed = np.nanmin(depth_numpy[:, crop_right:])
                 min_depth = 0.0
                 if self.front_zed_far < 1.0:
                     min_depth = self.front_zed_near
@@ -105,9 +107,9 @@ class GoToPoseTopicNode(Node):
         linear_kp = 1.8
         linear_ki = 0.0
         linear_kd = 0.5
-        angular_kp = 2.0
+        angular_kp = 4.0
         angular_ki = 0.0
-        angular_kd = 0.3
+        angular_kd = 0.6
 
         prev_linear_error = 0.0
         sum_linear_error = 0.0
@@ -136,7 +138,7 @@ class GoToPoseTopicNode(Node):
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
 
             front_distance = self.get_front_distance()
-            base_safe_distance = 0.85
+            base_safe_distance = 0.9
             max_safe_distance = 2.5
             speed_factor = abs(self.current_speed) / 50.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
@@ -148,19 +150,35 @@ class GoToPoseTopicNode(Node):
                 right_distance = getattr(self, 'right_distance', 1.0)
                 left_zed = getattr(self, 'left_zed', 1.0)
                 right_zed = getattr(self, 'right_zed', 1.0)
-                left_score = left_zed * 0.4 + left_distance * 0.6
-                right_score = right_zed * 0.4 + right_distance * 0.6
-                turn_direction = "left" if (left_score - right_score) > 0 else "right"
+                self.get_logger().info(
+                    f"左侧距离: {left_distance:.2f}, 右侧距离: {right_distance:.2f}, "
+                    f"左侧ZED: {left_zed:.2f}, 右侧ZED: {right_zed:.2f}, "
+                )
+
+                # angle_error > 0 表示目标在左侧，<0 表示目标在右侧
+                prefer_direction = "left" if angle_error > 0 else "right"
+
+                if left_distance < 2.0 or right_distance < 2.0:  # 如果激光距离小于2.0米，优先考虑激光距离
+                    turn_direction = "left" if left_distance > right_distance else "right"
+                else:
+                    if left_zed < 0.4 or right_zed < 0.4:  # 如果ZED深度小于0.5米，优先考虑ZED深度
+                        turn_direction = "left" if left_zed > right_zed else "right"
+                    else:
+                        turn_direction = prefer_direction
+
                 twist = Twist()
                 twist.linear.x = 0.0
                 twist.angular.z = 4.0 if turn_direction == "left" else -4.0
                 self.cmd_vel_pub.publish(twist)
-                self.get_logger().info(f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}")
+                self.get_logger().info(
+                    f"避障中，方向: {turn_direction}，目标在: {prefer_direction}，"
+                    f"前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
+                )
                 self.avoid_obstacle = True
                 continue
 
             # 到达目标
-            if distance < 0.15:
+            if distance < 0.5:
                 twist = Twist()
                 self.cmd_vel_pub.publish(twist)
                 self.get_logger().info("到达目标点，等待新目标...")
@@ -189,22 +207,22 @@ class GoToPoseTopicNode(Node):
             angular_speed = max(min(angular_speed, 6.0), -6.0)
 
             twist = Twist()
-            if self.avoid_obstacle and self.avoid_obstacle_count <= 20:
-                self.avoid_obstacle_count += 1
+            # if self.avoid_obstacle and self.avoid_obstacle_count <= 10:
+            #     self.avoid_obstacle_count += 1
+            #     twist.linear.x = linear_speed
+            #     twist.angular.z = 0.0
+            #     if self.avoid_obstacle_count == 10:
+            #         self.avoid_obstacle = False
+            #         self.avoid_obstacle_count = 0
+            #         self.get_logger().info("避障结束，恢复正常控制")
+
+            # else:
+            if abs(angle_error) > 0.4:
+                twist.linear.x = 0.0
+                twist.angular.z = angular_speed
+            else:
                 twist.linear.x = linear_speed
                 twist.angular.z = 0.0
-                if self.avoid_obstacle_count == 20:
-                    self.avoid_obstacle = False
-                    self.avoid_obstacle_count = 0
-                    self.get_logger().info("避障结束，恢复正常控制")
-
-            else:
-                if abs(angle_error) > 0.3:
-                    twist.linear.x = 0.0
-                    twist.angular.z = angular_speed
-                else:
-                    twist.linear.x = linear_speed
-                    twist.angular.z = 0.0
 
             self.cmd_vel_pub.publish(twist)
             self.get_logger().info(

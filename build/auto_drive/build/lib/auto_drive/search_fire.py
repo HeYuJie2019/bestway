@@ -240,12 +240,57 @@ class AutoDriveNode(Node):
         # self.right_distance = min(right_distances)
     
     def control_loop(self):
-        # 获取前方距离（使用 ZED 深度相机）
-        self.front_zed = self.get_front_distance()
+        # 1. 记录起始点
+        if not hasattr(self, 'start_position') and self.current_position is not None:
+            self.start_position = (self.current_position.x, self.current_position.y)
+            self.get_logger().info(f"记录起始点: {self.start_position}")
 
-        
-        
-        self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
+        # 2. 已到火源附近，静止
+        if self.count_above_1000 > 400 and self.current_position is not None:
+            if not hasattr(self, 'fire_position'):
+                self.fire_position = (self.current_position.x, self.current_position.y)
+                self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
+            # 停止运动
+            self.target_x = None
+            self.target_y = None
+            self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+            return
+
+        # 3. 搜索模式：自主探索
+        if self.search_mode:
+            # latest_distances: 21个方向的距离，取最大值方向
+            if self.latest_distances is not None and self.current_position is not None:
+                max_idx = int(np.argmax(self.latest_distances))
+                angle_step = math.pi / 20  # 180度/20
+                # 机器人正前方为0，左为正，右为负
+                yaw = 0.0
+                q = self.current_orientation
+                if q is not None:
+                    yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
+                # 计算目标点方向
+                target_angle = yaw + (max_idx - 10) * angle_step
+                step = 1.0  # 每次前进1米
+                self.target_x = self.current_position.x + step * math.cos(target_angle)
+                self.target_y = self.current_position.y + step * math.sin(target_angle)
+                self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
+                self.get_logger().info(f"搜索模式: 选择方向{max_idx}, 发布目标点({self.target_x:.2f}, {self.target_y:.2f})")
+            return
+
+        # 4. 云台已指向火源方向，沿该方向靠近
+        if not self.search_mode and self.current_position is not None:
+            # target_horizontal_position: 云台指向的角度（假设为相对机器人正前方的角度，单位弧度）
+            # 你需要根据实际协议确认这个角度的定义
+            yaw = 0.0
+            q = self.current_orientation
+            if q is not None:
+                yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
+            # 机器人前进方向 = 当前朝向 + 云台偏转角
+            target_angle = yaw + self.target_horizontal_position*math.pi/180.0
+            step = 0.7  # 每次靠近0.7米
+            self.target_x = self.current_position.x + step * math.cos(target_angle)
+            self.target_y = self.current_position.y + step * math.sin(target_angle)
+            self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
+            self.get_logger().info(f"靠近火源: 云台角度{self.target_horizontal_position:.2f}，发布目标点({self.target_x:.2f}, {self.target_y:.2f})")
     
     def stop(self):
         """

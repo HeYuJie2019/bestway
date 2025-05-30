@@ -85,6 +85,8 @@ class SbusControlNode(Node):
         self.sbus_in = serial.Serial('/dev/ttyCH341USB1', 115200, timeout=0.01)
         self.boss = serial.Serial('/dev/ttyTHS1', 115200, timeout=1)
         self.BOSS = None  # 默认不处于 BOSS 模式
+        self.boss.reset_input_buffer()
+        self.boss.reset_output_buffer()
 
         # 订阅 /cmd_vel 话题
         self.subscription = self.create_subscription(
