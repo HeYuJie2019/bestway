@@ -258,16 +258,29 @@ class AutoDriveNode(Node):
 
         # 3. 搜索模式：自主探索
         if self.search_mode:
+            # 判断是否超过5秒
+            now = time.time()
+            if self.search_mode_start_time is not None:
+                elapsed = now - self.search_mode_start_time
+            else:
+                elapsed = 0
+
+            # 只有超过5秒才继续探索
+            if elapsed < 5:
+                self.target_x = None
+                self.target_y = None
+                self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                self.get_logger().info(f"探索模式已进入 {elapsed:.1f} 秒，未到5秒不探索")
+                return
+
             # latest_distances: 21个方向的距离，取最大值方向
             if self.latest_distances is not None and self.current_position is not None:
                 max_idx = int(np.argmax(self.latest_distances))
                 angle_step = math.pi / 20  # 180度/20
-                # 机器人正前方为0，左为正，右为负
                 yaw = 0.0
                 q = self.current_orientation
                 if q is not None:
                     yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
-                # 计算目标点方向
                 target_angle = yaw + (max_idx - 10) * angle_step
                 step = 1.0  # 每次前进1米
                 self.target_x = self.current_position.x + step * math.cos(target_angle)
@@ -286,7 +299,7 @@ class AutoDriveNode(Node):
                 yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
             # 机器人前进方向 = 当前朝向 + 云台偏转角
             target_angle = yaw + self.target_horizontal_position*math.pi/180.0
-            step = 0.7  # 每次靠近0.7米
+            step = 1.0  # 每次靠近0.7米
             self.target_x = self.current_position.x + step * math.cos(target_angle)
             self.target_y = self.current_position.y + step * math.sin(target_angle)
             self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))

@@ -124,6 +124,15 @@ class GoToPoseTopicNode(Node):
                 twist.angular.z = 0.0
                 self.cmd_vel_pub.publish(twist)
                 continue
+            # 检查目标点有效性
+            if math.isnan(self.target_point.x) or math.isnan(self.target_point.y):
+                self.has_goal = False
+                self.target_point = None
+                twist = Twist()
+                twist.linear.x = 0.0
+                twist.angular.z = 0.0
+                self.cmd_vel_pub.publish(twist)
+                continue
             if self.current_pose is None:
                 self.get_logger().warn("当前位姿未更新，等待中...")
                 continue
@@ -158,7 +167,7 @@ class GoToPoseTopicNode(Node):
                 # angle_error > 0 表示目标在左侧，<0 表示目标在右侧
                 prefer_direction = "left" if angle_error > 0 else "right"
 
-                if left_distance < 2.0 or right_distance < 2.0:  # 如果激光距离小于2.0米，优先考虑激光距离
+                if left_distance < 1.4 or right_distance < 1.4:  # 如果激光距离小于1.4米，优先考虑激光距离
                     turn_direction = "left" if left_distance > right_distance else "right"
                 else:
                     if left_zed < 0.4 or right_zed < 0.4:  # 如果ZED深度小于0.5米，优先考虑ZED深度
