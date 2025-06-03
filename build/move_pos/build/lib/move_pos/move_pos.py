@@ -79,8 +79,8 @@ class GoToPoseTopicNode(Node):
             depth_numpy = self.depth.get_data()
             depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
             height, width = depth_numpy.shape
-            crop_left = int(width * 0.3)
-            crop_right = int(width * 0.7)
+            crop_left = int(width * 0.35)
+            crop_right = int(width * 0.65)
             depth_numpy_far = depth_numpy[:, crop_left:crop_right]
             if np.isnan(depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
@@ -91,12 +91,19 @@ class GoToPoseTopicNode(Node):
                 self.left_zed = np.nanmin(depth_numpy[:, :crop_left])
                 self.right_zed = np.nanmin(depth_numpy[:, crop_right:])
                 min_depth = 0.0
+                self.get_logger().info(
+                    f"前方近距离: {self.front_zed_near:.2f}, 前方远距离: {self.front_zed_far:.2f}, "
+                    f"左侧ZED: {self.left_zed:.2f}, 右侧ZED: {self.right_zed:.2f}"
+                )
                 if self.front_zed_far < 1.0:
                     min_depth = self.front_zed_near
+                    self.get_logger().warn("前方距离过近，使用较近的深度值")
                 elif self.front_zed_far >= 1.0 and self.front_zed_near > 0.7:
-                    min_depth = self.front_zed_near
+                    min_depth = self.front_zed_far
+                    self.get_logger().info("前方距离正常，使用较远的深度值")
                 else:
                     min_depth = self.front_zed_near
+                    self.get_logger().warn("前方距离过近，使用较近的深度值")
                 return min_depth
         else:
             self.get_logger().warn("无法捕获 ZED 深度数据")
@@ -167,7 +174,7 @@ class GoToPoseTopicNode(Node):
                 # angle_error > 0 表示目标在左侧，<0 表示目标在右侧
                 prefer_direction = "left" if angle_error > 0 else "right"
 
-                if left_distance < 1.4 or right_distance < 1.4:  # 如果激光距离小于1.4米，优先考虑激光距离
+                if left_distance < 0.8 or right_distance < 0.8:  # 如果激光距离小于1.4米，优先考虑激光距离
                     turn_direction = "left" if left_distance > right_distance else "right"
                 else:
                     if left_zed < 0.4 or right_zed < 0.4:  # 如果ZED深度小于0.5米，优先考虑ZED深度
@@ -226,7 +233,7 @@ class GoToPoseTopicNode(Node):
             #         self.get_logger().info("避障结束，恢复正常控制")
 
             # else:
-            if abs(angle_error) > 0.4:
+            if abs(angle_error) > 1.0:
                 twist.linear.x = 0.0
                 twist.angular.z = angular_speed
             else:

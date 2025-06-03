@@ -246,7 +246,7 @@ class AutoDriveNode(Node):
             self.get_logger().info(f"记录起始点: {self.start_position}")
 
         # 2. 已到火源附近，静止
-        if self.count_above_1000 > 400 and self.current_position is not None:
+        if self.count_above_1000 > 300 and self.current_position is not None:
             if not hasattr(self, 'fire_position'):
                 self.fire_position = (self.current_position.x, self.current_position.y)
                 self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
@@ -258,7 +258,6 @@ class AutoDriveNode(Node):
 
         # 3. 搜索模式：自主探索
         if self.search_mode:
-            # 判断是否超过5秒
             now = time.time()
             if self.search_mode_start_time is not None:
                 elapsed = now - self.search_mode_start_time
@@ -282,11 +281,32 @@ class AutoDriveNode(Node):
                 if q is not None:
                     yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
                 target_angle = yaw + (max_idx - 10) * angle_step
-                step = 1.0  # 每次前进1米
-                self.target_x = self.current_position.x + step * math.cos(target_angle)
-                self.target_y = self.current_position.y + step * math.sin(target_angle)
-                self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
-                self.get_logger().info(f"搜索模式: 选择方向{max_idx}, 发布目标点({self.target_x:.2f}, {self.target_y:.2f})")
+                step = 2.0  # 每次前进2米
+                goal_x = self.current_position.x + step * math.cos(target_angle)
+                goal_y = self.current_position.y + step * math.sin(target_angle)
+
+                # 判断是否需要发布新目标点
+                publish_new_goal = False
+                # 初始化记录
+                if not hasattr(self, 'last_goal'):
+                    self.last_goal = (goal_x, goal_y)
+                    self.goal_publish_time = now
+                    publish_new_goal = True
+                else:
+                    # 距离上次目标点的距离
+                    dist_to_goal = math.hypot(self.current_position.x - self.last_goal[0],
+                                            self.current_position.y - self.last_goal[1])
+                    # 距离目标点小于0.5米，或超时10秒未到达，则发布新目标点
+                    if dist_to_goal < 0.5 or (now - self.goal_publish_time) > 10:
+                        publish_new_goal = True
+
+                if publish_new_goal:
+                    self.last_goal = (goal_x, goal_y)
+                    self.goal_publish_time = now
+                    self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
+                    self.get_logger().info(f"搜索模式: 选择方向{max_idx}, 发布新目标点({goal_x:.2f}, {goal_y:.2f})")
+                else:
+                    self.get_logger().info(f"搜索模式: 保持目标点({self.last_goal[0]:.2f}, {self.last_goal[1]:.2f})，距离目标{dist_to_goal:.2f}米")
             return
 
         # 4. 云台已指向火源方向，沿该方向靠近
