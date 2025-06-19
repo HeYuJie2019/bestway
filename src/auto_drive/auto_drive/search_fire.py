@@ -81,6 +81,7 @@ class AutoDriveNode(Node):
         self.right_zed = 0.0 # 右侧距离
         self.left_distance = 0.0  # 左边距离
         self.right_distance = 0.0  # 右边距离
+        self.returning = False  # 是否返回状态
 
         # 搜索模式状态
         self.search_mode = True  # 初始状态为寻找模式
@@ -250,10 +251,24 @@ class AutoDriveNode(Node):
             if not hasattr(self, 'fire_position'):
                 self.fire_position = (self.current_position.x, self.current_position.y)
                 self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
-            # 停止运动
-            self.target_x = None
-            self.target_y = None
-            self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                self.returning = True  # 新增：进入返回模式
+                self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
+                return
+            
+        # 5. 返回出发点
+        if hasattr(self, 'returning') and self.returning and self.current_position is not None:
+            dist_to_start = math.hypot(self.current_position.x - self.start_position[0],
+                                    self.current_position.y - self.start_position[1])
+            if dist_to_start < 0.5:
+                # 到达出发点，停止并退出
+                self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
+                print(f"起火点坐标: {self.fire_position}")
+                rclpy.shutdown()
+                return
+            else:
+                # 持续发布回到出发点的目标
+                self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
             return
 
         # 3. 搜索模式：自主探索
@@ -345,8 +360,6 @@ def main(args=None):
         pass
 
     finally:
-        # 确保在退出时关闭 ZED 相机
-        node.zed.close()
         node.get_logger().info("ZED 相机已关闭")
         node.destroy_node()
         rclpy.shutdown()

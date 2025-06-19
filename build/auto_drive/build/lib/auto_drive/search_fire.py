@@ -345,8 +345,6 @@ def main(args=None):
         pass
 
     finally:
-        # 确保在退出时关闭 ZED 相机
-        node.zed.close()
         node.get_logger().info("ZED 相机已关闭")
         node.destroy_node()
         rclpy.shutdown()

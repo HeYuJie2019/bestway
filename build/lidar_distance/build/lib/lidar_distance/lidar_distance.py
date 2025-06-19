@@ -20,6 +20,7 @@ class PointCloudDistance(Node):
         self.angle_max = 90.0   # 最右侧
         self.num_intervals = 21  # 将[-90°, 90°]分成21个区间
         self.interval_size = (self.angle_max - self.angle_min) / self.num_intervals
+        self.last_valid_distances = [float('inf')] * self.num_intervals
 
     def listener_callback(self, msg):
         # 初始化每个区间的点列表
@@ -44,9 +45,21 @@ class PointCloudDistance(Node):
 
         # 计算每个区间的平均距离
         averaged_distances = [
-            sum(interval) / len(interval) if interval else 0.0
+            sum(interval) / len(interval) if interval else float('inf')
             for interval in intervals
         ]
+
+        # 检查是否全为0或全为无效
+        all_zero = all(d == 0.0 for d in averaged_distances)
+        all_invalid = all((d == float('inf') or d != d) for d in averaged_distances)  # d != d 检查nan
+
+        if all_zero or all_invalid:
+            # 用上次的有效数据
+            averaged_distances = self.last_valid_distances
+            self.get_logger().warn("本次点云无效，使用上次有效数据")
+        else:
+            # 更新上次有效数据
+            self.last_valid_distances = averaged_distances
 
         # 发布结果
         distance_msg = Float32MultiArray()
@@ -54,7 +67,7 @@ class PointCloudDistance(Node):
         self.publisher_.publish(distance_msg)
 
         # 打印从右到左的全部距离（调试用）
-        distances_str = ", ".join(f"{d:.2f}" for d in averaged_distances)
+        distances_str = ", ".join(f"{d:.2f}" if d != float('inf') else "inf" for d in averaged_distances)
         self.get_logger().info(f'从右到左的距离: [{distances_str}]')
 
 def main(args=None):
