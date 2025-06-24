@@ -154,7 +154,7 @@ class GoToPoseTopicNode(Node):
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
 
             front_distance = self.get_front_distance()
-            base_safe_distance = 0.9
+            base_safe_distance = 1.2
             max_safe_distance = 2.5
             speed_factor = abs(self.current_speed) / 50.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
@@ -177,7 +177,7 @@ class GoToPoseTopicNode(Node):
                 if left_distance < 0.8 or right_distance < 0.8:  # 如果激光距离小于1.4米，优先考虑激光距离
                     turn_direction = "left" if left_distance > right_distance else "right"
                 else:
-                    if left_zed < 0.4 or right_zed < 0.4:  # 如果ZED深度小于0.5米，优先考虑ZED深度
+                    if left_zed < 0.6 or right_zed < 0.6:  # 如果ZED深度小于0.5米，优先考虑ZED深度
                         turn_direction = "left" if left_zed > right_zed else "right"
                     else:
                         turn_direction = prefer_direction
@@ -218,19 +218,19 @@ class GoToPoseTopicNode(Node):
             angular_speed = angular_kp * angular_error + angular_ki * sum_angular_error + angular_kd * d_angular_error
             prev_angular_error = angular_error
 
-            linear_speed = max(min(linear_speed, 4.0), -4.0)
+            linear_speed = max(min(linear_speed, 3.0), -3.0)
             self.current_speed = linear_speed
             angular_speed = max(min(angular_speed, 6.0), -6.0)
 
             twist = Twist()
-            # if self.avoid_obstacle and self.avoid_obstacle_count <= 10:
-            #     self.avoid_obstacle_count += 1
-            #     twist.linear.x = linear_speed
-            #     twist.angular.z = 0.0
-            #     if self.avoid_obstacle_count == 10:
-            #         self.avoid_obstacle = False
-            #         self.avoid_obstacle_count = 0
-            #         self.get_logger().info("避障结束，恢复正常控制")
+            if self.avoid_obstacle and self.avoid_obstacle_count <= 10:
+                self.avoid_obstacle_count += 1
+                twist.linear.x = linear_speed
+                twist.angular.z = 0.0
+                if self.avoid_obstacle_count == 10:
+                    self.avoid_obstacle = False
+                    self.avoid_obstacle_count = 0
+                    self.get_logger().info("避障结束，恢复正常控制")
 
             # else:
             if abs(angle_error) > 1.0:

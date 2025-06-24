@@ -312,7 +312,7 @@ class AutoDriveNode(Node):
                     dist_to_goal = math.hypot(self.current_position.x - self.last_goal[0],
                                             self.current_position.y - self.last_goal[1])
                     # 距离目标点小于0.5米，或超时10秒未到达，则发布新目标点
-                    if dist_to_goal < 0.5 or (now - self.goal_publish_time) > 10:
+                    if dist_to_goal < 1.0 or (now - self.goal_publish_time) > 10:
                         publish_new_goal = True
 
                 if publish_new_goal:
