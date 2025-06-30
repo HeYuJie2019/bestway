@@ -10,6 +10,7 @@ setup.py
 ../../build/move_pos/move_pos.egg-info/zip-safe
 move_pos/__init__.py
 move_pos/move_pos.py
+move_pos/move_pos_v2.py
 resource/move_pos
 test/test_copyright.py
 test/test_flake8.py

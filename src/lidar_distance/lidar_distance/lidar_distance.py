@@ -31,7 +31,7 @@ class PointCloudDistance(Node):
             x, y, z = point.x, point.y, point.z
 
             # 提前过滤不需要的点
-            if abs(z) >= 0.1 or x <= 0:
+            if z >= 0.1 or x <= 0:
                 continue
 
             # 计算点的水平角度和距离
@@ -43,31 +43,31 @@ class PointCloudDistance(Node):
             if 0 <= interval_index < self.num_intervals:
                 intervals[interval_index].append(distance)
 
-        # 计算每个区间的平均距离
-        averaged_distances = [
-            sum(interval) / len(interval) if interval else float('inf')
+        # 计算每个区间的最小距离
+        min_distances = [
+            min(interval) if interval else float('inf')
             for interval in intervals
         ]
 
-        # 检查是否全为0或全为无效
-        all_zero = all(d == 0.0 for d in averaged_distances)
-        all_invalid = all((d == float('inf') or d != d) for d in averaged_distances)  # d != d 检查nan
+        # 检查是否全为0或只要有一个无效
+        all_zero = all(d == 0.0 for d in min_distances)
+        any_invalid = any((d == float('inf') or d != d) for d in min_distances)  # 只要有一个无效
 
-        if all_zero or all_invalid:
+        if all_zero or any_invalid:
             # 用上次的有效数据
-            averaged_distances = self.last_valid_distances
-            self.get_logger().warn("本次点云无效，使用上次有效数据")
+            min_distances = self.last_valid_distances
+            self.get_logger().warn("本次点云有无效区间，使用上次有效数据")
         else:
             # 更新上次有效数据
-            self.last_valid_distances = averaged_distances
+            self.last_valid_distances = min_distances
 
         # 发布结果
         distance_msg = Float32MultiArray()
-        distance_msg.data = averaged_distances
+        distance_msg.data = min_distances
         self.publisher_.publish(distance_msg)
 
         # 打印从右到左的全部距离（调试用）
-        distances_str = ", ".join(f"{d:.2f}" if d != float('inf') else "inf" for d in averaged_distances)
+        distances_str = ", ".join(f"{d:.2f}" if d != float('inf') else "inf" for d in min_distances)
         self.get_logger().info(f'从右到左的距离: [{distances_str}]')
 
 def main(args=None):

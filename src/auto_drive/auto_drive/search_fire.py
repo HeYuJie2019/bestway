@@ -287,58 +287,67 @@ class AutoDriveNode(Node):
                 self.get_logger().info(f"探索模式已进入 {elapsed:.1f} 秒，未到5秒不探索")
                 return
 
-            # latest_distances: 21个方向的距离，取最大值方向
+            # latest_distances: 21个方向的距离，取最大值方向，实时发布目标点
             if self.latest_distances is not None and self.current_position is not None:
                 max_idx = int(np.argmax(self.latest_distances))
+                max_distance = self.latest_distances[max_idx]
                 angle_step = math.pi / 20  # 180度/20
                 yaw = 0.0
                 q = self.current_orientation
                 if q is not None:
                     yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
                 target_angle = yaw + (max_idx - 10) * angle_step
-                step = 2.0  # 每次前进2米
+
+                # 根据最大距离和周围信息动态调整前进距离
+                # 取最大方向的距离，最多前进 max_distance*0.7，最少0.5米，最多2.5米
+                step = max(0.5, min(max_distance * 0.7, 2.5))
                 goal_x = self.current_position.x + step * math.cos(target_angle)
                 goal_y = self.current_position.y + step * math.sin(target_angle)
 
-                # 判断是否需要发布新目标点
-                publish_new_goal = False
-                # 初始化记录
-                if not hasattr(self, 'last_goal'):
-                    self.last_goal = (goal_x, goal_y)
-                    self.goal_publish_time = now
-                    publish_new_goal = True
-                else:
-                    # 距离上次目标点的距离
-                    dist_to_goal = math.hypot(self.current_position.x - self.last_goal[0],
-                                            self.current_position.y - self.last_goal[1])
-                    # 距离目标点小于0.5米，或超时10秒未到达，则发布新目标点
-                    if dist_to_goal < 1.0 or (now - self.goal_publish_time) > 10:
-                        publish_new_goal = True
-
-                if publish_new_goal:
-                    self.last_goal = (goal_x, goal_y)
-                    self.goal_publish_time = now
-                    self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
-                    self.get_logger().info(f"搜索模式: 选择方向{max_idx}, 发布新目标点({goal_x:.2f}, {goal_y:.2f})")
-                else:
-                    self.get_logger().info(f"搜索模式: 保持目标点({self.last_goal[0]:.2f}, {self.last_goal[1]:.2f})，距离目标{dist_to_goal:.2f}米")
+                self.last_goal = (goal_x, goal_y)
+                self.goal_publish_time = now
+                self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
+                self.get_logger().info(f"搜索模式: 实时选择方向{max_idx}, 距离{max_distance:.2f}m, 发布新目标点({goal_x:.2f}, {goal_y:.2f}), step={step:.2f}")
             return
 
         # 4. 云台已指向火源方向，沿该方向靠近
         if not self.search_mode and self.current_position is not None:
-            # target_horizontal_position: 云台指向的角度（假设为相对机器人正前方的角度，单位弧度）
-            # 你需要根据实际协议确认这个角度的定义
             yaw = 0.0
             q = self.current_orientation
             if q is not None:
                 yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
             # 机器人前进方向 = 当前朝向 + 云台偏转角
-            target_angle = yaw + self.target_horizontal_position*math.pi/180.0
-            step = 1.0  # 每次靠近0.7米
+            target_angle = yaw + self.target_horizontal_position * math.pi / 180.0
+
+            # 结合激光雷达数据和云台指向，寻找最优前进方向
+            best_idx = 10  # 默认正前方
+            min_angle_diff = float('inf')
+            if self.latest_distances is not None:
+                angle_step = math.pi / 20
+                for idx, dist in enumerate(self.latest_distances):
+                    angle = (idx - 10) * angle_step
+                    # 计算与云台指向的夹角
+                    diff = abs(angle - self.target_horizontal_position * math.pi / 180.0)
+                    # 只考虑与云台指向夹角小于60度的方向，且距离大于0.5米
+                    if diff < math.radians(60) and dist > 0.5:
+                        # 优先选择距离最大且角度最接近云台指向的方向
+                        if diff < min_angle_diff or (abs(diff - min_angle_diff) < 1e-3 and dist > self.latest_distances[best_idx]):
+                            best_idx = idx
+                            min_angle_diff = diff
+                # 选定方向
+                best_angle = (best_idx - 10) * angle_step
+                best_distance = self.latest_distances[best_idx]
+                # 步长为该方向距离的0.7，最小0.3米，最大2.0米
+                step = max(0.3, min(best_distance * 0.7, 2.0))
+                target_angle = yaw + best_angle
+            else:
+                # 没有激光数据时，默认步长
+                step = 0.5
+
             self.target_x = self.current_position.x + step * math.cos(target_angle)
             self.target_y = self.current_position.y + step * math.sin(target_angle)
             self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
-            self.get_logger().info(f"靠近火源: 云台角度{self.target_horizontal_position:.2f}，发布目标点({self.target_x:.2f}, {self.target_y:.2f})")
+            self.get_logger().info(f"靠近火源: 云台角度{self.target_horizontal_position:.2f}，选定方向idx={best_idx}，距离{self.latest_distances[best_idx] if self.latest_distances is not None else 'N/A'}，step={step:.2f}，目标点({self.target_x:.2f}, {self.target_y:.2f})")
     
     def stop(self):
         """

@@ -5,6 +5,9 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 import serial
 import time
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import TransformStamped
+import tf2_ros
 
 def calculate_xor(data):
     xor = 0
@@ -96,11 +99,21 @@ class SbusControlNode(Node):
             10
         )
 
+        # 订阅 /Odometry 话题
+        # self.odom_subscription = self.create_subscription(
+        #     Odometry,
+        #     '/Odometry',
+        #     self.odometry_callback,
+        #     10
+        # )
+
         # 定时器，用于检测是否停止发布
         self.last_cmd_time = self.get_clock().now()
         self.timer = self.create_timer(0.02, self.check_timeout)  # 每 0.02 秒触发一次
 
         self.serial_timer = self.create_timer(0.05, self.serial_send_and_read)
+
+        self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
 
     def serial_send_and_read(self):
         hex_data = '01'  # 你要发送的十六进制内容
@@ -147,6 +160,18 @@ class SbusControlNode(Node):
 
         # 发送 SBUS 数据帧
         self.send_sbus_frame()
+
+    def odometry_callback(self, msg):
+        # 根据/Odometry内容发布odom->base_link的TF
+        t = TransformStamped()
+        t.header.stamp = msg.header.stamp
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_link'
+        t.transform.translation.x = msg.pose.pose.position.x
+        t.transform.translation.y = msg.pose.pose.position.y
+        t.transform.translation.z = msg.pose.pose.position.z
+        t.transform.rotation = msg.pose.pose.orientation
+        self.tf_broadcaster.sendTransform(t)
 
     def check_timeout(self):
         """

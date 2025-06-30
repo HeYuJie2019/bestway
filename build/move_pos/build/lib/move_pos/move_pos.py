@@ -37,6 +37,7 @@ class GoToPoseTopicNode(Node):
         self.init_zed_camera()
         self.avoid_obstacle = False
         self.avoid_obstacle_count = 0
+        self.depth_numpy = None
 
     def init_zed_camera(self):
         init_params = sl.InitParameters()
@@ -76,20 +77,20 @@ class GoToPoseTopicNode(Node):
     def get_front_distance(self):
         if self.zed.grab() == sl.ERROR_CODE.SUCCESS:
             self.zed.retrieve_measure(self.depth, sl.MEASURE.DEPTH)
-            depth_numpy = self.depth.get_data()
-            depth_numpy = np.where(np.isfinite(depth_numpy), depth_numpy, np.nan)
-            height, width = depth_numpy.shape
+            self.depth_numpy = self.depth.get_data()
+            self.depth_numpy = np.where(np.isfinite(self.depth_numpy), self.depth_numpy, np.nan)
+            height, width = self.depth_numpy.shape
             crop_left = int(width * 0.35)
             crop_right = int(width * 0.65)
-            depth_numpy_far = depth_numpy[:, crop_left:crop_right]
-            if np.isnan(depth_numpy).all():
+            depth_numpy_far = self.depth_numpy[:, crop_left:crop_right]
+            if np.isnan(self.depth_numpy).all():
                 self.get_logger().warn("深度矩阵中没有有效值")
                 return float('inf')
             else:
-                self.front_zed_near = np.nanmin(depth_numpy)
+                self.front_zed_near = np.nanmin(self.depth_numpy)
                 self.front_zed_far = np.nanmin(depth_numpy_far)
-                self.left_zed = np.nanmin(depth_numpy[:, :crop_left])
-                self.right_zed = np.nanmin(depth_numpy[:, crop_right:])
+                self.left_zed = np.nanmin(self.depth_numpy[:, :crop_left])
+                self.right_zed = np.nanmin(self.depth_numpy[:, crop_right:])
                 min_depth = 0.0
                 self.get_logger().info(
                     f"前方近距离: {self.front_zed_near:.2f}, 前方远距离: {self.front_zed_far:.2f}, "
@@ -154,44 +155,46 @@ class GoToPoseTopicNode(Node):
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
 
             front_distance = self.get_front_distance()
-            base_safe_distance = 1.2
+            base_safe_distance = 1.0
             max_safe_distance = 2.5
             speed_factor = abs(self.current_speed) / 50.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
             safe_distance = max(0.5, min(safe_distance, max_safe_distance))
 
-            # 避障逻辑
-            if self.get_front_distance() < safe_distance:
-                left_distance = getattr(self, 'left_distance', 1.0)
-                right_distance = getattr(self, 'right_distance', 1.0)
-                left_zed = getattr(self, 'left_zed', 1.0)
-                right_zed = getattr(self, 'right_zed', 1.0)
-                self.get_logger().info(
-                    f"左侧距离: {left_distance:.2f}, 右侧距离: {right_distance:.2f}, "
-                    f"左侧ZED: {left_zed:.2f}, 右侧ZED: {right_zed:.2f}, "
-                )
-
-                # angle_error > 0 表示目标在左侧，<0 表示目标在右侧
-                prefer_direction = "left" if angle_error > 0 else "right"
-
-                if left_distance < 0.8 or right_distance < 0.8:  # 如果激光距离小于1.4米，优先考虑激光距离
-                    turn_direction = "left" if left_distance > right_distance else "right"
-                else:
-                    if left_zed < 0.6 or right_zed < 0.6:  # 如果ZED深度小于0.5米，优先考虑ZED深度
-                        turn_direction = "left" if left_zed > right_zed else "right"
-                    else:
-                        turn_direction = prefer_direction
-
-                twist = Twist()
-                twist.linear.x = 0.0
-                twist.angular.z = 4.0 if turn_direction == "left" else -4.0
-                self.cmd_vel_pub.publish(twist)
-                self.get_logger().info(
-                    f"避障中，方向: {turn_direction}，目标在: {prefer_direction}，"
-                    f"前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
-                )
-                self.avoid_obstacle = True
-                continue
+            # --- 智能绕障：主目标方向畅通性实时判断 ---
+            # 1. 避障优先：激光/深度距离小于安全距离，立即进入避障
+            if self.avoid_obstacle or self.get_front_distance() < safe_distance:
+                if self.get_front_distance() < safe_distance:
+                    if not self.avoid_obstacle:
+                        # 进入避障，判断一次方向
+                        left_distance = getattr(self, 'left_distance', 1.0)
+                        right_distance = getattr(self, 'right_distance', 1.0)
+                        left_zed = getattr(self, 'left_zed', 1.0)
+                        right_zed = getattr(self, 'right_zed', 1.0)
+                        prefer_direction = "left" if angle_error > 0 else "right"
+                        if left_distance < 0.8 or right_distance < 0.8:
+                            turn_direction = "left" if left_distance > right_distance else "right"
+                        else:
+                            if left_zed < 0.6 or right_zed < 0.6:
+                                turn_direction = "left" if left_zed > right_zed else "right"
+                            else:
+                                turn_direction = prefer_direction
+                        self.avoid_turn_direction = turn_direction
+                    self.avoid_obstacle = True
+                elif self.get_front_distance() > safe_distance:
+                    self.avoid_obstacle = False
+                    self.avoid_turn_direction = None
+                    self.avoid_straight_count = 0
+                if self.avoid_obstacle:
+                    turn_direction = getattr(self, 'avoid_turn_direction', 'left')
+                    twist = Twist()
+                    twist.linear.x = 0.0
+                    twist.angular.z = 4.0 if turn_direction == "left" else -4.0
+                    self.cmd_vel_pub.publish(twist)
+                    self.get_logger().info(
+                        f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
+                    )
+                    continue
 
             # 到达目标
             if distance < 0.5:
