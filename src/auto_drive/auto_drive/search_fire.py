@@ -9,6 +9,8 @@ import time  # 添加时间模块
 import pyzed.sl as sl  # 导入 ZED SDK
 import numpy as np
 from nav_msgs.msg import Odometry
+import csv
+from std_msgs.msg import Float32
 
 class AutoDriveNode(Node):
     def __init__(self):
@@ -57,6 +59,14 @@ class AutoDriveNode(Node):
             10
         )
 
+        # 订阅 /average_temperature 话题
+        self.temperature_subscription = self.create_subscription(
+            Float32,
+            '/average_temperature',
+            self.temperature_callback,
+            10
+        )
+
         # 初始化odom的位姿
         self.odom_position = None
         self.odom_orientation = None
@@ -98,7 +108,16 @@ class AutoDriveNode(Node):
         self.target_y = None  # 目标点
         self.current_position = None  # 当前位姿
         self.current_orientation = None  # 当前姿态
-    
+
+        # 轨迹记录
+        self.temperature_subscription = None
+        self.current_temperature = None
+        self.trajectory = []  # 记录轨迹点 (x, y, temp)
+        self.trajectory_file = 'trajectory.csv'
+        self.last_recorded_point = None
+        self.recording = False
+        self.returning_path = []
+
     def odom_callback(self, msg):
         """
         处理 /Odometry 消息，保存位置和姿态
@@ -240,11 +259,50 @@ class AutoDriveNode(Node):
         # self.left_distance = min(left_distances)
         # self.right_distance = min(right_distances)
     
+    def temperature_callback(self, msg):
+        self.current_temperature = msg.data
+
+    def should_record_point(self, x, y):
+        if self.last_recorded_point is None:
+            return True
+        lx, ly = self.last_recorded_point
+        dist = math.hypot(x - lx, y - ly)
+        return dist > 1.0
+
+    def record_trajectory_point(self, x, y, temp):
+        self.trajectory.append((x, y, temp))
+        self.last_recorded_point = (x, y)
+        with open(self.trajectory_file, 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([x, y, temp])
+
+    def start_recording(self):
+        self.trajectory = []
+        self.last_recorded_point = None
+        self.recording = True
+        # 写入表头
+        with open(self.trajectory_file, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['x', 'y', 'temperature'])
+
+    def stop_recording(self):
+        self.recording = False
+        self.returning_path = self.trajectory[::-1]  # 反向路径
+
     def control_loop(self):
         # 1. 记录起始点
         if not hasattr(self, 'start_position') and self.current_position is not None:
             self.start_position = (self.current_position.x, self.current_position.y)
             self.get_logger().info(f"记录起始点: {self.start_position}")
+
+        # 轨迹记录逻辑
+        if self.current_position is not None:
+            if not self.recording:
+                self.start_recording()
+            x, y = self.current_position.x, self.current_position.y
+            temp = self.current_temperature if self.current_temperature is not None else ''
+            if self.should_record_point(x, y):
+                self.record_trajectory_point(x, y, temp)
 
         # 2. 已到火源附近，静止
         if self.count_above_1000 > 300 and self.current_position is not None:
@@ -252,23 +310,26 @@ class AutoDriveNode(Node):
                 self.fire_position = (self.current_position.x, self.current_position.y)
                 self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
                 self.returning = True  # 新增：进入返回模式
+                self.stop_recording()  # 停止记录轨迹
                 self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
                 return
             
         # 5. 返回出发点
         if hasattr(self, 'returning') and self.returning and self.current_position is not None:
-            dist_to_start = math.hypot(self.current_position.x - self.start_position[0],
-                                    self.current_position.y - self.start_position[1])
-            if dist_to_start < 0.5:
-                # 到达出发点，停止并退出
-                self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
-                self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
-                print(f"起火点坐标: {self.fire_position}")
-                rclpy.shutdown()
-                return
-            else:
-                # 持续发布回到出发点的目标
-                self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
+            # 按照记录的路径返回
+            if self.returning_path:
+                next_point = self.returning_path[0]
+                dist_to_next = math.hypot(self.current_position.x - next_point[0], self.current_position.y - next_point[1])
+                if dist_to_next < 1.0:
+                    self.returning_path.pop(0)
+                    if not self.returning_path:
+                        self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                        self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
+                        print(f"起火点坐标: {self.fire_position}")
+                        rclpy.shutdown()
+                        return
+                else:
+                    self.goal_publisher.publish(Point(x=next_point[0], y=next_point[1], z=0.0))
             return
 
         # 3. 搜索模式：自主探索
@@ -280,11 +341,11 @@ class AutoDriveNode(Node):
                 elapsed = 0
 
             # 只有超过5秒才继续探索
-            if elapsed < 5:
+            if elapsed < 8:
                 self.target_x = None
                 self.target_y = None
                 self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
-                self.get_logger().info(f"探索模式已进入 {elapsed:.1f} 秒，未到5秒不探索")
+                self.get_logger().info(f"探索模式已进入 {elapsed:.1f} 秒，未到8秒不探索")
                 return
 
             # latest_distances: 21个方向的距离，取最大值方向，实时发布目标点
@@ -322,32 +383,44 @@ class AutoDriveNode(Node):
             # 结合激光雷达数据和云台指向，寻找最优前进方向
             best_idx = 10  # 默认正前方
             min_angle_diff = float('inf')
+            found_valid = False
             if self.latest_distances is not None:
-                angle_step = math.pi / 20
+                angle_step = math.pi / 20  # 21个区间，20个间隔
                 for idx, dist in enumerate(self.latest_distances):
-                    angle = (idx - 10) * angle_step
-                    # 计算与云台指向的夹角
+                    angle = (idx - 10) * angle_step  # idx=10为正前方
                     diff = abs(angle - self.target_horizontal_position * math.pi / 180.0)
-                    # 只考虑与云台指向夹角小于60度的方向，且距离大于0.5米
-                    if diff < math.radians(60) and dist > 0.5:
-                        # 优先选择距离最大且角度最接近云台指向的方向
-                        if diff < min_angle_diff or (abs(diff - min_angle_diff) < 1e-3 and dist > self.latest_distances[best_idx]):
+                    # 只考虑与云台指向夹角小于35度的方向，且距离大于0.5米
+                    if diff < math.radians(45) and dist > 0.5:
+                        found_valid = True
+                        if (dist > self.latest_distances[best_idx]) or (abs(dist - self.latest_distances[best_idx]) < 1e-3 and diff < min_angle_diff):
                             best_idx = idx
                             min_angle_diff = diff
-                # 选定方向
-                best_angle = (best_idx - 10) * angle_step
-                best_distance = self.latest_distances[best_idx]
-                # 步长为该方向距离的0.7，最小0.3米，最大2.0米
-                step = max(0.3, min(best_distance * 0.7, 2.0))
-                target_angle = yaw + best_angle
+                        print(f"方向 {idx} ({angle * 180 / math.pi:.1f}°): 距离={dist:.2f}, 夹角={diff * 180 / math.pi:.1f}°")
+                if found_valid:
+                    # 选定方向
+                    best_angle = (best_idx - 10) * angle_step
+                    best_distance = self.latest_distances[best_idx]
+                    # 步长为该方向距离的0.7，最小0.3米，最大2.0米
+                    step = max(0.3, min(best_distance * 0.7, 2.0))
+                    # 目标点的角度应为机器人朝向+最佳方向角
+                    target_angle = yaw + best_angle
+                    # 目标点坐标
+                    self.target_x = self.current_position.x + step * math.cos(target_angle)
+                    self.target_y = self.current_position.y + step * math.sin(target_angle)
+                else:
+                    # 没有合适方向，直接按云台指向发布目标点
+                    step = 0.5
+                    target_angle = yaw + self.target_horizontal_position * math.pi / 180.0
+                    self.target_x = self.current_position.x + step * math.cos(target_angle)
+                    self.target_y = self.current_position.y + step * math.sin(target_angle)
             else:
                 # 没有激光数据时，默认步长
                 step = 0.5
+                self.target_x = self.current_position.x + step * math.cos(target_angle)
+                self.target_y = self.current_position.y + step * math.sin(target_angle)
 
-            self.target_x = self.current_position.x + step * math.cos(target_angle)
-            self.target_y = self.current_position.y + step * math.sin(target_angle)
             self.goal_publisher.publish(Point(x=self.target_x, y=self.target_y, z=0.0))
-            self.get_logger().info(f"靠近火源: 云台角度{self.target_horizontal_position:.2f}，选定方向idx={best_idx}，距离{self.latest_distances[best_idx] if self.latest_distances is not None else 'N/A'}，step={step:.2f}，目标点({self.target_x:.2f}, {self.target_y:.2f})")
+            self.get_logger().info(f"靠近火源: 云台角度{self.target_horizontal_position:.2f}，选定方向idx={best_idx if found_valid else '云台指向'}，step={step:.2f}，目标点({self.target_x:.2f}, {self.target_y:.2f})")
     
     def stop(self):
         """

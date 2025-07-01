@@ -115,7 +115,7 @@ class GoToPoseTopicNode(Node):
         linear_kp = 1.8
         linear_ki = 0.0
         linear_kd = 0.5
-        angular_kp = 4.0
+        angular_kp = 5.0
         angular_ki = 0.0
         angular_kd = 0.6
 
@@ -175,7 +175,7 @@ class GoToPoseTopicNode(Node):
                         if left_distance < 0.8 or right_distance < 0.8:
                             turn_direction = "left" if left_distance > right_distance else "right"
                         else:
-                            if left_zed < 0.6 or right_zed < 0.6:
+                            if left_zed < 0.5 or right_zed < 0.5:
                                 turn_direction = "left" if left_zed > right_zed else "right"
                             else:
                                 turn_direction = prefer_direction
@@ -237,9 +237,12 @@ class GoToPoseTopicNode(Node):
 
             # else:
             if abs(angle_error) > 1.0:
+                # 转弯时不进行避障
+                self.avoid_obstacle = False
                 twist.linear.x = 0.0
                 twist.angular.z = angular_speed
             else:
+                # 只有直行时才允许避障
                 twist.linear.x = linear_speed
                 twist.angular.z = 0.0
 

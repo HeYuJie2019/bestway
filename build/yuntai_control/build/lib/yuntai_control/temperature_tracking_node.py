@@ -31,7 +31,7 @@ class TemperatureTrackingNode(Node):
         self.current_vertical_angle = 0
 
         # 云台角度范围
-        self.horizontal_angle_limit = 132
+        self.horizontal_angle_limit = 120
         self.vertical_angle_limit = 88
 
         # 最大步长
@@ -103,12 +103,17 @@ class TemperatureTrackingNode(Node):
             if max_temp - min_temp < self.temperature_threshold:
                 # 如果温差不足，进入搜索模式
                 self.searching = True
+                self.temp_enough_time = None  # 重置计时
                 self.search_mode()
                 return
             
-            # 如果温差足够，退出搜索模式
-            if self.searching:
-                self.searching = False
+            # 如果温差足够，需持续超过1秒才退出搜索模式
+            now = time.time()
+            if not hasattr(self, 'temp_enough_time') or self.temp_enough_time is None:
+                self.temp_enough_time = now
+            elif now - self.temp_enough_time >= 0.5:
+                if self.searching:
+                    self.searching = False
 
             # 找到最高温度的位置
             max_temp = np.max(self.temperature_matrix)

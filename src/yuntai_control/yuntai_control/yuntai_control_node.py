@@ -16,15 +16,15 @@ class ServoController:
         self.kit.servo[0].set_pulse_width_range(500, 2500)
         self.kit.servo[1].set_pulse_width_range(500, 2500)
         # 设置舵机的初始角度
-        self.kit.servo[0].angle = 88
-        self.kit.servo[1].angle = 92
+        self.kit.servo[0].angle = 81
+        self.kit.servo[1].angle = 84
 
     def middle(self):
         """
         将两个舵机都设置为中间位置
         """
-        self.set_angle(0, 88)
-        self.set_angle(1, 92)
+        self.set_angle(0, 81)
+        self.set_angle(1, 84)
 
     def set_angle(self, servo_index, target_angle):
         """
@@ -38,13 +38,13 @@ class ServoController:
                 current_angle = 0  # 如果当前角度为 None，假设为 0
 
             # 计算角度差
-            # angle_difference = abs(target_angle - current_angle)
+            angle_difference = abs(target_angle - current_angle)
 
             # 设置舵机角度
             self.kit.servo[servo_index].angle = target_angle
 
             # 根据角度差延时，假设每移动 1 度延时 10 毫秒
-            # delay = angle_difference * 0.01
+            delay = angle_difference * 0.01
             # sleep(delay)
 
     def get_angle(self, servo_index):
@@ -65,18 +65,22 @@ class ServoController:
         :param position: 软件设定的位置 (0: -130~+130, 1: -90~+90)
         """
         if servo_index == 0:
-            # 舵机 0 的软件范围是 -132 到 +132，实际范围是 0 到 176，中心是 88
-            if position < -132 or position > 132:
+            # 舵机 0 的软件范围是 -123.56 到 +123.56，实际范围是 0 到 162，中心是 81
+            if position < -123.56 or position > 123.56:
                 raise ValueError("舵机 0 的位置超出范围")
-            # 映射公式：实际角度 = (位置 + 132) * (176 - 0) / (132 - (-132)) + 0
-            target_angle = (position + 132) * (176 - 0) / (132 - (-132)) + 0
+            # 映射公式：实际角度 = (位置 + 123.56) * (162 - 0) / (123.56 - (-123.56)) + 0
+            target_angle = (position + 123.56) * (162 - 0) / (123.56 - (-123.56)) + 0
+            # 调整中心点为81
+            target_angle = target_angle - 81 + 81
             self.set_angle(servo_index, target_angle)
         elif servo_index == 1:
-            # 舵机 1 的软件范围是 -88 到 +88 4 到 180，中心是 92
+            # 舵机 1 的软件范围是 -88 到 +88，实际范围是 0 到 168，中心是 84
             if position < -88 or position > 88:
                 raise ValueError("舵机 1 的位置超出范围")
-            # 映射公式：实际角度 = (位置 + 88) * (180 - 4) / (88 - (-88)) + 4
-            target_angle = (position + 88) * (180 - 4) / (88 - (-88)) + 4
+            # 映射公式：实际角度 = (位置 + 88) * (168 - 0) / (88 - (-88)) + 0
+            target_angle = (position + 88) * (168 - 0) / (88 - (-88)) + 0
+            # 调整中心点为84
+            target_angle = target_angle - 84 + 84
             self.set_angle(servo_index, target_angle)
         else:
             raise ValueError("无效的舵机索引")
