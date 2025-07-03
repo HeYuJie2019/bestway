@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'move_pos_topic_node = move_pos.move_pos:main',
+            'move_pos_topic_node = move_pos.move_pos:main'
+            'move_pos_topic_node_v2 = move_pos.move_pos_v2:main',
         ],
     },
 )
