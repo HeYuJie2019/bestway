@@ -1,9 +1,11 @@
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire copy.py
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/auto_drive_node.py
+/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/pose_printer.py
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__init__.py
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire.py
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__pycache__/search_fire copy.cpython-310.pyc
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__pycache__/auto_drive_node.cpython-310.pyc
+/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__pycache__/pose_printer.cpython-310.pyc
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__pycache__/__init__.cpython-310.pyc
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__pycache__/search_fire.cpython-310.pyc
 /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index/packages/auto_drive
@@ -16,3 +18,5 @@
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info/dependency_links.txt
 /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info/top_level.txt
 /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive/auto_drive_node
+/home/bestway/bestway_ws/install/auto_drive/lib/auto_drive/pose_printer_node
+/home/bestway/bestway_ws/install/auto_drive/lib/auto_drive/search_fire_node

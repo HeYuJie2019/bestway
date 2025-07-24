@@ -3,101 +3,101 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist, Point
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32MultiArray
-from livox_ros_driver2.msg import CustomMsg
 import math
 import time
-import numpy as np
 
 class GoToPoseTopicNode(Node):
     def __init__(self):
-        super().__init__('move_pos_topic_node')
+        super().__init__('move_pos_topic_node_v2')
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.odom_sub = self.create_subscription(Odometry, '/Odometry', self.odom_callback, 10)
         self.goal_sub = self.create_subscription(Point, '/goal_pose', self.goal_callback, 10)
         self.lidar_subscription = self.create_subscription(
-            CustomMsg,
-            '/livox/lidar',
+            Float32MultiArray,
+            'horizontal_distances',
             self.lidar_callback,
             10
         )
         self.current_pose = None
         self.target_point = None
         self.has_goal = False
+        self.front_distance = 0.0
         self.left_distance = 0.0
         self.right_distance = 0.0
-        self.front_distance = 0.0
+        self.latest_distances = None
         self.current_speed = 0.0
         self.avoid_obstacle = False
         self.avoid_obstacle_count = 0
+        self.avoid_turn_direction = None
         
+        # 新增：左右侧避障相关变量
+        self.side_avoid_active = False       # 是否正在进行左右侧避障
+        self.side_avoid_direction = None     # 左右侧避障方向 ("right" 或 "left")
+        self.side_avoid_threshold = 0.6      # 左右侧距离阈值
 
     def odom_callback(self, msg):
         self.current_pose = msg.pose.pose
-        # self.get_logger().info(f"收到里程计: x={self.current_pose.position.x:.3f}, y={self.current_pose.position.y:.3f}")
 
     def goal_callback(self, msg):
         self.target_point = msg
         self.has_goal = True
-        # self.get_logger().info(f"收到新目标点: x={msg.x:.3f}, y={msg.y:.3f}")
 
     def lidar_callback(self, msg):
-        # 旋转角度（前倾45°，绕y轴-45°）
-        theta = math.radians(-45)
-        cos_theta = math.cos(theta)
-        sin_theta = math.sin(theta)
-        front_min = float('inf')
-        left_min = float('inf')
-        right_min = float('inf')
-        front_count = left_count = right_count = 0
-        total_points = len(msg.points)
-        filtered_points = 0
-        for idx, point in enumerate(msg.points):
-            x, y, z = point.x, point.y, point.z
-            # 绕y轴-45°旋转，适配前倾
-            x_p = x * cos_theta + z * sin_theta
-            y_p = y
-            z_p = -x * sin_theta + z * cos_theta
-            # 放宽z_p阈值，临时注释x_p<=0
-            if abs(z_p) > 0.25:
-                continue
-            filtered_points += 1
-            distance = math.hypot(x_p, y_p)
-            # 打印前10个点的旋转前后坐标
-            if idx < 10:
-                self.get_logger().info(f"原始:({x:.2f},{y:.2f},{z:.2f}) 旋转后:({x_p:.2f},{y_p:.2f},{z_p:.2f})")
-            # 前方：x'较大且|y'|较小
-            if x_p > 0.2 and abs(y_p) < 0.3:
-                if distance < front_min:
-                    front_min = distance
-                front_count += 1
-            # 左侧：y'>0.2且|x'|较小
-            if y_p > 0.2 and abs(x_p) < 0.5:
-                if distance < left_min:
-                    left_min = distance
-                left_count += 1
-            # 右侧：y'<-0.2且|x'|较小
-            if y_p < -0.2 and abs(x_p) < 0.5:
-                if distance < right_min:
-                    right_min = distance
-                right_count += 1
-        if front_count == 0:
-            front_min = float('inf')
-        if left_count == 0:
-            left_min = float('inf')
-        if right_count == 0:
-            right_min = float('inf')
-        self.front_distance = front_min
-        self.left_distance = left_min
-        self.right_distance = right_min
-        self.get_logger().info(f"点云总数: {total_points}, 过滤后: {filtered_points}, 前方点: {front_count}, 左: {left_count}, 右: {right_count}")
-        self.get_logger().info(f"前方距离: {front_min:.2f}, 左侧距离: {left_min:.2f}, 右侧距离: {right_min:.2f}")
+        self.latest_distances = msg.data
+        num_points = len(self.latest_distances)
+        if num_points != 21:
+            self.get_logger().warn("接收到的水平距离数据数量与预期不符！")
+            return
+        # 0~20: 从右到左正前方180度
+        # 8~12为正前方，13~20为左，0~7为右
+        front_distances = self.latest_distances[8:13]
+        left_distances = self.latest_distances[13:]
+        right_distances = self.latest_distances[:8]
+        self.front_distance = min(front_distances)
+        self.left_distance = min(left_distances)
+        self.right_distance = min(right_distances)
+        
+        # 检查左右侧距离是否需要避障
+        self.check_side_obstacles()
+
+    def get_front_distance(self):
+        # 直接返回激光雷达正前方最小距离
+        return self.front_distance
+    
+    def check_side_obstacles(self):
+        """检查左右侧是否有障碍物需要避让"""
+        if self.latest_distances is None or len(self.latest_distances) != 21:
+            return
+            
+        # 检查左侧距离
+        left_min = self.left_distance
+        # 检查右侧距离  
+        right_min = self.right_distance
+        
+        # 判断是否需要进行左右侧避障
+        if left_min < self.side_avoid_threshold:
+            # 左侧太近，需要向右偏
+            self.side_avoid_active = True
+            self.side_avoid_direction = "right"
+            self.get_logger().info(f"左侧距离过近({left_min:.2f}m < {self.side_avoid_threshold}m)，向右偏移")
+        elif right_min < self.side_avoid_threshold:
+            # 右侧太近，需要向左偏
+            self.side_avoid_active = True
+            self.side_avoid_direction = "left"
+            self.get_logger().info(f"右侧距离过近({right_min:.2f}m < {self.side_avoid_threshold}m)，向左偏移")
+        else:
+            # 左右侧距离都足够，取消侧避障
+            if self.side_avoid_active:
+                self.get_logger().info(f"左右侧距离恢复正常(左:{left_min:.2f}m, 右:{right_min:.2f}m)，取消侧避障")
+            self.side_avoid_active = False
+            self.side_avoid_direction = None
 
     def control_loop(self):
         # PID参数
         linear_kp = 1.8
         linear_ki = 0.0
         linear_kd = 0.5
-        angular_kp = 4.0
+        angular_kp = 5.0
         angular_ki = 0.0
         angular_kd = 0.6
 
@@ -126,7 +126,6 @@ class GoToPoseTopicNode(Node):
             if self.current_pose is None:
                 self.get_logger().warn("当前位姿未更新，等待中...")
                 continue
-
             dx = self.target_point.x - self.current_pose.position.x
             dy = self.target_point.y - self.current_pose.position.y
             distance = math.hypot(dx, dy)
@@ -135,38 +134,36 @@ class GoToPoseTopicNode(Node):
             yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
             angle_error = angle_to_goal - yaw
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
-
-            # 仅用雷达前方距离
-            front_distance = self.front_distance
-            base_safe_distance = 1.2
+            front_distance = self.get_front_distance()
+            base_safe_distance = 1.0
             max_safe_distance = 2.5
             speed_factor = abs(self.current_speed) / 50.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
             safe_distance = max(0.5, min(safe_distance, max_safe_distance))
-
-            # 避障逻辑
-            if front_distance < safe_distance:
-                # 只用雷达信息避障
+            # --- 智能绕障：主目标方向畅通性实时判断 ---
+            if self.avoid_obstacle and front_distance < safe_distance and self.avoid_turn_direction is None:
                 left_distance = getattr(self, 'left_distance', 1.0)
                 right_distance = getattr(self, 'right_distance', 1.0)
-                self.get_logger().info(
-                    f"左侧距离: {left_distance:.2f}, 右侧距离: {right_distance:.2f}")
                 prefer_direction = "left" if angle_error > 0 else "right"
                 if left_distance < 0.8 or right_distance < 0.8:
                     turn_direction = "left" if left_distance > right_distance else "right"
                 else:
                     turn_direction = prefer_direction
+                self.avoid_turn_direction = turn_direction
+            elif front_distance > safe_distance:
+                self.avoid_obstacle = False
+                self.avoid_turn_direction = None
+                self.avoid_straight_count = 0
+            if self.avoid_obstacle:
+                turn_direction = getattr(self, 'avoid_turn_direction', 'left')
                 twist = Twist()
                 twist.linear.x = 0.0
                 twist.angular.z = 4.0 if turn_direction == "left" else -4.0
                 self.cmd_vel_pub.publish(twist)
                 self.get_logger().info(
-                    f"避障中，方向: {turn_direction}，目标在: {prefer_direction}，"
-                    f"前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
+                    f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
                 )
-                self.avoid_obstacle = True
                 continue
-
             # 到达目标
             if distance < 0.5:
                 twist = Twist()
@@ -178,39 +175,49 @@ class GoToPoseTopicNode(Node):
                 )
                 self.has_goal = False
                 continue
-
             # PID控制
             linear_error = distance
             sum_linear_error += linear_error
             d_linear_error = linear_error - prev_linear_error
             linear_speed = linear_kp * linear_error + linear_ki * sum_linear_error + linear_kd * d_linear_error
             prev_linear_error = linear_error
-
             angular_error = angle_error
             sum_angular_error += angular_error
             d_angular_error = angular_error - prev_angular_error
             angular_speed = angular_kp * angular_error + angular_ki * sum_angular_error + angular_kd * d_angular_error
             prev_angular_error = angular_error
-
-            linear_speed = max(min(linear_speed, 3.0), -3.0)
+            linear_speed = max(min(linear_speed, 4.0), -4.0)
             self.current_speed = linear_speed
             angular_speed = max(min(angular_speed, 6.0), -6.0)
-
+            
+            # 添加左右侧避障的角度调整
+            side_avoid_angular_adjustment = 0.0
+            if self.side_avoid_active and self.side_avoid_direction:
+                # 根据侧避障方向添加角速度调整
+                side_avoid_intensity = 2.0  # 侧避障强度
+                if self.side_avoid_direction == "left":
+                    side_avoid_angular_adjustment = side_avoid_intensity
+                elif self.side_avoid_direction == "right":
+                    side_avoid_angular_adjustment = -side_avoid_intensity
+            
             twist = Twist()
-            if abs(angle_error) > 1.5:
+            if abs(angle_error) > 0.45:
+                self.avoid_obstacle = False
                 twist.linear.x = 0.0
-                twist.angular.z = angular_speed
+                twist.angular.z = angular_speed + side_avoid_angular_adjustment
             else:
+                self.avoid_obstacle = True
                 twist.linear.x = linear_speed
-                twist.angular.z = 0.0
-
+                twist.angular.z = side_avoid_angular_adjustment  # 即使直行也要考虑侧避障
+            
             self.cmd_vel_pub.publish(twist)
             self.get_logger().info(
-                f"角度差: {abs(angle_error):.2f}, "
                 f"当前位置: ({self.current_pose.position.x:.3f},{self.current_pose.position.y:.3f}), "
                 f"目标:({self.target_point.x:.3f},{self.target_point.y:.3f}), "
                 f"速度: {twist.linear.x:.2f}, 角速度: {twist.angular.z:.2f}, "
-                f"前方距离: {front_distance:.2f}, 安全距离: {safe_distance:.2f}"
+                f"前方距离: {front_distance:.2f}, 安全距离: {safe_distance:.2f}, "
+                f"左距离: {self.left_distance:.2f}, 右距离: {self.right_distance:.2f}, "
+                f"侧避障: {'是' if self.side_avoid_active else '否'}({self.side_avoid_direction or '无'})"
             )
 
 def main(args=None):
@@ -221,7 +228,6 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
-        node.get_logger().info("节点已关闭")
         node.destroy_node()
         rclpy.shutdown()
 

@@ -10,6 +10,7 @@ setup.py
 ../../build/auto_drive/auto_drive.egg-info/zip-safe
 auto_drive/__init__.py
 auto_drive/auto_drive_node.py
+auto_drive/pose_printer.py
 auto_drive/search_fire copy.py
 auto_drive/search_fire.py
 resource/auto_drive

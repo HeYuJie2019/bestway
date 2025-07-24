@@ -1,0 +1,40 @@
+[4.350s] Invoking command in '/home/bestway/bestway_ws/src/move_pos': PYTHONPATH=/home/bestway/bestway_ws/build/move_pos/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/move_pos build --build-base /home/bestway/bestway_ws/build/move_pos/build install --record /home/bestway/bestway_ws/build/move_pos/install.log --single-version-externally-managed install_data
+[5.211s] running egg_info
+[5.213s] creating ../../build/move_pos/move_pos.egg-info
+[5.214s] writing ../../build/move_pos/move_pos.egg-info/PKG-INFO
+[5.215s] writing dependency_links to ../../build/move_pos/move_pos.egg-info/dependency_links.txt
+[5.215s] writing entry points to ../../build/move_pos/move_pos.egg-info/entry_points.txt
+[5.215s] writing requirements to ../../build/move_pos/move_pos.egg-info/requires.txt
+[5.215s] writing top-level names to ../../build/move_pos/move_pos.egg-info/top_level.txt
+[5.216s] writing manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'
+[5.221s] reading manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'
+[5.222s] writing manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'
+[5.223s] running build
+[5.223s] running build_py
+[5.223s] creating /home/bestway/bestway_ws/build/move_pos/build
+[5.223s] creating /home/bestway/bestway_ws/build/move_pos/build/lib
+[5.223s] creating /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos
+[5.224s] copying move_pos/move_pos.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos
+[5.224s] copying move_pos/move_pos_v2.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos
+[5.224s] copying move_pos/__init__.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos
+[5.225s] running install
+[5.226s] running install_lib
+[5.228s] creating /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos
+[5.228s] copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/move_pos.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos
+[5.228s] copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/move_pos_v2.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos
+[5.228s] copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/__init__.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos
+[5.230s] byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/move_pos.py to move_pos.cpython-310.pyc
+[5.235s] byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/move_pos_v2.py to move_pos_v2.cpython-310.pyc
+[5.238s] byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/__init__.py to __init__.cpython-310.pyc
+[5.239s] running install_data
+[5.239s] creating /home/bestway/bestway_ws/install/move_pos/share/ament_index
+[5.239s] creating /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index
+[5.239s] creating /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index/packages
+[5.239s] copying resource/move_pos -> /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index/packages
+[5.240s] copying package.xml -> /home/bestway/bestway_ws/install/move_pos/share/move_pos
+[5.240s] running install_egg_info
+[5.245s] Copying ../../build/move_pos/move_pos.egg-info to /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info
+[5.248s] running install_scripts
+[5.303s] Installing move_pos_topic_node script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos
+[5.304s] writing list of installed files to '/home/bestway/bestway_ws/build/move_pos/install.log'
+[6.043s] Invoked command in '/home/bestway/bestway_ws/src/move_pos' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/move_pos/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/move_pos build --build-base /home/bestway/bestway_ws/build/move_pos/build install --record /home/bestway/bestway_ws/build/move_pos/install.log --single-version-externally-managed install_data

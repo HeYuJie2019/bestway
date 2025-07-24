@@ -21,6 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'auto_drive_node = auto_drive.auto_drive_node:main',
+            'search_fire_node = auto_drive.search_fire:main',
+            'pose_printer_node = auto_drive.pose_printer:main',
         ],
     },
 )

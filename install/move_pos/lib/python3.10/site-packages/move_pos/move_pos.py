@@ -37,6 +37,7 @@ class GoToPoseTopicNode(Node):
         self.init_zed_camera()
         self.avoid_obstacle = False
         self.avoid_obstacle_count = 0
+        self.avoid_turn_direction = None  # 初始化，防止AttributeError
         self.depth_numpy = None
 
     def init_zed_camera(self):
@@ -163,38 +164,35 @@ class GoToPoseTopicNode(Node):
 
             # --- 智能绕障：主目标方向畅通性实时判断 ---
             # 1. 避障优先：激光/深度距离小于安全距离，立即进入避障
-            if self.avoid_obstacle or self.get_front_distance() < safe_distance:
-                if self.get_front_distance() < safe_distance:
-                    if not self.avoid_obstacle:
-                        # 进入避障，判断一次方向
-                        left_distance = getattr(self, 'left_distance', 1.0)
-                        right_distance = getattr(self, 'right_distance', 1.0)
-                        left_zed = getattr(self, 'left_zed', 1.0)
-                        right_zed = getattr(self, 'right_zed', 1.0)
-                        prefer_direction = "left" if angle_error > 0 else "right"
-                        if left_distance < 0.8 or right_distance < 0.8:
-                            turn_direction = "left" if left_distance > right_distance else "right"
-                        else:
-                            if left_zed < 0.5 or right_zed < 0.5:
-                                turn_direction = "left" if left_zed > right_zed else "right"
-                            else:
-                                turn_direction = prefer_direction
-                        self.avoid_turn_direction = turn_direction
-                    self.avoid_obstacle = True
-                elif self.get_front_distance() > safe_distance:
-                    self.avoid_obstacle = False
-                    self.avoid_turn_direction = None
-                    self.avoid_straight_count = 0
-                if self.avoid_obstacle:
-                    turn_direction = getattr(self, 'avoid_turn_direction', 'left')
-                    twist = Twist()
-                    twist.linear.x = 0.0
-                    twist.angular.z = 4.0 if turn_direction == "left" else -4.0
-                    self.cmd_vel_pub.publish(twist)
-                    self.get_logger().info(
-                        f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
-                    )
-                    continue
+            if self.avoid_obstacle and self.get_front_distance() < safe_distance and self.avoid_turn_direction is None:
+                # 进入避障，判断一次方向
+                left_distance = getattr(self, 'left_distance', 1.0)
+                right_distance = getattr(self, 'right_distance', 1.0)
+                left_zed = getattr(self, 'left_zed', 1.0)
+                right_zed = getattr(self, 'right_zed', 1.0)
+                prefer_direction = "left" if angle_error > 0 else "right"
+                if left_distance < 0.8 or right_distance < 0.8:
+                    turn_direction = "left" if left_distance > right_distance else "right"
+                else:
+                    if left_zed < 0.5 or right_zed < 0.5:
+                        turn_direction = "left" if left_zed > right_zed else "right"
+                    else:
+                        turn_direction = prefer_direction
+                self.avoid_turn_direction = turn_direction
+            elif self.get_front_distance() > safe_distance:
+                self.avoid_obstacle = False
+                self.avoid_turn_direction = None
+                self.avoid_straight_count = 0
+            if self.avoid_obstacle:
+                turn_direction = getattr(self, 'avoid_turn_direction', 'left')
+                twist = Twist()
+                twist.linear.x = 0.0
+                twist.angular.z = 4.0 if turn_direction == "left" else -4.0
+                self.cmd_vel_pub.publish(twist)
+                self.get_logger().info(
+                    f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
+                )
+                continue
 
             # 到达目标
             if distance < 0.5:
@@ -221,28 +219,29 @@ class GoToPoseTopicNode(Node):
             angular_speed = angular_kp * angular_error + angular_ki * sum_angular_error + angular_kd * d_angular_error
             prev_angular_error = angular_error
 
-            linear_speed = max(min(linear_speed, 3.0), -3.0)
+            linear_speed = max(min(linear_speed, 3.5), -3.5)
             self.current_speed = linear_speed
             angular_speed = max(min(angular_speed, 6.0), -6.0)
 
             twist = Twist()
-            if self.avoid_obstacle and self.avoid_obstacle_count <= 10:
-                self.avoid_obstacle_count += 1
-                twist.linear.x = linear_speed
-                twist.angular.z = 0.0
-                if self.avoid_obstacle_count == 10:
-                    self.avoid_obstacle = False
-                    self.avoid_obstacle_count = 0
-                    self.get_logger().info("避障结束，恢复正常控制")
+            # if self.avoid_obstacle and self.avoid_obstacle_count <= 10:
+            #     self.avoid_obstacle_count += 1
+            #     twist.linear.x = linear_speed
+            #     twist.angular.z = 0.0
+            #     if self.avoid_obstacle_count == 10:
+            #         self.avoid_obstacle = False
+            #         self.avoid_obstacle_count = 0
+            #         self.get_logger().info("避障结束，恢复正常控制")
 
             # else:
-            if abs(angle_error) > 1.0:
+            if abs(angle_error) > 0.5:
                 # 转弯时不进行避障
                 self.avoid_obstacle = False
                 twist.linear.x = 0.0
                 twist.angular.z = angular_speed
             else:
                 # 只有直行时才允许避障
+                self.avoid_obstacle = True
                 twist.linear.x = linear_speed
                 twist.angular.z = 0.0
 

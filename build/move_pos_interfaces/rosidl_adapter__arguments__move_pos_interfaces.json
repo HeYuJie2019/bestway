@@ -1,6 +1,0 @@
-{
-  "package_name": "move_pos_interfaces",
-  "non_idl_tuples": [
-    "/home/bestway/bestway_ws/src/move_pos_interfaces:action/GoToPose.action"
-  ]
-}

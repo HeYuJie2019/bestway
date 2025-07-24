@@ -102,6 +102,8 @@ class TemperatureTrackingNode(Node):
             # 判断温差是否达到阈值
             if max_temp - min_temp < self.temperature_threshold:
                 # 如果温差不足，进入搜索模式
+                if not self.searching:  # 只有在非搜索模式时才打印进入搜索的信息
+                    self.get_logger().info(f"温差{max_temp - min_temp:.2f}小于阈值{self.temperature_threshold}，进入搜索模式")
                 self.searching = True
                 self.temp_enough_time = None  # 重置计时
                 self.search_mode()
@@ -111,7 +113,7 @@ class TemperatureTrackingNode(Node):
             now = time.time()
             if not hasattr(self, 'temp_enough_time') or self.temp_enough_time is None:
                 self.temp_enough_time = now
-            elif now - self.temp_enough_time >= 0.5:
+            elif now - self.temp_enough_time >= 0.1:
                 if self.searching:
                     self.searching = False
 
@@ -199,6 +201,18 @@ class TemperatureTrackingNode(Node):
             self.get_logger().info("Entering search mode...")
             self.searching = True
             self.temperature_data = []  # 清空上一圈的温度数据
+            
+            # 检查当前角度是否已经在极限位置，如果是则重置搜索方向
+            if self.current_horizontal_angle >= self.horizontal_angle_limit:
+                self.search_direction = -1  # 如果已在右极限，向左搜索
+                self.get_logger().info(f"当前角度{self.current_horizontal_angle}已达到右极限，设置向左搜索")
+            elif self.current_horizontal_angle <= -self.horizontal_angle_limit:
+                self.search_direction = 1   # 如果已在左极限，向右搜索
+                self.get_logger().info(f"当前角度{self.current_horizontal_angle}已达到左极限，设置向右搜索")
+            else:
+                # 如果在中间位置，优先向右搜索（正方向）
+                self.search_direction = 1
+                self.get_logger().info(f"当前角度{self.current_horizontal_angle}在中间位置，设置向右搜索")
 
         # 水平旋转一圈
         if self.search_direction == 1 and self.current_horizontal_angle < self.horizontal_angle_limit:
@@ -248,6 +262,15 @@ class TemperatureTrackingNode(Node):
                     avg_temp_msg.data = average_temperature
                     self.average_temperature_publisher.publish(avg_temp_msg)
                     self.get_logger().info(f"Published average temperature for one rotation: {average_temperature:.2f}")
+        else:
+            # 如果两个条件都不满足，说明可能卡在某个位置，强制重置
+            self.get_logger().warn(f"搜索模式可能卡住: 当前角度={self.current_horizontal_angle}, 搜索方向={self.search_direction}")
+            if self.current_horizontal_angle >= self.horizontal_angle_limit:
+                self.search_direction = -1
+                self.get_logger().info("强制设置向左搜索")
+            elif self.current_horizontal_angle <= -self.horizontal_angle_limit:
+                self.search_direction = 1
+                self.get_logger().info("强制设置向右搜索")
 
         # 限制角度范围
         self.current_horizontal_angle = max(-self.horizontal_angle_limit, min(self.horizontal_angle_limit, self.current_horizontal_angle))

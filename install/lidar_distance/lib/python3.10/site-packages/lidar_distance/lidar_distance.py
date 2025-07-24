@@ -9,7 +9,7 @@ class PointCloudDistance(Node):
         super().__init__('lidar_distance')
         self.subscription = self.create_subscription(
             CustomMsg,
-            '/livox/lidar',  # 替换为你的点云话题名称
+            'livox/lidar_192_168_1_160',  # 替换为你的点云话题名称
             self.listener_callback,
             10
         )
@@ -31,7 +31,8 @@ class PointCloudDistance(Node):
             x, y, z = point.x, point.y, point.z
 
             # 提前过滤不需要的点
-            if z >= 0.1 or x <= 0:
+            # if z >= 0.1 or x <= 0:
+            if z >= 0.5 or z <= -0.1 or x <= 0:
                 continue
 
             # 计算点的水平角度和距离
