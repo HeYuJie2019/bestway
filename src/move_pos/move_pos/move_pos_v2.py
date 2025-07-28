@@ -136,8 +136,8 @@ class GoToPoseTopicNode(Node):
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
             front_distance = self.get_front_distance()
             base_safe_distance = 1.0
-            max_safe_distance = 2.5
-            speed_factor = abs(self.current_speed) / 50.0
+            max_safe_distance = 3.0
+            speed_factor = abs(self.current_speed) / 10.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
             safe_distance = max(0.5, min(safe_distance, max_safe_distance))
             # --- 智能绕障：主目标方向畅通性实时判断 ---
@@ -154,15 +154,34 @@ class GoToPoseTopicNode(Node):
                 self.avoid_obstacle = False
                 self.avoid_turn_direction = None
                 self.avoid_straight_count = 0
-            if self.avoid_obstacle:
-                turn_direction = getattr(self, 'avoid_turn_direction', 'left')
+            
+            # 检查是否需要避障（前方或左右侧）
+            need_avoid = (self.avoid_obstacle or self.side_avoid_active) and self.avoid_obstacle
+            
+            if need_avoid:
                 twist = Twist()
                 twist.linear.x = 0.0
-                twist.angular.z = 4.0 if turn_direction == "left" else -4.0
+                
+                # 确定避障方向
+                if self.avoid_obstacle:
+                    # 前方避障
+                    turn_direction = getattr(self, 'avoid_turn_direction', 'left')
+                    twist.angular.z = 4.0 if turn_direction == "left" else -4.0
+                    self.get_logger().info(
+                        f"前方避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
+                    )
+                elif self.side_avoid_active:
+                    # 左右侧避障
+                    side_avoid_intensity = 3.0
+                    if self.side_avoid_direction == "left":
+                        twist.angular.z = side_avoid_intensity
+                    elif self.side_avoid_direction == "right":
+                        twist.angular.z = -side_avoid_intensity
+                    self.get_logger().info(
+                        f"侧避障中，方向: {self.side_avoid_direction}，左距离: {self.left_distance:.2f}，右距离: {self.right_distance:.2f}"
+                    )
+                
                 self.cmd_vel_pub.publish(twist)
-                self.get_logger().info(
-                    f"避障中，方向: {turn_direction}，前方距离: {front_distance:.2f}，安全距离: {safe_distance:.2f}"
-                )
                 continue
             # 到达目标
             if distance < 0.5:
@@ -190,25 +209,15 @@ class GoToPoseTopicNode(Node):
             self.current_speed = linear_speed
             angular_speed = max(min(angular_speed, 6.0), -6.0)
             
-            # 添加左右侧避障的角度调整
-            side_avoid_angular_adjustment = 0.0
-            if self.side_avoid_active and self.side_avoid_direction:
-                # 根据侧避障方向添加角速度调整
-                side_avoid_intensity = 2.0  # 侧避障强度
-                if self.side_avoid_direction == "left":
-                    side_avoid_angular_adjustment = side_avoid_intensity
-                elif self.side_avoid_direction == "right":
-                    side_avoid_angular_adjustment = -side_avoid_intensity
-            
             twist = Twist()
             if abs(angle_error) > 0.45:
                 self.avoid_obstacle = False
                 twist.linear.x = 0.0
-                twist.angular.z = angular_speed + side_avoid_angular_adjustment
+                twist.angular.z = angular_speed
             else:
                 self.avoid_obstacle = True
                 twist.linear.x = linear_speed
-                twist.angular.z = side_avoid_angular_adjustment  # 即使直行也要考虑侧避障
+                twist.angular.z = 0.0
             
             self.cmd_vel_pub.publish(twist)
             self.get_logger().info(

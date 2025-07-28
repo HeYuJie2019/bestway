@@ -135,6 +135,33 @@ class AutoDriveNode(Node):
         
         # 新增：记录是否曾经出现过count_above_1000大于10的情况
         self.has_count_above_10 = False         # 是否曾经出现过count_above_1000 > 10
+        
+        # 程序计时功能
+        self.start_time = time.time()           # 记录程序开始时间
+        self.get_logger().info(f"程序开始运行，记录开始时间: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.start_time))}")
+
+    def calculate_and_log_total_time(self):
+        """
+        计算并输出程序总耗时
+        """
+        if hasattr(self, 'start_time'):
+            end_time = time.time()
+            total_time = end_time - self.start_time
+            hours = int(total_time // 3600)
+            minutes = int((total_time % 3600) // 60)
+            seconds = total_time % 60
+            
+            time_str = ""
+            if hours > 0:
+                time_str += f"{hours}小时"
+            if minutes > 0:
+                time_str += f"{minutes}分钟"
+            time_str += f"{seconds:.2f}秒"
+            
+            self.get_logger().info(f"程序结束，总耗时: {time_str}")
+            print(f"程序总耗时: {time_str}")
+        else:
+            self.get_logger().warn("未找到开始时间，无法计算总耗时")
 
     def odom_callback(self, msg):
         """
@@ -454,6 +481,7 @@ class AutoDriveNode(Node):
                             self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
                             self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
                             print(f"起火点坐标: {self.fire_position}")
+                            self.calculate_and_log_total_time()  # 输出总耗时
                             rclpy.shutdown()
                             return
                     return
@@ -469,6 +497,7 @@ class AutoDriveNode(Node):
                         self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
                         self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
                         print(f"起火点坐标: {self.fire_position}")
+                        self.calculate_and_log_total_time()  # 输出总耗时
                         rclpy.shutdown()
                         return
                 elif time.time() - self.return_point_set_time > 20.0:
@@ -620,7 +649,7 @@ class AutoDriveNode(Node):
                         max_idx = int(np.argmax(self.latest_distances))
                         max_distance = self.latest_distances[max_idx]
                         target_angle = yaw + (max_idx - 10) * angle_step
-                        step = step = max(0.3, min(best_distance * 0.7, 4.0))
+                        step = max(0.3, min(max_distance * 0.7, 4.0))
                         goal_x = self.current_position.x + step * math.cos(target_angle)
                         goal_y = self.current_position.y + step * math.sin(target_angle)
                         self.current_goal = (goal_x, goal_y)
@@ -830,6 +859,7 @@ def main(args=None):
 
     finally:
         node.get_logger().info("ZED 相机已关闭")
+        node.calculate_and_log_total_time()  # 输出总耗时
         node.destroy_node()
         rclpy.shutdown()
 
