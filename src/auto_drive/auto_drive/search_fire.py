@@ -132,6 +132,7 @@ class AutoDriveNode(Node):
         # 新增：记录是否曾经进入过靠近火源模式
         self.has_entered_approach_mode = False  # 是否曾经进入过靠近火源模式
         self.last_approach_direction = None     # 最后一次靠近火源时的大致方向
+        self.need_smart_first_goal = False      # 是否需要智能生成第一个探索目标点
         
         # 新增：记录是否曾经出现过count_above_1000大于10的情况
         self.has_count_above_10 = False         # 是否曾经出现过count_above_1000 > 10
@@ -273,6 +274,8 @@ class AutoDriveNode(Node):
                 # 进入丢失火源等待期，根据当前位置和激光数据智能选择目标点
                 self.lost_fire_waiting = True
                 self.lost_fire_time = time.time()
+                # 标记需要智能生成第一个探索目标点
+                self.need_smart_first_goal = True
                 # 智能选择丢失火源后的目标点
                 if hasattr(self, 'approach_goal') and self.approach_goal is not None and self.current_position is not None:
                     goal_x, goal_y = self.approach_goal
@@ -434,7 +437,7 @@ class AutoDriveNode(Node):
                 self.record_trajectory_point(x, y, temp)
 
         # 2. 已到火源附近，静止
-        if self.count_above_1000 > 200 and self.current_position is not None:
+        if self.count_above_1000 > 100 and self.current_position is not None:
             if not hasattr(self, 'fire_position'):
                 self.fire_position = (self.current_position.x, self.current_position.y)
                 self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
@@ -446,8 +449,8 @@ class AutoDriveNode(Node):
         # 5. 返回出发点
         if hasattr(self, 'returning') and self.returning and self.current_position is not None:
             # 优化返程：如果路径点大致在一条直线上，直接前往终点
-            def are_points_colinear(points, tolerance=0.15):
-                if len(points) < 3:
+            def are_points_colinear(points, tolerance=0.10):
+                if len(points) < 4:  # 要求至少4个点才判断共线
                     return False
                 # 轨迹点格式为(x, y, temp)，只取x, y坐标
                 (x0, y0, _) = points[0]
@@ -455,13 +458,23 @@ class AutoDriveNode(Node):
                 dx = x1 - x0
                 dy = y1 - y0
                 norm = math.hypot(dx, dy)
-                if norm < 1e-3:
+                if norm < 0.5:  # 起终点距离太近也不判断共线
                     return False
+                
+                # 计算所有中间点到直线的距离
+                max_deviation = 0.0
                 for (x, y, _) in points[1:-1]:
                     # 点到直线距离公式
                     dist = abs(dy * x - dx * y + x1 * y0 - y1 * x0) / norm
+                    max_deviation = max(max_deviation, dist)
                     if dist > tolerance:
                         return False
+                
+                # 额外检查：最大偏差不能超过路径总长度的5%
+                path_length_threshold = norm * 0.05
+                if max_deviation > path_length_threshold:
+                    return False
+                    
                 return True
 
             if self.returning_path:
@@ -490,7 +503,7 @@ class AutoDriveNode(Node):
                 dist_to_next = math.hypot(self.current_position.x - next_point[0], self.current_position.y - next_point[1])
                 if not hasattr(self, 'return_point_set_time') or self.return_point_set_time is None:
                     self.return_point_set_time = time.time()
-                if dist_to_next < 1.0:
+                if dist_to_next < 1.5:
                     self.returning_path.pop(0)
                     self.return_point_set_time = None
                     if not self.returning_path:
@@ -574,20 +587,30 @@ class AutoDriveNode(Node):
                 if self.current_goal is not None and self.goal_set_time is not None:
                     goal_x, goal_y = self.current_goal
                     dist_to_goal = math.hypot(self.current_position.x - goal_x, self.current_position.y - goal_y)
+                    
+                    # 判断是否为智能第一目标点（刚从靠近火源模式退出生成的）
+                    is_smart_first_goal = hasattr(self, 'has_entered_approach_mode') and self.has_entered_approach_mode and not hasattr(self, 'switched_to_normal_exploration')
+                    timeout_duration = 5.0 if is_smart_first_goal else 10.0  # 智能第一目标点5秒超时，其他10秒
+                    
                     if dist_to_goal < 1.0:
                         # 到达目标点，清空目标，准备选新点
                         self.get_logger().info(f"已到达目标点({goal_x:.2f}, {goal_y:.2f})，准备选新点")
                         self.current_goal = None
                         self.goal_set_time = None
-                    elif now - self.goal_set_time < 10.0:
-                        # 10秒内不切换目标，继续前进
+                        if is_smart_first_goal:
+                            self.switched_to_normal_exploration = True  # 标记已切换到正常探索
+                    elif now - self.goal_set_time < timeout_duration:
+                        # 在超时时间内不切换目标，继续前进
                         self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
                         return
                     else:
                         # 超时未到达，暂停0.5秒
-                        self.get_logger().info(f"5秒未到达目标点({goal_x:.2f}, {goal_y:.2f})，暂停0.5秒后重新探索")
+                        timeout_type = "智能第一目标点5秒" if is_smart_first_goal else "普通目标点10秒"
+                        self.get_logger().info(f"{timeout_type}未到达目标点({goal_x:.2f}, {goal_y:.2f})，暂停0.5秒后重新探索")
                         self.pause_until = now + 0.5
                         self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                        if is_smart_first_goal:
+                            self.switched_to_normal_exploration = True  # 标记已切换到正常探索
                         return
 
                 # 选新目标点（优先未探索区域）
@@ -598,38 +621,45 @@ class AutoDriveNode(Node):
                     if q is not None:
                         yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0-2.0*(q.y*q.y + q.z*q.z))
                     
-                    # 如果曾经进入过靠近火源模式，优先朝最后靠近方向探索
-                    if self.has_entered_approach_mode and self.last_approach_direction is not None:
-                        self.get_logger().info(f"曾进入靠近模式，优先朝最后靠近方向探索")
-                        # 朝最后靠近方向附近寻找合适的目标点
-                        target_candidates = []
-                        for idx, dist in enumerate(self.latest_distances):
-                            target_angle = yaw + (idx - 10) * angle_step
-                            # 计算与最后靠近方向的角度差
-                            angle_diff = abs(target_angle - self.last_approach_direction)
-                            # 角度差小于45度的方向优先考虑
-                            if angle_diff < math.radians(45) and dist > 0.5:
-                                step = max(0.5, min(dist * 0.7, 2.5))
-                                goal_x = self.current_position.x + step * math.cos(target_angle)
-                                goal_y = self.current_position.y + step * math.sin(target_angle)
-                                target_candidates.append((dist, idx, goal_x, goal_y, angle_diff))
+                    # 刚从靠近火源模式退出时，智能生成第一个探索目标点
+                    if self.has_entered_approach_mode and self.need_smart_first_goal and len(self.trajectory) > 3:
+                        self.get_logger().info(f"刚退出靠近火源模式，沿着已走过的路径生成第一个探索目标点")
                         
-                        if target_candidates:
-                            # 按距离和角度差综合排序，距离优先
-                            target_candidates.sort(key=lambda x: (-x[0], x[4]))  # 距离降序，角度差升序
-                            max_dist, max_idx, goal_x, goal_y, _ = target_candidates[0]
-                            self.current_goal = (goal_x, goal_y)
-                            self.goal_set_time = now
-                            self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
-                            self.get_logger().info(f"探索模式: 朝最后靠近方向探索，方向{max_idx}, 距离{max_dist:.2f}m, 目标点({goal_x:.2f}, {goal_y:.2f})")
-                            return
+                        # 取最近的几个轨迹点，沿着路径方向继续前进
+                        recent_points = self.trajectory[-4:]  # 取最近4个点
+                        if len(recent_points) >= 2:
+                            # 计算路径的延续方向
+                            start_point = recent_points[0]  # 较早的点
+                            end_point = recent_points[-1]   # 最新的点
+                            
+                            # 路径方向向量
+                            path_dx = end_point[0] - start_point[0]
+                            path_dy = end_point[1] - start_point[1]
+                            path_length = math.hypot(path_dx, path_dy)
+                            
+                            if path_length > 0.1:  # 确保有足够的移动距离
+                                # 归一化方向向量
+                                path_direction_x = path_dx / path_length
+                                path_direction_y = path_dy / path_length
+                                
+                                # 沿着路径方向前进3米
+                                step = 3.0
+                                goal_x = self.current_position.x + step * path_direction_x
+                                goal_y = self.current_position.y + step * path_direction_y
+                                
+                                self.current_goal = (goal_x, goal_y)
+                                self.goal_set_time = now
+                                self.need_smart_first_goal = False  # 已生成智能目标点，后续使用距离优先
+                                self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
+                                self.get_logger().info(f"探索模式: 沿路径方向前进，目标点({goal_x:.2f}, {goal_y:.2f})")
+                                return
                     
                     # 原有的探索逻辑
                     candidates = []
                     for idx, dist in enumerate(self.latest_distances):
                         # 计算该方向的目标点
                         target_angle = yaw + (idx - 10) * angle_step
-                        step = max(0.5, min(dist * 0.7, 2.5))
+                        step = max(0.5, min(dist * 0.7, 5.0))
                         goal_x = self.current_position.x + step * math.cos(target_angle)
                         goal_y = self.current_position.y + step * math.sin(target_angle)
                         if not self.is_point_explored(goal_x, goal_y):
@@ -649,7 +679,7 @@ class AutoDriveNode(Node):
                         max_idx = int(np.argmax(self.latest_distances))
                         max_distance = self.latest_distances[max_idx]
                         target_angle = yaw + (max_idx - 10) * angle_step
-                        step = max(0.3, min(max_distance * 0.7, 4.0))
+                        step = max(0.3, min(max_distance * 0.7, 5.0))
                         goal_x = self.current_position.x + step * math.cos(target_angle)
                         goal_y = self.current_position.y + step * math.sin(target_angle)
                         self.current_goal = (goal_x, goal_y)

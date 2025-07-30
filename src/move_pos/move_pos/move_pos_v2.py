@@ -137,7 +137,7 @@ class GoToPoseTopicNode(Node):
             front_distance = self.get_front_distance()
             base_safe_distance = 1.0
             max_safe_distance = 3.0
-            speed_factor = abs(self.current_speed) / 10.0
+            speed_factor = abs(self.current_speed) / 20.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
             safe_distance = max(0.5, min(safe_distance, max_safe_distance))
             # --- 智能绕障：主目标方向畅通性实时判断 ---
