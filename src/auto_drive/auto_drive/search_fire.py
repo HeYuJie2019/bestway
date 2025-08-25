@@ -137,6 +137,11 @@ class AutoDriveNode(Node):
         # 新增：记录是否曾经出现过count_above_1000大于10的情况
         self.has_count_above_10 = False         # 是否曾经出现过count_above_1000 > 10
         
+        # 新增：找到火源后归零等待相关变量
+        self.fire_found_waiting = False         # 是否正在等待归零
+        self.fire_found_wait_start = None       # 开始等待归零的时间
+        self.fire_found_wait_duration = 0.5     # 等待时长（秒）
+        
         # 程序计时功能
         self.start_time = time.time()           # 记录程序开始时间
         self.get_logger().info(f"程序开始运行，记录开始时间: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.start_time))}")
@@ -441,10 +446,29 @@ class AutoDriveNode(Node):
             if not hasattr(self, 'fire_position'):
                 self.fire_position = (self.current_position.x, self.current_position.y)
                 self.get_logger().info(f"到达火源附近，记录火源位置: {self.fire_position}")
-                self.returning = True  # 新增：进入返回模式
-                self.stop_recording()  # 停止记录轨迹
-                self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
+                # 开始0.5秒的归零等待
+                self.fire_found_waiting = True
+                self.fire_found_wait_start = time.time()
+                self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                self.get_logger().info(f"开始0.5秒归零等待...")
                 return
+            
+            # 处理归零等待期
+            if self.fire_found_waiting:
+                elapsed = time.time() - self.fire_found_wait_start
+                if elapsed < self.fire_found_wait_duration:
+                    # 继续等待，发布停止指令
+                    self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
+                    self.get_logger().info(f"归零等待中... 剩余时间: {self.fire_found_wait_duration - elapsed:.2f}s")
+                    return
+                else:
+                    # 等待结束，开始返程
+                    self.fire_found_waiting = False
+                    self.returning = True  # 进入返回模式
+                    self.stop_recording()  # 停止记录轨迹
+                    self.goal_publisher.publish(Point(x=self.start_position[0], y=self.start_position[1], z=0.0))
+                    self.get_logger().info(f"归零等待结束，开始返程到起始点: {self.start_position}")
+                    return
             
         # 5. 返回出发点
         if hasattr(self, 'returning') and self.returning and self.current_position is not None:
@@ -494,8 +518,7 @@ class AutoDriveNode(Node):
                             self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
                             self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
                             print(f"起火点坐标: {self.fire_position}")
-                            self.calculate_and_log_total_time()  # 输出总耗时
-                            rclpy.shutdown()
+                            self.safe_shutdown()
                             return
                     return
                 # 否则按原有逐点返程
@@ -510,8 +533,7 @@ class AutoDriveNode(Node):
                         self.goal_publisher.publish(Point(x=float('nan'), y=float('nan'), z=0.0))
                         self.get_logger().info(f"已返回出发点，起火点坐标为: {self.fire_position}")
                         print(f"起火点坐标: {self.fire_position}")
-                        self.calculate_and_log_total_time()  # 输出总耗时
-                        rclpy.shutdown()
+                        self.safe_shutdown()
                         return
                 elif time.time() - self.return_point_set_time > 20.0:
                     self.get_logger().warn(f"返回路径点({next_point[0]:.2f}, {next_point[1]:.2f})长时间无法到达，自动跳过！")
@@ -868,6 +890,22 @@ class AutoDriveNode(Node):
             self.goal_publisher.publish(Point(x=goal_x, y=goal_y, z=0.0))
             self.get_logger().info(f"靠近火源: {direction_info}，step={step:.2f}，目标点({goal_x:.2f}, {goal_y:.2f})")
     
+    def safe_shutdown(self):
+        """
+        安全地关闭 ROS 2 节点和上下文
+        """
+        try:
+            if rclpy.ok():
+                self.get_logger().info("安全关闭 ROS 2 节点...")
+                self.calculate_and_log_total_time()  # 输出总耗时
+                rclpy.shutdown()
+            else:
+                self.get_logger().warn("ROS 2 上下文已经关闭")
+                print("程序结束")
+        except Exception as e:
+            self.get_logger().error(f"关闭时发生错误: {e}")
+            print("程序强制结束")
+
     def stop(self):
         """
         停止
@@ -889,9 +927,14 @@ def main(args=None):
 
     finally:
         node.get_logger().info("ZED 相机已关闭")
-        node.calculate_and_log_total_time()  # 输出总耗时
-        node.destroy_node()
-        rclpy.shutdown()
+        try:
+            node.calculate_and_log_total_time()  # 输出总耗时
+            node.destroy_node()
+            if rclpy.ok():
+                rclpy.shutdown()
+        except Exception as e:
+            print(f"清理时发生错误: {e}")
+            print("程序结束")
 
 if __name__ == '__main__':
     main()

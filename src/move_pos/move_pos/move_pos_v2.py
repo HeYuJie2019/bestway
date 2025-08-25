@@ -1,3 +1,4 @@
+# 在v1基础上去掉了zed相关代码，加入了左右侧避障功能
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, Point

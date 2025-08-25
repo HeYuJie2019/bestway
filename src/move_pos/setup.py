@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'move_pos_topic_node = move_pos.move_pos:main',
             'move_pos_topic_node_v2 = move_pos.move_pos_v2:main',
+            'move_pos_topic_node_v3 = move_pos.move_pos_v3:main'
         ],
     },
 )
