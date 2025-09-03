@@ -9,6 +9,7 @@ import time
 import sys
 import struct
 import signal
+import math
 
 class CAR28FSensorReader:
     def __init__(self, interface='can0', bitrate=500000, radar_id=0):
@@ -49,6 +50,23 @@ class CAR28FSensorReader:
         # 设置信号处理器用于优雅退出
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
+    
+    def extract_bits_from_int(self, data_int, start_bit, length):
+        """
+        从整数中提取指定位域的值
+        
+        Args:
+            data_int: 源整数数据
+            start_bit: 起始位位置
+            length: 位域长度
+            
+        Returns:
+            提取的位域值
+        """
+        # 创建掩码
+        mask = (1 << length) - 1
+        # 右移到目标位置并应用掩码
+        return (data_int >> start_bit) & mask
     
     def signal_handler(self, signum, frame):
         """信号处理器，用于优雅退出"""
@@ -176,31 +194,65 @@ class CAR28FSensorReader:
                     })
                     
             elif message_type == 'TargetInformation':
-                # 雷达目标信息解析 - 这是主要的测量数据
+                # 雷达目标信息解析 - 根据CAR28F应用手册0x70C消息格式
                 if len(data) >= 8:
-                    distance_raw = struct.unpack('<H', data[0:2])[0]
-                    velocity_raw = struct.unpack('<h', data[2:4])[0]  # 有符号
+                    # 按照图片中的位域定义解析数据
+                    # 将8字节数据转换为64位整数便于位操作
+                    data_64bit = 0
+                    for i in range(8):
+                        data_64bit |= (data[i] << (8 * i))
+                    
+                    # 按照表格定义提取各字段
+                    cluster_index = self.extract_bits_from_int(data_64bit, 0, 8)      # Bit 0-7
+                    cluster_rcs_raw = self.extract_bits_from_int(data_64bit, 8, 8)    # Bit 8-15
+                    cluster_range_raw = self.extract_bits_from_int(data_64bit, 16, 16) # Bit 16-31
+                    cluster_azimuth_raw = self.extract_bits_from_int(data_64bit, 32, 8) # Bit 32-39
+                    cluster_vrel_raw = self.extract_bits_from_int(data_64bit, 48, 11)  # Bit 48-58
+                    cluster_rollcount = self.extract_bits_from_int(data_64bit, 46, 2)  # Bit 46-47
+                    
+                    # 按照新的距离计算公式: (RangeHValue*256 + RangeLValue)*0.01
+                    range_l_value = cluster_range_raw & 0xFF        # 低8位
+                    range_h_value = (cluster_range_raw >> 8) & 0xFF # 高8位
+                    cluster_range = (range_h_value * 256 + range_l_value) * 0.01  # 距离计算
+                    
+                    # 按照计算公式转换为其他物理值
+                    cluster_rcs = cluster_rcs_raw * 0.5 - 50        # RCS值：Val*0.5-50
+                    cluster_azimuth = cluster_azimuth_raw - 90      # 角度：Val-90 (单位度)
+                    cluster_vrel = cluster_vrel_raw * 0.05 - 35     # 速度：Val*0.05-35 (单位m/s)
                     
                     result.update({
-                        'distance_cm': distance_raw,                    # 距离，单位cm
-                        'distance_m': distance_raw / 100.0,            # 距离，单位m
-                        'velocity_cms': velocity_raw,                   # 速度，单位cm/s
-                        'velocity_ms': velocity_raw / 100.0,           # 速度，单位m/s
-                        'signal_strength': data[4],                     # 信号强度 0-255
-                        'target_angle': struct.unpack('<h', data[5:7])[0] / 10.0,  # 角度，单位0.1度
-                        'target_id': data[7] & 0x0F,                   # 目标ID (低4位)
-                        'target_type': (data[7] & 0xF0) >> 4          # 目标类型 (高4位)
+                        # 原始值
+                        'cluster_index': cluster_index,                # 目标ID (0-127)
+                        'cluster_rcs_raw': cluster_rcs_raw,
+                        'cluster_range_raw': cluster_range_raw,
+                        'cluster_azimuth_raw': cluster_azimuth_raw,
+                        'cluster_vrel_raw': cluster_vrel_raw,
+                        'cluster_rollcount': cluster_rollcount,
+                        
+                        # 物理值
+                        'target_id': cluster_index,                    # 目标ID
+                        'rcs_value': cluster_rcs,                      # 雷达截面积 (dBm²)
+                        'distance_m': cluster_range,                   # 距离 (m)
+                        'azimuth_deg': cluster_azimuth,               # 方位角 (度)
+                        'velocity_ms': cluster_vrel,                  # 相对速度 (m/s)
+                        'roll_count': cluster_rollcount,              # 计数位
+                        
+                        # 额外计算的直角坐标
+                        'pos_x': cluster_range * math.sin(math.radians(cluster_azimuth)),  # X坐标
+                        'pos_y': cluster_range * math.cos(math.radians(cluster_azimuth))   # Y坐标
                     })
                     
-                    # 目标类型解析
-                    target_types = {
-                        0: '无目标',
-                        1: '静止目标',
-                        2: '运动目标',
-                        3: '接近目标',
-                        4: '远离目标'
-                    }
-                    result['target_type_name'] = target_types.get(result['target_type'], '未知类型')
+                    # 判断目标类型
+                    if abs(cluster_vrel) < 0.1:
+                        target_type_name = '静止目标'
+                    elif cluster_vrel > 0.1:
+                        target_type_name = '远离目标'
+                    elif cluster_vrel < -0.1:
+                        target_type_name = '接近目标'
+                    else:
+                        target_type_name = '未知类型'
+                    
+                    result['target_type_name'] = target_type_name
                     
             elif message_type == 'RadarConfiguration':
                 # 雷达配置消息解析（通常是发送给雷达的）
@@ -280,26 +332,38 @@ class CAR28FSensorReader:
                     break
             
             if message_found:
-                print(f"\n收到CAR28F消息: {message_name}")
-                print(f"  CAN ID: 0x{message.arbitration_id:03X}")
-                print(f"  数据长度: {message.dlc}")
-                print(f"  原始数据: {message.data.hex()}")
-                
-                # 解析CAR28F专用数据
-                parsed_data = self.parse_car28f_data(message.arbitration_id, message.data)
-                print(f"  解析结果:")
-                for key, value in parsed_data.items():
-                    if key not in ['raw_data', 'bytes']:  # 避免重复显示原始数据
-                        print(f"    {key}: {value}")
-                
-                return {
-                    'can_id': message.arbitration_id,
-                    'message_name': message_name,
-                    'timestamp': message.timestamp,
-                    'dlc': message.dlc,
-                    'raw_data': message.data,
-                    'parsed_data': parsed_data
-                }
+                # 只处理和显示 0x70C (TargetInformation) 消息
+                if message_name == 'TargetInformation':
+                    # 解析数据
+                    parsed_data = self.parse_car28f_data(message.arbitration_id, message.data)
+                    
+                    if 'error' not in parsed_data:
+                        # 只输出目标ID和距离
+                        target_id = parsed_data.get('target_id', 'N/A')
+                        distance = parsed_data.get('distance_m', 'N/A')
+                        if distance != 'N/A':
+                            print(f"目标ID: {target_id}, 距离: {distance:.3f}m")
+                        else:
+                            print(f"目标ID: {target_id}, 距离: 解析失败")
+                    
+                    return {
+                        'can_id': message.arbitration_id,
+                        'message_name': message_name,
+                        'timestamp': message.timestamp,
+                        'dlc': message.dlc,
+                        'raw_data': message.data,
+                        'parsed_data': parsed_data
+                    }
+                else:
+                    # 对于非 0x70C 消息，静默处理，不显示
+                    return {
+                        'can_id': message.arbitration_id,
+                        'message_name': message_name,
+                        'timestamp': message.timestamp,
+                        'dlc': message.dlc,
+                        'raw_data': message.data,
+                        'parsed_data': {}
+                    }
             else:
                 # 显示其他ID的消息（用于调试）
                 print(f"收到其他设备消息: 0x{message.arbitration_id:03X}, 数据: {message.data.hex()}")
@@ -370,13 +434,8 @@ class CAR28FSensorReader:
         """
         self.running = True
         print(f"开始连续读取CAR28F雷达数据...")
-        print("监听的消息类型:")
-        for msg_name, msg_id in self.message_ids.items():
-            print(f"  {msg_name}: 0x{msg_id:03X}")
-        print("按 Ctrl+C 停止读取")
         
         # 统计计数器
-        message_counters = {name: 0 for name in self.message_ids.keys()}
         total_messages = 0
         start_time = time.time()
         
@@ -385,20 +444,6 @@ class CAR28FSensorReader:
                 data = self.read_sensor_data(timeout=0.5)
                 if data:
                     total_messages += 1
-                    message_name = data.get('message_name', 'unknown')
-                    if message_name in message_counters:
-                        message_counters[message_name] += 1
-                    
-                    # 特别处理目标信息消息
-                    if message_name == 'TargetInformation':
-                        parsed = data.get('parsed_data', {})
-                        if 'distance_m' in parsed:
-                            print(f"=== 目标检测数据 #{message_counters[message_name]} ===")
-                            print(f"距离: {parsed['distance_m']:.2f}m")
-                            print(f"速度: {parsed['velocity_ms']:.2f}m/s")
-                            print(f"信号强度: {parsed['signal_strength']}")
-                            print(f"角度: {parsed.get('target_angle', 'N/A')}°")
-                            print(f"目标类型: {parsed.get('target_type_name', 'N/A')}")
                 
                 time.sleep(read_interval)
                 
@@ -408,13 +453,8 @@ class CAR28FSensorReader:
             print(f"连续读取时发生错误: {e}")
         finally:
             elapsed_time = time.time() - start_time
-            print(f"\n=== 统计信息 ===")
-            print(f"运行时间: {elapsed_time:.2f} 秒")
+            print(f"\n运行时间: {elapsed_time:.2f} 秒")
             print(f"总接收消息: {total_messages}")
-            print("各类型消息统计:")
-            for msg_name, count in message_counters.items():
-                if count > 0:
-                    print(f"  {msg_name}: {count} 条")
             if elapsed_time > 0:
                 print(f"平均消息速率: {total_messages/elapsed_time:.2f} 条/秒")
     
@@ -429,30 +469,57 @@ class CAR28FSensorReader:
         """停止读取"""
         self.running = False
         self.disconnect()
+    
+    def analyze_target_distances(self, target_data_list):
+        """
+        分析目标距离数据
+        
+        Args:
+            target_data_list: 目标数据列表
+        """
+        if not target_data_list:
+            return
+        
+        print(f"\n=== 距离分析报告 ===")
+        print(f"分析的目标数量: {len(target_data_list)}")
+        
+        distances = [data.get('distance_m', 0) for data in target_data_list if 'distance_m' in data]
+        
+        if distances:
+            print(f"距离范围: {min(distances):.3f}m - {max(distances):.3f}m")
+            print(f"平均距离: {sum(distances)/len(distances):.3f}m")
+            
+            # 距离分类统计
+            close_targets = [d for d in distances if d < 5.0]
+            medium_targets = [d for d in distances if 5.0 <= d < 20.0]
+            far_targets = [d for d in distances if d >= 20.0]
+            
+            print(f"近距离目标 (<5m): {len(close_targets)} 个")
+            print(f"中距离目标 (5-20m): {len(medium_targets)} 个")
+            print(f"远距离目标 (≥20m): {len(far_targets)} 个")
+            
+            # 列出每个目标的距离
+            print(f"\n各目标距离详情:")
+            for i, data in enumerate(target_data_list):
+                if 'distance_m' in data:
+                    tid = data.get('target_id', i+1)
+                    dist = data['distance_m']
+                    angle = data.get('azimuth_deg', 0)
+                    vel = data.get('velocity_ms', 0)
+                    print(f"  目标{tid}: {dist:.3f}m (角度:{angle:.1f}°, 速度:{vel:.2f}m/s)")
+        
+        print("=" * 30)
 
 def main():
     """主函数"""
     print("=== CAR28F雷达传感器CAN数据读取程序 ===")
-    print("传感器型号: CAR28F")
-    print("支持的消息类型:")
-    print("  - RadarConfiguration (0x200) - 雷达配置")
-    print("  - RadarFeedback (0x400) - 雷达回复") 
-    print("  - RadarStatus (0x60A) - 雷达状态")
-    print("  - TargetStatus (0x70B) - 目标状态")
-    print("  - TargetInformation (0x70C) - 目标信息")
-    
-    # 获取雷达ID
-    try:
-        radar_id = int(input("\n请输入雷达ID (默认为0): ").strip() or "0")
-    except ValueError:
-        radar_id = 0
-        print("输入无效，使用默认雷达ID: 0")
+    print("只输出目标ID和距离信息")
     
     # 创建CAR28F读取器实例
     can_reader = CAR28FSensorReader(
         interface='can0',      # CAN接口
         bitrate=500000,        # CAR28F可能使用500kbps或250kbps
-        radar_id=radar_id      # 雷达ID
+        radar_id=0             # 雷达ID固定为0
     )
     
     # 设置CAN接口
@@ -468,57 +535,17 @@ def main():
         return
     
     try:
-        # 选择运行模式
-        print("\n请选择运行模式:")
-        print("1. 初始化雷达并单次读取")
-        print("2. 初始化雷达并连续读取")
-        print("3. 仅监听数据 (不发送配置)")
-        print("4. 扫描所有CAN ID (调试模式)")
-        
-        choice = input("请输入选择 (1, 2, 3 或 4): ").strip()
-        
-        if choice in ['1', '2']:
-            # 初始化传感器
-            print("\n3. 初始化CAR28F雷达...")
-            can_reader.initialize_sensor()
-            
-            if choice == '1':
-                print("\n4. 执行单次读取...")
-                data = can_reader.read_sensor_data(timeout=5.0)
-                if data:
-                    print("读取成功!")
-                else:
-                    print("未接收到CAR28F雷达数据")
-                    print("请检查雷达连接和CAN配置")
-            else:
-                print("\n4. 开始连续读取...")
-                can_reader.start_continuous_reading(read_interval=0.05)
-        
-        elif choice == '3':
-            print("\n3. 开始监听雷达数据...")
-            can_reader.start_continuous_reading(read_interval=0.05)
-        
-        elif choice == '4':
-            print("\n3. 扫描模式 - 监听所有CAN消息...")
-            print("这将显示所有收到的CAN消息，用于调试")
-            # 清空消息ID过滤，接收所有消息
-            original_ids = can_reader.message_ids.copy()
-            can_reader.message_ids = {}  # 清空过滤
-            
-            try:
-                can_reader.start_continuous_reading(read_interval=0.01)
-            finally:
-                can_reader.message_ids = original_ids  # 恢复过滤
-        
-        else:
-            print("无效选择，程序退出")
+        print("\n3. 开始监听雷达数据...")
+        print("按 Ctrl+C 停止")
+        print("-" * 30)
+        can_reader.start_continuous_reading(read_interval=0.05)
     
     except Exception as e:
         print(f"程序执行时发生错误: {e}")
     
     finally:
         # 清理资源
-        print("\n5. 清理资源...")
+        print("\n清理资源...")
         can_reader.stop()
         print("程序结束")
 

@@ -7,6 +7,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
+# 生成服务已删除，改为依赖外部服务包
+
 # 添加 include 目录
 include_directories(include)
 

@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'sbus_control_node = sbus_control.sbus_control_node:main',
             'keyboard_control_node = sbus_control.keyboard_control_node:main',
+            'serial_node = sbus_control.serial_node:main',
         ],
     },
 )

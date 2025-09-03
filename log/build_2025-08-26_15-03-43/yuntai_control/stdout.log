@@ -1,0 +1,27 @@
+running egg_info
+writing ../../build/yuntai_control/yuntai_control.egg-info/PKG-INFO
+writing dependency_links to ../../build/yuntai_control/yuntai_control.egg-info/dependency_links.txt
+writing entry points to ../../build/yuntai_control/yuntai_control.egg-info/entry_points.txt
+writing requirements to ../../build/yuntai_control/yuntai_control.egg-info/requires.txt
+writing top-level names to ../../build/yuntai_control/yuntai_control.egg-info/top_level.txt
+reading manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'
+writing manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'
+running build
+running build_py
+copying yuntai_control/temperature_monitor_node.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control
+copying yuntai_control/temperature_data_storage.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control
+running install
+running install_lib
+copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/temperature_monitor_node.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control
+copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/temperature_data_storage.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control
+byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/temperature_monitor_node.py to temperature_monitor_node.cpython-310.pyc
+byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/temperature_data_storage.py to temperature_data_storage.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../build/yuntai_control/yuntai_control.egg-info to /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control-0.0.0-py3.10.egg-info
+running install_scripts
+Installing temperature_monitor_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control
+Installing temperature_tracking_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control
+Installing yuntai_controller_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control
+writing list of installed files to '/home/bestway/bestway_ws/build/yuntai_control/install.log'

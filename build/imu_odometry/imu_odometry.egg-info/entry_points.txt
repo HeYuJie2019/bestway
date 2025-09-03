@@ -1,3 +1,0 @@
-[console_scripts]
-imu_odometry_node = imu_odometry.imu_odometry_node:main
-

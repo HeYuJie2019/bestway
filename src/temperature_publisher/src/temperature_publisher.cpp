@@ -11,7 +11,7 @@ public:
     TemperaturePublisher() : Node("temperature_publisher")
     {
         // 创建发布者
-        temp_publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("temperature_matrix", 10000);
+        temp_publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("temperature_matrix", 100);
 
         // 初始化设备
         if (init_lib() != 0)

@@ -1,6 +1,8 @@
+/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/serial_node.py
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/keyboard_control_node.py
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/sbus_control_node.py
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__init__.py
+/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__pycache__/serial_node.cpython-310.pyc
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__pycache__/keyboard_control_node.cpython-310.pyc
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__pycache__/sbus_control_node.cpython-310.pyc
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__pycache__/__init__.cpython-310.pyc
@@ -15,3 +17,4 @@
 /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control-0.0.0-py3.10.egg-info/top_level.txt
 /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control/keyboard_control_node
 /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control/sbus_control_node
+/home/bestway/bestway_ws/install/sbus_control/lib/sbus_control/serial_node

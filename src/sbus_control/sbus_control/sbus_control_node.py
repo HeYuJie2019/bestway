@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Int32
 import serial
 import time
 from nav_msgs.msg import Odometry
@@ -86,10 +87,7 @@ class SbusControlNode(Node):
             stopbits=serial.STOPBITS_TWO
         )
         # self.sbus_in = serial.Serial('/dev/ttyCH341USB1', 115200, timeout=0.01)
-        self.boss = serial.Serial('/dev/ttyTHS1', 115200, timeout=1)
         self.BOSS = None  # 默认不处于 BOSS 模式
-        self.boss.reset_input_buffer()
-        self.boss.reset_output_buffer()
 
         # 订阅 /cmd_vel 话题
         self.subscription = self.create_subscription(
@@ -99,39 +97,33 @@ class SbusControlNode(Node):
             10
         )
 
-        # 订阅 /Odometry 话题
-        # self.odom_subscription = self.create_subscription(
-        #     Odometry,
-        #     '/Odometry',
-        #     self.odometry_callback,
-        #     10
-        # )
+        # 订阅 /boss 话题
+        self.boss_subscription = self.create_subscription(
+            Int32,
+            '/boss',
+            self.boss_callback,
+            10
+        )
 
         # 定时器，用于检测是否停止发布
         self.last_cmd_time = self.get_clock().now()
         self.timer = self.create_timer(0.02, self.check_timeout)  # 每 0.02 秒触发一次
 
-        self.serial_timer = self.create_timer(0.05, self.serial_send_and_read)
-
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
 
-    def serial_send_and_read(self):
-        hex_data = '01'  # 你要发送的十六进制内容
-        # self.boss.reset_output_buffer()  # 清空输入缓冲区
-        # self.boss.reset_input_buffer()  # 清空输出缓冲区
-        self.boss.write(bytes.fromhex(hex_data))
-        # self.get_logger().info(f"串口发送: {hex_data}")
-        # 读取串口数据
-        if self.boss.in_waiting:
-            # 读取所有数据，只取最后一个字节
-            data = self.boss.read(self.boss.in_waiting)
-            if data:
-                last_byte = data[-1]
-            self.get_logger().info(f"串口接收: {last_byte}")
-            if last_byte == 1:
-                self.BOSS = False
-            elif last_byte == 2:
-                self.BOSS = True
+    def boss_callback(self, msg):
+        """
+        接收BOSS状态消息
+        """
+        if msg.data == 0:
+            self.BOSS = False
+            self.get_logger().info("接收BOSS状态: 非BOSS模式")
+        elif msg.data == 1:
+            self.BOSS = True
+            self.get_logger().info("接收BOSS状态: BOSS模式")
+        else:
+            self.BOSS = None
+            self.get_logger().info(f"接收BOSS状态: 未知状态 ({msg.data})")
 
     def cmd_vel_callback(self, msg):
         """
@@ -160,18 +152,6 @@ class SbusControlNode(Node):
 
         # 发送 SBUS 数据帧
         self.send_sbus_frame()
-
-    def odometry_callback(self, msg):
-        # 根据/Odometry内容发布odom->base_link的TF
-        t = TransformStamped()
-        t.header.stamp = msg.header.stamp
-        t.header.frame_id = 'odom'
-        t.child_frame_id = 'base_link'
-        t.transform.translation.x = msg.pose.pose.position.x
-        t.transform.translation.y = msg.pose.pose.position.y
-        t.transform.translation.z = msg.pose.pose.position.z
-        t.transform.rotation = msg.pose.pose.orientation
-        self.tf_broadcaster.sendTransform(t)
 
     def check_timeout(self):
         """

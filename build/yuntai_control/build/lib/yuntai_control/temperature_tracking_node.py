@@ -14,7 +14,7 @@ class TemperatureTrackingNode(Node):
             Float32MultiArray,
             'temperature_matrix',
             self.temperature_callback,
-            10
+            100
         )
 
         # 发布云台控制指令
@@ -42,7 +42,7 @@ class TemperatureTrackingNode(Node):
 
         # 搜索模式参数
         self.search_step = 30  # 每次转动的角度
-        self.search_delay = 0.3  # 每次转动后的延时（秒）
+        self.search_delay = 0.1  # 每次转动后的延时（秒）
         self.search_vertical_step = 10  # 垂直方向每次抬高的角度
         self.search_direction = 1 # 搜索方向（1：顺时针，-1：逆时针）
 
@@ -280,7 +280,7 @@ class TemperatureTrackingNode(Node):
         self.control_yuntai(self.current_horizontal_angle, self.current_vertical_angle)
 
         # 延时以放慢搜索速度
-        # time.sleep(self.search_delay)
+        time.sleep(self.search_delay)
 
 def main(args=None):
     rclpy.init(args=args)

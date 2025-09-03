@@ -314,7 +314,7 @@ class GoToPoseTopicNode(Node):
                 self.cmd_vel_pub.publish(twist)
                 continue
             # 到达目标
-            if distance < 0.5:
+            if distance < 0.2:
                 twist = Twist()
                 self.cmd_vel_pub.publish(twist)
                 self.get_logger().info("到达目标点，等待新目标...")
