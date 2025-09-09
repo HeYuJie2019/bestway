@@ -9,7 +9,7 @@ class PointCloudDistance(Node):
         super().__init__('lidar_distance')
         self.subscription = self.create_subscription(
             CustomMsg,
-            'livox/lidar_192_168_1_160',  # 替换为你的点云话题名称
+            'livox/lidar_192_168_144_160',  # 替换为你的点云话题名称
             # 'livox/lidar_192_168_1_118',  # 替换为你的点云话题名称
             self.listener_callback,
             10

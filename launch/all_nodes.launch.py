@@ -17,8 +17,8 @@ def generate_launch_description():
         ),
         Node(
             package='yuntai_control',
-            executable='temperature_tracking_node',
-            name='temperature_tracking_node',
+            executable='temperature_tracking_node_v2',
+            name='temperature_tracking_node_v2',
             output='screen'
         ),
         Node(

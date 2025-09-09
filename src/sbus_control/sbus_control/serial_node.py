@@ -78,6 +78,10 @@ class SerialNode(Node):
         # 添加发送锁，防止数据冲突
         self.sending_lock = False
         
+        # 添加03 00命令的时间锁定机制（6秒内不重复处理）
+        self.last_03_00_time = None
+        self.cmd_03_00_lock_duration = 6.0  # 6秒锁定时间
+        
         self.get_logger().info("串口节点已启动")
     
     def odometry_callback(self, msg):
@@ -455,7 +459,10 @@ class SerialNode(Node):
         """
         处理BOSS状态数据帧
         协议格式：帧头(AA BB) + 数据(2字节) + 帧尾(CC DD)
-        数据含义：01 00/02 00 = BOSS模式，03 00 = 非BOSS模式
+        数据含义：
+        - 01 00 = 启动search_fire_node（如果未运行）
+        - 02 00 = 停止search_fire_node
+        - 03 00 = 启动/重启建图节点（6秒内重复命令忽略）
         """
         if len(frame) != 6:
             self.get_logger().warn(f"帧长度错误，期望6字节，实际{len(frame)}字节")
@@ -474,27 +481,48 @@ class SerialNode(Node):
             self.get_logger().info(f"数据部分: {data_byte1:02X} {data_byte2:02X}")
             boss_msg = Int32()
             # 新协议逻辑
-            if (data_byte1, data_byte2) in [(0x01, 0x00), (0x02, 0x00)]:
+            if (data_byte1, data_byte2) == (0x03, 0x00):
                 boss_msg.data = 1
-                self.get_logger().info("BOSS模式")
-                if (data_byte1, data_byte2) == (0x01, 0x00):
-                    # 建图节点管理
-                    if self.is_process_running('mapping.launch.py'):
-                        self.get_logger().info("建图节点已运行，重启...")
-                        self.restart_mapping_node()
-                    else:
-                        self.get_logger().info("建图节点未运行，启动...")
-                        self.start_mapping_node()
-            elif (data_byte1, data_byte2) == (0x03, 0x00):
+                self.get_logger().info("收到03 00命令")
+                # 检查是否在6秒锁定期内
+                current_time = self.get_clock().now()
+                if self.last_03_00_time is not None:
+                    time_diff = (current_time - self.last_03_00_time).nanoseconds / 1e9
+                    if time_diff < self.cmd_03_00_lock_duration:
+                        self.get_logger().info(f"接收到03 00，但在锁定期内({time_diff:.1f}s < {self.cmd_03_00_lock_duration}s)，忽略处理")
+                        # 仍然发布BOSS状态，但不执行建图节点操作
+                        self.boss_publisher.publish(boss_msg)
+                        return
+                
+                # 更新最后处理03 00的时间
+                self.last_03_00_time = current_time
+                self.get_logger().info("处理03 00命令，启动/重启建图节点")
+                
+                # 建图节点管理
+                if self.is_process_running('mapping.launch.py'):
+                    self.get_logger().info("建图节点已运行，重启...")
+                    self.restart_mapping_node()
+                else:
+                    self.get_logger().info("建图节点未运行，启动...")
+                    self.start_mapping_node()
+            elif (data_byte1, data_byte2) == (0x01, 0x00):
                 boss_msg.data = 0
-                self.get_logger().info("非BOSS模式")
-                # search_fire_node管理
+                self.get_logger().info("收到01 00命令")
+                # search_fire_node管理：只在未运行时启动
+                if self.is_process_running('search_fire_node'):
+                    self.get_logger().info("search_fire_node已运行，忽略01 00命令")
+                else:
+                    self.get_logger().info("search_fire_node未运行，启动...")
+                    self.start_search_fire_node()
+            elif (data_byte1, data_byte2) == (0x02, 0x00):
+                boss_msg.data = 1
+                self.get_logger().info("收到02 00命令，停止search_fire_node")
+                # 停止search_fire_node节点
                 if self.is_process_running('search_fire_node'):
                     self.get_logger().info("search_fire_node已运行，停止...")
                     self.stop_search_fire_node()
                 else:
-                    self.get_logger().info("search_fire_node未运行，启动...")
-                    self.start_search_fire_node()
+                    self.get_logger().info("search_fire_node未运行，无需停止")
             else:
                 boss_msg.data = -1
                 self.get_logger().warn(f"未知状态 ({data_byte1:02X} {data_byte2:02X})")

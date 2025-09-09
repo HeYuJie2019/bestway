@@ -7,6 +7,10 @@ from std_msgs.msg import Int32
 import serial
 import time
 from datetime import datetime
+import subprocess
+import psutil
+import os
+import signal
 
 class SerialNode(Node):
     def __init__(self):
@@ -217,53 +221,284 @@ class SerialNode(Node):
         
         return frames
     
+    def is_process_running(self, cmd_keyword):
+        """
+        检查包含指定关键字的进程是否正在运行
+        """
+        if cmd_keyword == 'mapping.launch.py':
+            # 对于建图节点，检查相关关键词但排除livox驱动
+            search_keywords = ['mapping.launch.py', 'fast_lio']
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                try:
+                    cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                    for keyword in search_keywords:
+                        if keyword in cmdline_str and 'livox' not in cmdline_str.lower():
+                            return proc.info['pid']
+                except Exception:
+                    continue
+        elif cmd_keyword == 'search_fire_node':
+            # 对于search_fire_node，专门检查
+            search_keywords = ['search_fire_node', 'auto_drive']
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                try:
+                    cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                    for keyword in search_keywords:
+                        if keyword in cmdline_str and 'search_fire' in cmdline_str:
+                            return proc.info['pid']
+                except Exception:
+                    continue
+        else:
+            # 对于其他进程，使用原有逻辑
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                try:
+                    if any(cmd_keyword in str(x) for x in proc.info['cmdline']):
+                        return proc.info['pid']
+                except Exception:
+                    continue
+        return None
+
+    def start_mapping_node(self):
+        """启动建图节点"""
+        self.get_logger().info("启动建图节点: ros2 launch fast_lio mapping.launch.py")
+        subprocess.Popen(['ros2', 'launch', 'fast_lio', 'mapping.launch.py'])
+
+    def stop_mapping_node(self):
+        """停止建图节点（杀死所有相关进程）"""
+        killed_pids = []
+        
+        # 只搜索建图相关的进程，不包含livox驱动
+        search_keywords = ['mapping.launch.py', 'fast_lio']
+        
+        # 首先收集所有需要杀死的进程ID
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                # 检查是否包含建图相关关键词，但排除livox驱动
+                for keyword in search_keywords:
+                    if keyword in cmdline_str and 'livox' not in cmdline_str.lower():
+                        if proc.info['pid'] not in killed_pids:
+                            killed_pids.append(proc.info['pid'])
+                            self.get_logger().info(f"找到建图相关进程: PID={proc.info['pid']}, CMD={cmdline_str}")
+                        break
+            except Exception:
+                continue
+        
+        # 杀死所有找到的进程
+        for pid in killed_pids:
+            try:
+                self.get_logger().info(f"强制停止进程，PID={pid}")
+                process = psutil.Process(pid)
+                
+                # 首先尝试杀死子进程
+                try:
+                    children = process.children(recursive=True)
+                    for child in children:
+                        self.get_logger().info(f"杀死子进程，PID={child.pid}")
+                        child.kill()
+                        child.wait(timeout=2)
+                except Exception as e:
+                    self.get_logger().warn(f"杀死子进程失败: {e}")
+                
+                # 然后杀死主进程
+                process.kill()
+                process.wait(timeout=5)
+                self.get_logger().info(f"进程PID={pid}已停止")
+                
+            except psutil.TimeoutExpired:
+                self.get_logger().warn(f"进程PID={pid}停止超时，尝试强制杀死")
+                try:
+                    # 最后的强制手段
+                    import os
+                    import signal
+                    os.kill(pid, signal.SIGKILL)
+                except Exception as e:
+                    self.get_logger().error(f"强制杀死进程PID={pid}失败: {e}")
+            except psutil.NoSuchProcess:
+                self.get_logger().info(f"进程PID={pid}已不存在")
+            except Exception as e:
+                self.get_logger().error(f"停止进程PID={pid}失败: {e}")
+        
+        if not killed_pids:
+            self.get_logger().info("建图节点未运行，无需停止")
+
+    def restart_mapping_node(self):
+        """重启建图节点"""
+        self.get_logger().info("开始重启建图节点...")
+        self.stop_mapping_node()
+        # 等待更长时间确保所有进程完全退出
+        self.get_logger().info("等待进程完全退出...")
+        time.sleep(5)
+        # 再次检查是否还有残留进程
+        remaining_pids = []
+        search_keywords = ['mapping.launch.py', 'fast_lio', 'mapping']
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                for keyword in search_keywords:
+                    if keyword in cmdline_str:
+                        remaining_pids.append(proc.info['pid'])
+                        break
+            except Exception:
+                continue
+        
+        if remaining_pids:
+            self.get_logger().warn(f"仍有残留进程: {remaining_pids}")
+            for pid in remaining_pids:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                    self.get_logger().info(f"强制杀死残留进程: {pid}")
+                except Exception as e:
+                    self.get_logger().error(f"杀死残留进程{pid}失败: {e}")
+            time.sleep(2)
+        
+        self.get_logger().info("启动新的建图节点...")
+        self.start_mapping_node()
+
+    def start_search_fire_node(self):
+        self.get_logger().info("启动search_fire_node: ros2 run auto_drive search_fire_node")
+        subprocess.Popen(['ros2', 'run', 'auto_drive', 'search_fire_node'])
+
+    def stop_search_fire_node(self):
+        """停止search_fire_node节点（彻底杀死所有相关进程）"""
+        killed_pids = []
+        
+        # 搜索search_fire_node相关的进程
+        search_keywords = ['search_fire_node', 'auto_drive']
+        
+        # 首先收集所有需要杀死的进程ID
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                # 检查是否包含search_fire_node相关关键词
+                for keyword in search_keywords:
+                    if keyword in cmdline_str and 'search_fire' in cmdline_str:
+                        if proc.info['pid'] not in killed_pids:
+                            killed_pids.append(proc.info['pid'])
+                            self.get_logger().info(f"找到search_fire_node相关进程: PID={proc.info['pid']}, CMD={cmdline_str}")
+                            break
+            except Exception:
+                continue
+        
+        # 杀死所有找到的进程
+        for pid in killed_pids:
+            try:
+                self.get_logger().info(f"强制停止search_fire_node节点，PID={pid}")
+                process = psutil.Process(pid)
+                
+                # 首先尝试杀死所有子进程
+                try:
+                    children = process.children(recursive=True)
+                    for child in children:
+                        self.get_logger().info(f"杀死子进程，PID={child.pid}")
+                        child.kill()
+                        child.wait(timeout=2)
+                except Exception as e:
+                    self.get_logger().warn(f"杀死子进程失败: {e}")
+                
+                # 然后杀死主进程
+                process.kill()
+                process.wait(timeout=5)
+                self.get_logger().info(f"search_fire_node进程PID={pid}已停止")
+                
+            except psutil.TimeoutExpired:
+                self.get_logger().warn(f"search_fire_node进程PID={pid}停止超时，尝试强制杀死")
+                try:
+                    # 最后的强制手段
+                    import os
+                    import signal
+                    os.kill(pid, signal.SIGKILL)
+                except Exception as e:
+                    self.get_logger().error(f"强制杀死search_fire_node进程PID={pid}失败: {e}")
+            except psutil.NoSuchProcess:
+                self.get_logger().info(f"search_fire_node进程PID={pid}已不存在")
+            except Exception as e:
+                self.get_logger().error(f"停止search_fire_node进程PID={pid}失败: {e}")
+        
+        if not killed_pids:
+            self.get_logger().info("search_fire_node未运行，无需停止")
+
+    def restart_search_fire_node(self):
+        """重启search_fire_node节点"""
+        self.get_logger().info("开始重启search_fire_node节点...")
+        self.stop_search_fire_node()
+        # 等待一段时间确保所有进程完全退出
+        self.get_logger().info("等待search_fire_node进程完全退出...")
+        time.sleep(2)
+        # 再次检查是否还有残留进程
+        remaining_pids = []
+        search_keywords = ['search_fire_node', 'auto_drive']
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                for keyword in search_keywords:
+                    if keyword in cmdline_str and 'search_fire' in cmdline_str:
+                        remaining_pids.append(proc.info['pid'])
+                        break
+            except Exception:
+                continue
+        
+        if remaining_pids:
+            self.get_logger().warn(f"仍有search_fire_node残留进程: {remaining_pids}")
+            for pid in remaining_pids:
+                try:
+                    import os
+                    import signal
+                    os.kill(pid, signal.SIGKILL)
+                    self.get_logger().info(f"强制杀死search_fire_node残留进程: {pid}")
+                except Exception as e:
+                    self.get_logger().error(f"杀死search_fire_node残留进程{pid}失败: {e}")
+        
+        self.get_logger().info("启动search_fire_node节点...")
+        self.start_search_fire_node()
+
     def process_boss_frame(self, frame):
         """
         处理BOSS状态数据帧
         协议格式：帧头(AA BB) + 数据(2字节) + 帧尾(CC DD)
-        数据含义：01 00 = 非BOSS模式，02 00 = BOSS模式
+        数据含义：01 00/02 00 = BOSS模式，03 00 = 非BOSS模式
         """
         if len(frame) != 6:
             self.get_logger().warn(f"帧长度错误，期望6字节，实际{len(frame)}字节")
             return
-        
         try:
-            # 生成16进制字符串用于日志
             hex_str = ' '.join([f'{b:02X}' for b in frame])
             self.get_logger().info(f"接收到帧: {hex_str}")
-            
-            # 验证帧头和帧尾
             if frame[0] != 0xAA or frame[1] != 0xBB:
                 self.get_logger().warn(f"帧头错误: {frame[0]:02X} {frame[1]:02X}")
                 return
-                
             if frame[4] != 0xCC or frame[5] != 0xDD:
                 self.get_logger().warn(f"帧尾错误: {frame[4]:02X} {frame[5]:02X}")
                 return
-            
-            # 提取数据部分（第2、3字节，索引为2、3）
             data_byte1 = frame[2]
             data_byte2 = frame[3]
-            
             self.get_logger().info(f"数据部分: {data_byte1:02X} {data_byte2:02X}")
-            
-            # 创建并发布BOSS状态消息
             boss_msg = Int32()
-            
-            # 根据协议解析BOSS状态
-            if data_byte1 == 0x01 and data_byte2 == 0x00:
-                boss_msg.data = 0  # 非BOSS模式
-                self.get_logger().info("BOSS状态: 非BOSS模式 (01 00)")
-            elif data_byte1 == 0x02 and data_byte2 == 0x00:
-                boss_msg.data = 1  # BOSS模式
-                self.get_logger().info("BOSS状态: BOSS模式 (02 00)")
+            # 新协议逻辑
+            if (data_byte1, data_byte2) in [(0x01, 0x00), (0x02, 0x00)]:
+                boss_msg.data = 1
+                self.get_logger().info("BOSS模式")
+                if (data_byte1, data_byte2) == (0x01, 0x00):
+                    # 建图节点管理
+                    if self.is_process_running('mapping.launch.py'):
+                        self.get_logger().info("建图节点已运行，重启...")
+                        self.restart_mapping_node()
+                    else:
+                        self.get_logger().info("建图节点未运行，启动...")
+                        self.start_mapping_node()
+            elif (data_byte1, data_byte2) == (0x03, 0x00):
+                boss_msg.data = 0
+                self.get_logger().info("非BOSS模式")
+                # search_fire_node管理
+                if self.is_process_running('search_fire_node'):
+                    self.get_logger().info("search_fire_node已运行，停止...")
+                    self.stop_search_fire_node()
+                else:
+                    self.get_logger().info("search_fire_node未运行，启动...")
+                    self.start_search_fire_node()
             else:
-                boss_msg.data = -1  # 未知状态
-                self.get_logger().warn(f"BOSS状态: 未知状态 ({data_byte1:02X} {data_byte2:02X})")
-            
-            # 发布状态
+                boss_msg.data = -1
+                self.get_logger().warn(f"未知状态 ({data_byte1:02X} {data_byte2:02X})")
             self.boss_publisher.publish(boss_msg)
-                
         except Exception as e:
             self.get_logger().error(f"处理数据帧失败: {e}")
     
