@@ -3,7 +3,7 @@
 	BuildStamp="20250909-0118-Experimental"
 	Name="ubuntu"
 	Generator="ctest-3.22.1"
-	CompilerName="/usr/bin/aarch64-linux-gnu-g++"
+	CompilerName="/usr/bin/c++"
 	CompilerVersion="11.4.0"
 	OSName="Linux"
 	Hostname="ubuntu"
@@ -24,11 +24,11 @@
 	ProcessorClockFrequency="0"
 	>
 	<Testing>
-		<StartDateTime>Sep 09 10:47 CST</StartDateTime>
-		<StartTestTime>1757386038</StartTestTime>
+		<StartDateTime>Sep 09 11:20 CST</StartDateTime>
+		<StartTestTime>1757388030</StartTestTime>
 		<TestList/>
-		<EndDateTime>Sep 09 10:47 CST</EndDateTime>
-		<EndTestTime>1757386038</EndTestTime>
+		<EndDateTime>Sep 09 11:20 CST</EndDateTime>
+		<EndTestTime>1757388030</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

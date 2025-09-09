@@ -73,15 +73,15 @@ CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o: CMakeFiles
 CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o: /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp
 CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o: CMakeFiles/temperature_publisher.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bestway/bestway_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o"
-	/usr/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o -MF CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o.d -o CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o -c /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o -MF CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o.d -o CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o -c /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp
 
 CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.i"
-	/usr/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp > CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp > CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.i
 
 CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.s"
-	/usr/bin/aarch64-linux-gnu-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp -o CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/bestway/bestway_ws/src/temperature_publisher/src/temperature_publisher.cpp -o CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.s
 
 # Object files for target temperature_publisher
 temperature_publisher_OBJECTS = \
