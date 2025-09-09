@@ -72,11 +72,11 @@ class SbusControlNode(Node):
 
         # 初始化串口
         self.channels = [
-            1002, 1002, 1002, 1002, 1002, 1002, 282, 1722,
+            1002, 1002, 1002, 1002, 1002, 1002, 282, 282,
             282, 282, 1002, 1002, 300, 300, 300, 300
         ]
         self.default_channels = [
-            1002, 1002, 1002, 1002, 1002, 1002, 282, 1722,
+            1002, 1002, 1002, 1002, 1002, 1002, 282, 282,
             282, 282, 1002, 1002, 300, 300, 300, 300
         ]
         self.serial_port = serial.Serial(
@@ -169,26 +169,15 @@ class SbusControlNode(Node):
         发送 SBUS 数据帧
         """
         if self.BOSS is True:
-            # 读取CH341USB1的数据并转发
+            # 读取CH341USB2的数据并直接转发
             if self.sbus_in.in_waiting >= 35:
                 # 读取前清空输入缓冲区，只处理最新一帧
                 while self.sbus_in.in_waiting >= 35:
                     data = self.sbus_in.read(35)
                 if 'data' in locals():
-                    channels, flag, xor = parse_sbus_frame(data)
-                    if channels is not None:
-                        # 只映射1,2,3,4,11,12通道
-                        for idx in [0, 1, 2, 3, 10, 11]:
-                            channels[idx] = map_channel(channels[idx])
-                        # 处理第8通道（索引7）
-                        if channels[7] == 1723:
-                            channels[7] = 1722
-                        # 其余通道保持不变
-                        self.get_logger().info(f"SBUS 16通道数据: {channels}, flag: {flag:02X}, xor: {xor:02X}")
-                        frame = create_sbus_frame(channels, flag)
-                        self.serial_port.write(frame)
-                    else:
-                        self.get_logger().warn("SBUS帧校验失败或格式错误")
+                    # 直接转发原始数据，不做任何解析和映射
+                    self.serial_port.write(data)
+                    self.get_logger().info(f"直接转发SBUS数据: {data.hex().upper()}")
         else:
             frame = create_sbus_frame(self.channels)
             self.serial_port.write(frame)

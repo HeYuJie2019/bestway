@@ -7,7 +7,7 @@ import threading
 from datetime import datetime
 
 class SerialDataReader:
-    def __init__(self, port='/dev/ttyTHS1', baudrate=115200):
+    def __init__(self, port='/dev/ttyTHS1', baudrate=921600):
         self.port = port
         self.baudrate = baudrate
         self.serial_port = None
@@ -91,7 +91,7 @@ class SerialDataReader:
         
         print(f"[{timestamp}] 接收数据 ({len(data)} 字节):")
         print(f"  HEX: {hex_str}")
-        print(f"  ASCII: {ascii_str}")
+        # print(f"  ASCII: {ascii_str}")
         print("-" * 60)
     
     def process_coordinate_data(self, frame):

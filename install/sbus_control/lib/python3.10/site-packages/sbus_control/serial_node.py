@@ -13,7 +13,9 @@ class SerialNode(Node):
         super().__init__('serial_node')
         
         # 声明参数
-        self.declare_parameter('port', '/dev/ttyTHS1')
+        # self.declare_parameter('port', '/dev/ttyTHS1')
+        # self.declare_parameter('port', '/dev/ttyCH341USB1')
+        self.declare_parameter('port', '/dev/ttyCH9344USB0')
         self.declare_parameter('baudrate', 115200)
         self.declare_parameter('timeout', 1.0)
         
@@ -53,7 +55,7 @@ class SerialNode(Node):
         self.last_odometry_time = None
         
         # 超时时间（秒）
-        self.odometry_timeout = 0.2
+        self.odometry_timeout = 0.3
         
         # 订阅 /Odometry 话题
         self.odom_subscription = self.create_subscription(
@@ -179,77 +181,88 @@ class SerialNode(Node):
     
     def parse_frames(self, data):
         """
-        解析数据帧：帧头(0xAA55) + 数据 + 帧尾(0x0D0A)
+        解析数据帧：帧头(0xAABB) + 数据(2字节) + 帧尾(0xCCDD)
+        总长度：6字节
         """
         frames = []
         buffer = data
         
-        while len(buffer) >= 4:  # 至少需要帧头+帧尾的长度
-            # 查找帧头 0xAA55
+        while len(buffer) >= 6:  # 完整帧长度为6字节
+            # 查找帧头 0xAABB
             header_pos = -1
-            for i in range(len(buffer) - 1):
-                if buffer[i] == 0xAA and buffer[i + 1] == 0x55:
+            for i in range(len(buffer) - 5):  # 确保有足够空间容纳完整帧
+                if buffer[i] == 0xAA and buffer[i + 1] == 0xBB:
                     header_pos = i
                     break
             
             if header_pos == -1:
                 break  # 没有找到帧头
             
-            # 查找帧尾 0x0D0A
-            tail_pos = -1
-            for i in range(header_pos + 2, len(buffer) - 1):
-                if buffer[i] == 0x0D and buffer[i + 1] == 0x0A:
-                    tail_pos = i
-                    break
+            # 检查是否有完整的6字节帧
+            if header_pos + 6 > len(buffer):
+                break  # 数据不够一个完整帧
             
-            if tail_pos == -1:
-                break  # 没有找到帧尾
-            
-            # 提取完整帧（包括帧头和帧尾）
-            frame_data = buffer[header_pos:tail_pos + 2]
-            frames.append(frame_data)
-            
-            # 移除已处理的数据
-            buffer = buffer[tail_pos + 2:]
+            # 检查帧尾是否正确 0xCCDD
+            if (buffer[header_pos + 4] == 0xCC and 
+                buffer[header_pos + 5] == 0xDD):
+                # 提取完整帧（6字节）
+                frame_data = buffer[header_pos:header_pos + 6]
+                frames.append(frame_data)
+                
+                # 移除已处理的数据
+                buffer = buffer[header_pos + 6:]
+            else:
+                # 帧尾不正确，跳过当前帧头，继续查找
+                buffer = buffer[header_pos + 1:]
         
         return frames
     
     def process_boss_frame(self, frame):
         """
         处理BOSS状态数据帧
+        协议格式：帧头(AA BB) + 数据(2字节) + 帧尾(CC DD)
+        数据含义：01 00 = 非BOSS模式，02 00 = BOSS模式
         """
-        if len(frame) < 4:
+        if len(frame) != 6:
+            self.get_logger().warn(f"帧长度错误，期望6字节，实际{len(frame)}字节")
             return
         
         try:
-            # 提取数据部分（去掉帧头和帧尾）
-            data_part = frame[2:-2]
-            
             # 生成16进制字符串用于日志
             hex_str = ' '.join([f'{b:02X}' for b in frame])
             self.get_logger().info(f"接收到帧: {hex_str}")
             
-            # 如果数据部分只有1个字节，认为是BOSS状态
-            if len(data_part) == 1:
-                status_byte = data_part[0]
+            # 验证帧头和帧尾
+            if frame[0] != 0xAA or frame[1] != 0xBB:
+                self.get_logger().warn(f"帧头错误: {frame[0]:02X} {frame[1]:02X}")
+                return
                 
-                # 创建并发布BOSS状态消息
-                boss_msg = Int32()
-                
-                if status_byte == 1:
-                    boss_msg.data = 0  # 非BOSS模式
-                    self.get_logger().info("BOSS状态: 非BOSS模式")
-                elif status_byte == 2:
-                    boss_msg.data = 1  # BOSS模式
-                    self.get_logger().info("BOSS状态: BOSS模式")
-                else:
-                    boss_msg.data = -1  # 未知状态
-                    self.get_logger().info(f"BOSS状态: 未知 ({status_byte})")
-                
-                # 发布状态
-                self.boss_publisher.publish(boss_msg)
+            if frame[4] != 0xCC or frame[5] != 0xDD:
+                self.get_logger().warn(f"帧尾错误: {frame[4]:02X} {frame[5]:02X}")
+                return
+            
+            # 提取数据部分（第2、3字节，索引为2、3）
+            data_byte1 = frame[2]
+            data_byte2 = frame[3]
+            
+            self.get_logger().info(f"数据部分: {data_byte1:02X} {data_byte2:02X}")
+            
+            # 创建并发布BOSS状态消息
+            boss_msg = Int32()
+            
+            # 根据协议解析BOSS状态
+            if data_byte1 == 0x01 and data_byte2 == 0x00:
+                boss_msg.data = 0  # 非BOSS模式
+                self.get_logger().info("BOSS状态: 非BOSS模式 (01 00)")
+            elif data_byte1 == 0x02 and data_byte2 == 0x00:
+                boss_msg.data = 1  # BOSS模式
+                self.get_logger().info("BOSS状态: BOSS模式 (02 00)")
             else:
-                self.get_logger().info(f"接收到其他数据: {data_part.hex()}")
+                boss_msg.data = -1  # 未知状态
+                self.get_logger().warn(f"BOSS状态: 未知状态 ({data_byte1:02X} {data_byte2:02X})")
+            
+            # 发布状态
+            self.boss_publisher.publish(boss_msg)
                 
         except Exception as e:
             self.get_logger().error(f"处理数据帧失败: {e}")

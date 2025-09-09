@@ -67,7 +67,7 @@ private:
     int login_device()
     {
         SV_NET_DEV_USER_LOGIN_INFO login_info = {0};
-        std::strcpy(login_info.sDeviceAddress, "192.168.1.64");
+        std::strcpy(login_info.sDeviceAddress, "192.168.144.64");
         login_info.wPort = 8000;
         std::strcpy(login_info.sUserName, "admin");
         std::strcpy(login_info.sPassword, "ipc12345");
