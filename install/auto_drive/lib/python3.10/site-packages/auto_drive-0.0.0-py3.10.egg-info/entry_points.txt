@@ -1,5 +1,7 @@
 [console_scripts]
 auto_drive_node = auto_drive.auto_drive_node:main
+navigation_controller = auto_drive.navigation_controller:main
+pointcloud_to_2d_map = auto_drive.pointcloud_to_2d_map:main
 pose_printer_node = auto_drive.pose_printer:main
 search_fire_node = auto_drive.search_fire:main
 

@@ -13,7 +13,7 @@ import struct
 from datetime import datetime
 
 class RadarDistanceMonitor:
-    def __init__(self, port='/dev/ttyCH341USB1', baudrate=921600):
+    def __init__(self, port='/dev/ttySBUS_USB', baudrate=921600):
         self.port = port
         self.baudrate = baudrate
         self.serial_conn = None

@@ -1,0 +1,37 @@
+[6.339s] Invoking command in '/home/bestway/bestway_ws/src/lidar_distance': PYTHONPATH=/home/bestway/bestway_ws/build/lidar_distance/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/lidar_distance build --build-base /home/bestway/bestway_ws/build/lidar_distance/build install --record /home/bestway/bestway_ws/build/lidar_distance/install.log --single-version-externally-managed install_data
+[10.128s] running egg_info
+[10.143s] creating ../../build/lidar_distance/lidar_distance.egg-info
+[10.144s] writing ../../build/lidar_distance/lidar_distance.egg-info/PKG-INFO
+[10.145s] writing dependency_links to ../../build/lidar_distance/lidar_distance.egg-info/dependency_links.txt
+[10.145s] writing entry points to ../../build/lidar_distance/lidar_distance.egg-info/entry_points.txt
+[10.146s] writing requirements to ../../build/lidar_distance/lidar_distance.egg-info/requires.txt
+[10.146s] writing top-level names to ../../build/lidar_distance/lidar_distance.egg-info/top_level.txt
+[10.146s] writing manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'
+[10.173s] reading manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'
+[10.176s] writing manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'
+[10.181s] running build
+[10.181s] running build_py
+[10.185s] creating /home/bestway/bestway_ws/build/lidar_distance/build
+[10.186s] creating /home/bestway/bestway_ws/build/lidar_distance/build/lib
+[10.186s] creating /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance
+[10.186s] copying lidar_distance/lidar_distance.py -> /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance
+[10.187s] copying lidar_distance/__init__.py -> /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance
+[10.187s] running install
+[10.187s] running install_lib
+[10.209s] creating /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance
+[10.213s] copying /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance/lidar_distance.py -> /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance
+[10.219s] copying /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance/__init__.py -> /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance
+[10.220s] byte-compiling /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance/lidar_distance.py to lidar_distance.cpython-310.pyc
+[10.220s] byte-compiling /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance/__init__.py to __init__.cpython-310.pyc
+[10.220s] running install_data
+[10.220s] creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index
+[10.221s] creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index
+[10.221s] creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index/packages
+[10.221s] copying resource/lidar_distance -> /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index/packages
+[10.221s] copying package.xml -> /home/bestway/bestway_ws/install/lidar_distance/share/lidar_distance
+[10.223s] running install_egg_info
+[10.236s] Copying ../../build/lidar_distance/lidar_distance.egg-info to /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance-0.0.0-py3.10.egg-info
+[10.239s] running install_scripts
+[10.420s] Installing lidar_distance script to /home/bestway/bestway_ws/install/lidar_distance/lib/lidar_distance
+[10.423s] writing list of installed files to '/home/bestway/bestway_ws/build/lidar_distance/install.log'
+[10.874s] Invoked command in '/home/bestway/bestway_ws/src/lidar_distance' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/lidar_distance/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/lidar_distance build --build-base /home/bestway/bestway_ws/build/lidar_distance/build install --record /home/bestway/bestway_ws/build/lidar_distance/install.log --single-version-externally-managed install_data

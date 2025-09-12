@@ -1,0 +1,13 @@
+# USB串口设备固定名称规则
+# 针对CH341 USB转串口芯片 (1a86:7523)
+
+# 为 ttyCH341USB0 创建固定的符号链接
+# 使用设备路径来区分同类型设备
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", ATTRS{devpath}=="2.4", SYMLINK+="ttyUSB_SBUS"
+
+# 为 ttyCH341USB1 创建固定的符号链接
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", ATTRS{devpath}=="2.1", SYMLINK+="ttySBUS_USB"
+
+# 备用规则：如果上面的规则不工作，可以使用这个更通用的规则
+# SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", KERNELS=="1-2.4:1.0", SYMLINK+="ttyUSB_SBUS"
+# SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", KERNELS=="1-2.1:1.0", SYMLINK+="ttySBUS_USB"

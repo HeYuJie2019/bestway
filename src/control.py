@@ -56,7 +56,7 @@ def send_sbus_frame(port, baudrate, channels):
 
 if __name__ == "__main__":
     # 示例用法
-    port = '/dev/ttyCH341USB0'  # 修改为你的串口端口
+    port = '/dev/ttyUSB_SBUS'  # 使用固定的USB设备名称
     baudrate = 115200
     channels = [1200] * 16  # 16 个通道值均为 1002 (0x03EA)
     channels[0] = 1002

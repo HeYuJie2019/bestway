@@ -1,0 +1,56 @@
+[7.226s] Invoking command in '/home/bestway/bestway_ws/src/auto_drive': PYTHONPATH=/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/auto_drive build --build-base /home/bestway/bestway_ws/build/auto_drive/build install --record /home/bestway/bestway_ws/build/auto_drive/install.log --single-version-externally-managed install_data
+[10.687s] running egg_info
+[10.701s] creating ../../build/auto_drive/auto_drive.egg-info
+[10.705s] writing ../../build/auto_drive/auto_drive.egg-info/PKG-INFO
+[10.709s] writing dependency_links to ../../build/auto_drive/auto_drive.egg-info/dependency_links.txt
+[10.712s] writing entry points to ../../build/auto_drive/auto_drive.egg-info/entry_points.txt
+[10.713s] writing requirements to ../../build/auto_drive/auto_drive.egg-info/requires.txt
+[10.713s] writing top-level names to ../../build/auto_drive/auto_drive.egg-info/top_level.txt
+[10.724s] writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[10.794s] reading manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[10.826s] writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[10.826s] running build
+[10.827s] running build_py
+[10.828s] creating /home/bestway/bestway_ws/build/auto_drive/build
+[10.828s] creating /home/bestway/bestway_ws/build/auto_drive/build/lib
+[10.832s] creating /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.833s] copying auto_drive/navigation_controller.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.833s] copying auto_drive/search_fire copy.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.844s] copying auto_drive/auto_drive_node.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.847s] copying auto_drive/pose_printer.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.849s] copying auto_drive/pointcloud_to_2d_map.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.852s] copying auto_drive/__init__.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.854s] copying auto_drive/search_fire.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive
+[10.867s] running install
+[10.873s] running install_lib
+[10.889s] creating /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.891s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/navigation_controller.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.901s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/search_fire copy.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.904s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/auto_drive_node.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.907s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/pose_printer.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.909s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/pointcloud_to_2d_map.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.913s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/__init__.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.914s] copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/search_fire.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive
+[10.929s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/navigation_controller.py to navigation_controller.cpython-310.pyc
+[11.074s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire copy.py to search_fire copy.cpython-310.pyc
+[11.129s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/auto_drive_node.py to auto_drive_node.cpython-310.pyc
+[11.182s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/pose_printer.py to pose_printer.cpython-310.pyc
+[11.183s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/pointcloud_to_2d_map.py to pointcloud_to_2d_map.cpython-310.pyc
+[11.209s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__init__.py to __init__.cpython-310.pyc
+[11.211s] byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire.py to search_fire.cpython-310.pyc
+[11.302s] running install_data
+[11.304s] creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index
+[11.304s] creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index
+[11.304s] creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index/packages
+[11.306s] copying resource/auto_drive -> /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index/packages
+[11.307s] copying package.xml -> /home/bestway/bestway_ws/install/auto_drive/share/auto_drive
+[11.309s] running install_egg_info
+[11.320s] Copying ../../build/auto_drive/auto_drive.egg-info to /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info
+[11.374s] running install_scripts
+[11.580s] Installing auto_drive_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[11.589s] Installing navigation_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[11.590s] Installing pointcloud_printer_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[11.593s] Installing pose_printer_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[11.597s] Installing search_fire_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[11.600s] writing list of installed files to '/home/bestway/bestway_ws/build/auto_drive/install.log'
+[13.575s] Invoked command in '/home/bestway/bestway_ws/src/auto_drive' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/auto_drive build --build-base /home/bestway/bestway_ws/build/auto_drive/build install --record /home/bestway/bestway_ws/build/auto_drive/install.log --single-version-externally-managed install_data

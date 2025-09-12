@@ -23,6 +23,8 @@ setup(
             'auto_drive_node = auto_drive.auto_drive_node:main',
             'search_fire_node = auto_drive.search_fire:main',
             'pose_printer_node = auto_drive.pose_printer:main',
+            'pointcloud_to_2d_map = auto_drive.pointcloud_to_2d_map:main',
+            'navigation_controller = auto_drive.navigation_controller:main',
         ],
     },
 )

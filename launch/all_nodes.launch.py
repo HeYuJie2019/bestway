@@ -33,4 +33,23 @@ def generate_launch_description():
             name='lidar_distance',
             output='screen'
         ),
+        ############
+        # Node(
+        #     package='auto_drive',
+        #     executable='pointcloud_to_2d_map',
+        #     name='pointcloud_to_2d_map',
+        #     output='screen'
+        # ),
+        # Node(
+        #     package='auto_drive',
+        #     executable='navigation_controller',
+        #     name='navigation_controller',
+        #     output='screen'
+        # ),
+        # Node(
+        #     package='move_pos',
+        #     executable='move_pos_topic_node_v3',
+        #     name='move_pos_topic_node_v3',
+        #     output='screen'
+        # ),
     ])

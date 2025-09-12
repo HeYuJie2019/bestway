@@ -463,9 +463,6 @@ temperature_publisher_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 temperature_publisher_SOURCE_DIR:STATIC=/home/bestway/bestway_ws/src/temperature_publisher
 
-//The directory containing a CMake configuration file for temperature_service.
-temperature_service_DIR:PATH=temperature_service_DIR-NOTFOUND
-
 //The directory containing a CMake configuration file for tracetools.
 tracetools_DIR:PATH=/opt/ros/humble/share/tracetools/cmake
 

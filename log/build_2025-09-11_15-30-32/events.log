@@ -1,0 +1,708 @@
+[0.000000] (-) TimerEvent: {}
+[0.003062] (auto_drive) JobQueued: {'identifier': 'auto_drive', 'dependencies': OrderedDict()}
+[0.005115] (lidar_distance) JobQueued: {'identifier': 'lidar_distance', 'dependencies': OrderedDict()}
+[0.005306] (move_pos) JobQueued: {'identifier': 'move_pos', 'dependencies': OrderedDict()}
+[0.005380] (sbus_control) JobQueued: {'identifier': 'sbus_control', 'dependencies': OrderedDict()}
+[0.005478] (temperature_publisher) JobQueued: {'identifier': 'temperature_publisher', 'dependencies': OrderedDict()}
+[0.005528] (yuntai_control) JobQueued: {'identifier': 'yuntai_control', 'dependencies': OrderedDict()}
+[0.005570] (auto_drive) JobStarted: {'identifier': 'auto_drive'}
+[0.051472] (lidar_distance) JobStarted: {'identifier': 'lidar_distance'}
+[0.090349] (move_pos) JobStarted: {'identifier': 'move_pos'}
+[0.099329] (-) TimerEvent: {}
+[0.142060] (sbus_control) JobStarted: {'identifier': 'sbus_control'}
+[0.199484] (-) TimerEvent: {}
+[0.300133] (-) TimerEvent: {}
+[0.400782] (-) TimerEvent: {}
+[0.501806] (-) TimerEvent: {}
+[0.602441] (-) TimerEvent: {}
+[0.703090] (-) TimerEvent: {}
+[0.803738] (-) TimerEvent: {}
+[0.904344] (-) TimerEvent: {}
+[1.005138] (-) TimerEvent: {}
+[1.106335] (-) TimerEvent: {}
+[1.206977] (-) TimerEvent: {}
+[1.307623] (-) TimerEvent: {}
+[1.408274] (-) TimerEvent: {}
+[1.509252] (-) TimerEvent: {}
+[1.609939] (-) TimerEvent: {}
+[1.711108] (-) TimerEvent: {}
+[1.812076] (-) TimerEvent: {}
+[1.913998] (-) TimerEvent: {}
+[2.014853] (-) TimerEvent: {}
+[2.115498] (-) TimerEvent: {}
+[2.216124] (-) TimerEvent: {}
+[2.316777] (-) TimerEvent: {}
+[2.417420] (-) TimerEvent: {}
+[2.518070] (-) TimerEvent: {}
+[2.618744] (-) TimerEvent: {}
+[2.719465] (-) TimerEvent: {}
+[2.820681] (-) TimerEvent: {}
+[2.921305] (-) TimerEvent: {}
+[3.021967] (-) TimerEvent: {}
+[3.122967] (-) TimerEvent: {}
+[3.223589] (-) TimerEvent: {}
+[3.324221] (-) TimerEvent: {}
+[3.424849] (-) TimerEvent: {}
+[3.525485] (-) TimerEvent: {}
+[3.626411] (-) TimerEvent: {}
+[3.727038] (-) TimerEvent: {}
+[3.827668] (-) TimerEvent: {}
+[3.928287] (-) TimerEvent: {}
+[4.028955] (-) TimerEvent: {}
+[4.129626] (-) TimerEvent: {}
+[4.230309] (-) TimerEvent: {}
+[4.330926] (-) TimerEvent: {}
+[4.431567] (-) TimerEvent: {}
+[4.532418] (-) TimerEvent: {}
+[4.633359] (-) TimerEvent: {}
+[4.734248] (-) TimerEvent: {}
+[4.835218] (-) TimerEvent: {}
+[4.936097] (-) TimerEvent: {}
+[5.036997] (-) TimerEvent: {}
+[5.137908] (-) TimerEvent: {}
+[5.238794] (-) TimerEvent: {}
+[5.339782] (-) TimerEvent: {}
+[5.441314] (-) TimerEvent: {}
+[5.542909] (-) TimerEvent: {}
+[5.645127] (-) TimerEvent: {}
+[5.748709] (-) TimerEvent: {}
+[5.850992] (-) TimerEvent: {}
+[5.952422] (-) TimerEvent: {}
+[6.054079] (-) TimerEvent: {}
+[6.154753] (-) TimerEvent: {}
+[6.255425] (-) TimerEvent: {}
+[6.356074] (-) TimerEvent: {}
+[6.389607] (lidar_distance) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/lidar_distance', 'build', '--build-base', '/home/bestway/bestway_ws/build/lidar_distance/build', 'install', '--record', '/home/bestway/bestway_ws/build/lidar_distance/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bestway/bestway_ws/src/lidar_distance', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'bestway', 'SSH_CLIENT': '192.168.126.18 48442 22', 'LC_TIME': 'zh_CN.UTF-8', 'XDG_SESSION_TYPE': 'tty', 'GIT_ASKPASS': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/', 'BROWSER': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/bestway', 'TERM_PROGRAM_VERSION': '1.103.2', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js', 'LC_MONETARY': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_NODE': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node', 'SSL_CERT_FILE': '/usr/lib/ssl/certs/ca-certificates.crt', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'COLCON_PREFIX_PATH': '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'bestway', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '17', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand', 'LC_ADDRESS': 'zh_CN.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSL_CERT_DIR': '/usr/lib/ssl/certs', 'DISPLAY': 'localhost:20.0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt', 'LANG': 'zh_CN.UTF-8', 'LC_TELEPHONE': 'zh_CN.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-964b17549a.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/run/user/1000/vscode-ssh-auth-sock-162614507', 'AMENT_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'zh_CN.UTF-8', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'zh_CN.UTF-8', 'LC_IDENTIFICATION': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/bestway/bestway_ws/build/lidar_distance', 'SSH_CONNECTION': '192.168.126.18 48442 192.168.126.43 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bestway/bestway_ws/build/lidar_distance/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'zh_CN.UTF-8', 'LC_PAPER': 'zh_CN.UTF-8', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od'}, 'shell': False}
+[6.456220] (-) TimerEvent: {}
+[6.558880] (-) TimerEvent: {}
+[6.643433] (sbus_control) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/sbus_control', 'build', '--build-base', '/home/bestway/bestway_ws/build/sbus_control/build', 'install', '--record', '/home/bestway/bestway_ws/build/sbus_control/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bestway/bestway_ws/src/sbus_control', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'bestway', 'SSH_CLIENT': '192.168.126.18 48442 22', 'LC_TIME': 'zh_CN.UTF-8', 'XDG_SESSION_TYPE': 'tty', 'GIT_ASKPASS': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/', 'BROWSER': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/bestway', 'TERM_PROGRAM_VERSION': '1.103.2', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js', 'LC_MONETARY': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_NODE': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node', 'SSL_CERT_FILE': '/usr/lib/ssl/certs/ca-certificates.crt', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'COLCON_PREFIX_PATH': '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'bestway', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '17', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand', 'LC_ADDRESS': 'zh_CN.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSL_CERT_DIR': '/usr/lib/ssl/certs', 'DISPLAY': 'localhost:20.0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt', 'LANG': 'zh_CN.UTF-8', 'LC_TELEPHONE': 'zh_CN.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-964b17549a.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/run/user/1000/vscode-ssh-auth-sock-162614507', 'AMENT_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'zh_CN.UTF-8', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'zh_CN.UTF-8', 'LC_IDENTIFICATION': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/bestway/bestway_ws/build/sbus_control', 'SSH_CONNECTION': '192.168.126.18 48442 192.168.126.43 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bestway/bestway_ws/build/sbus_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'zh_CN.UTF-8', 'LC_PAPER': 'zh_CN.UTF-8', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od'}, 'shell': False}
+[6.659019] (-) TimerEvent: {}
+[6.759709] (-) TimerEvent: {}
+[6.860406] (-) TimerEvent: {}
+[6.963791] (-) TimerEvent: {}
+[7.066287] (-) TimerEvent: {}
+[7.167822] (-) TimerEvent: {}
+[7.230210] (auto_drive) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/auto_drive', 'build', '--build-base', '/home/bestway/bestway_ws/build/auto_drive/build', 'install', '--record', '/home/bestway/bestway_ws/build/auto_drive/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bestway/bestway_ws/src/auto_drive', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'bestway', 'SSH_CLIENT': '192.168.126.18 48442 22', 'LC_TIME': 'zh_CN.UTF-8', 'XDG_SESSION_TYPE': 'tty', 'GIT_ASKPASS': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/', 'BROWSER': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/bestway', 'TERM_PROGRAM_VERSION': '1.103.2', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js', 'LC_MONETARY': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_NODE': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node', 'SSL_CERT_FILE': '/usr/lib/ssl/certs/ca-certificates.crt', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'COLCON_PREFIX_PATH': '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'bestway', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '17', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand', 'LC_ADDRESS': 'zh_CN.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSL_CERT_DIR': '/usr/lib/ssl/certs', 'DISPLAY': 'localhost:20.0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt', 'LANG': 'zh_CN.UTF-8', 'LC_TELEPHONE': 'zh_CN.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-964b17549a.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/run/user/1000/vscode-ssh-auth-sock-162614507', 'AMENT_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'zh_CN.UTF-8', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'zh_CN.UTF-8', 'LC_IDENTIFICATION': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/bestway/bestway_ws/build/auto_drive', 'SSH_CONNECTION': '192.168.126.18 48442 192.168.126.43 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'zh_CN.UTF-8', 'LC_PAPER': 'zh_CN.UTF-8', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od'}, 'shell': False}
+[7.267910] (-) TimerEvent: {}
+[7.369325] (-) TimerEvent: {}
+[7.470737] (-) TimerEvent: {}
+[7.572213] (-) TimerEvent: {}
+[7.673601] (-) TimerEvent: {}
+[7.774981] (-) TimerEvent: {}
+[7.876369] (-) TimerEvent: {}
+[7.977783] (-) TimerEvent: {}
+[8.009352] (move_pos) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/move_pos', 'build', '--build-base', '/home/bestway/bestway_ws/build/move_pos/build', 'install', '--record', '/home/bestway/bestway_ws/build/move_pos/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bestway/bestway_ws/src/move_pos', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'bestway', 'SSH_CLIENT': '192.168.126.18 48442 22', 'LC_TIME': 'zh_CN.UTF-8', 'XDG_SESSION_TYPE': 'tty', 'GIT_ASKPASS': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/', 'BROWSER': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/bestway', 'TERM_PROGRAM_VERSION': '1.103.2', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js', 'LC_MONETARY': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_NODE': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node', 'SSL_CERT_FILE': '/usr/lib/ssl/certs/ca-certificates.crt', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'COLCON_PREFIX_PATH': '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'bestway', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '17', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand', 'LC_ADDRESS': 'zh_CN.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSL_CERT_DIR': '/usr/lib/ssl/certs', 'DISPLAY': 'localhost:20.0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt', 'LANG': 'zh_CN.UTF-8', 'LC_TELEPHONE': 'zh_CN.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-964b17549a.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/run/user/1000/vscode-ssh-auth-sock-162614507', 'AMENT_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'zh_CN.UTF-8', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'zh_CN.UTF-8', 'LC_IDENTIFICATION': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/bestway/bestway_ws/build/move_pos', 'SSH_CONNECTION': '192.168.126.18 48442 192.168.126.43 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bestway/bestway_ws/build/move_pos/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'zh_CN.UTF-8', 'LC_PAPER': 'zh_CN.UTF-8', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od'}, 'shell': False}
+[8.077998] (-) TimerEvent: {}
+[8.178945] (-) TimerEvent: {}
+[8.279853] (-) TimerEvent: {}
+[8.381688] (-) TimerEvent: {}
+[8.489189] (-) TimerEvent: {}
+[8.590862] (-) TimerEvent: {}
+[8.692400] (-) TimerEvent: {}
+[8.794823] (-) TimerEvent: {}
+[8.897761] (-) TimerEvent: {}
+[8.999412] (-) TimerEvent: {}
+[9.101211] (-) TimerEvent: {}
+[9.202743] (-) TimerEvent: {}
+[9.311895] (-) TimerEvent: {}
+[9.413421] (-) TimerEvent: {}
+[9.515479] (-) TimerEvent: {}
+[9.617610] (-) TimerEvent: {}
+[9.718788] (-) TimerEvent: {}
+[9.795261] (sbus_control) StdoutLine: {'line': b'running egg_info\n'}
+[9.803196] (sbus_control) StdoutLine: {'line': b'creating ../../build/sbus_control/sbus_control.egg-info\n'}
+[9.803857] (sbus_control) StdoutLine: {'line': b'writing ../../build/sbus_control/sbus_control.egg-info/PKG-INFO\n'}
+[9.804549] (sbus_control) StdoutLine: {'line': b'writing dependency_links to ../../build/sbus_control/sbus_control.egg-info/dependency_links.txt\n'}
+[9.804896] (sbus_control) StdoutLine: {'line': b'writing entry points to ../../build/sbus_control/sbus_control.egg-info/entry_points.txt\n'}
+[9.805204] (sbus_control) StdoutLine: {'line': b'writing requirements to ../../build/sbus_control/sbus_control.egg-info/requires.txt\n'}
+[9.805486] (sbus_control) StdoutLine: {'line': b'writing top-level names to ../../build/sbus_control/sbus_control.egg-info/top_level.txt\n'}
+[9.806062] (sbus_control) StdoutLine: {'line': b"writing manifest file '../../build/sbus_control/sbus_control.egg-info/SOURCES.txt'\n"}
+[9.818944] (-) TimerEvent: {}
+[9.826631] (sbus_control) StdoutLine: {'line': b"reading manifest file '../../build/sbus_control/sbus_control.egg-info/SOURCES.txt'\n"}
+[9.828532] (sbus_control) StdoutLine: {'line': b"writing manifest file '../../build/sbus_control/sbus_control.egg-info/SOURCES.txt'\n"}
+[9.828985] (sbus_control) StdoutLine: {'line': b'running build\n'}
+[9.829215] (sbus_control) StdoutLine: {'line': b'running build_py\n'}
+[9.829480] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/sbus_control/build\n'}
+[9.829708] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/sbus_control/build/lib\n'}
+[9.829998] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control\n'}
+[9.830222] (sbus_control) StdoutLine: {'line': b'copying sbus_control/serial_node.py -> /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control\n'}
+[9.830480] (sbus_control) StdoutLine: {'line': b'copying sbus_control/keyboard_control_node.py -> /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control\n'}
+[9.830690] (sbus_control) StdoutLine: {'line': b'copying sbus_control/sbus_control_node.py -> /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control\n'}
+[9.831094] (sbus_control) StdoutLine: {'line': b'copying sbus_control/__init__.py -> /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control\n'}
+[9.831397] (sbus_control) StdoutLine: {'line': b'running install\n'}
+[9.832204] (sbus_control) StdoutLine: {'line': b'running install_lib\n'}
+[9.847647] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control\n'}
+[9.848116] (sbus_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control/serial_node.py -> /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control\n'}
+[9.848339] (sbus_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control/keyboard_control_node.py -> /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control\n'}
+[9.848711] (sbus_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control/sbus_control_node.py -> /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control\n'}
+[9.848951] (sbus_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/sbus_control/build/lib/sbus_control/__init__.py -> /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control\n'}
+[9.849776] (sbus_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/serial_node.py to serial_node.cpython-310.pyc\n'}
+[9.881421] (sbus_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/keyboard_control_node.py to keyboard_control_node.cpython-310.pyc\n'}
+[9.891719] (sbus_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/sbus_control_node.py to sbus_control_node.cpython-310.pyc\n'}
+[9.891979] (sbus_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control/__init__.py to __init__.cpython-310.pyc\n'}
+[9.892188] (sbus_control) StdoutLine: {'line': b'running install_data\n'}
+[9.892391] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/sbus_control/share/ament_index\n'}
+[9.892610] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/sbus_control/share/ament_index/resource_index\n'}
+[9.892817] (sbus_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/sbus_control/share/ament_index/resource_index/packages\n'}
+[9.901147] (sbus_control) StdoutLine: {'line': b'copying resource/sbus_control -> /home/bestway/bestway_ws/install/sbus_control/share/ament_index/resource_index/packages\n'}
+[9.901824] (sbus_control) StdoutLine: {'line': b'copying package.xml -> /home/bestway/bestway_ws/install/sbus_control/share/sbus_control\n'}
+[9.902101] (sbus_control) StdoutLine: {'line': b'running install_egg_info\n'}
+[9.906656] (sbus_control) StdoutLine: {'line': b'Copying ../../build/sbus_control/sbus_control.egg-info to /home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages/sbus_control-0.0.0-py3.10.egg-info\n'}
+[9.918847] (sbus_control) StdoutLine: {'line': b'running install_scripts\n'}
+[9.919329] (-) TimerEvent: {}
+[10.019946] (-) TimerEvent: {}
+[10.110323] (sbus_control) StdoutLine: {'line': b'Installing keyboard_control_node script to /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control\n'}
+[10.111611] (sbus_control) StdoutLine: {'line': b'Installing sbus_control_node script to /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control\n'}
+[10.112388] (sbus_control) StdoutLine: {'line': b'Installing serial_node script to /home/bestway/bestway_ws/install/sbus_control/lib/sbus_control\n'}
+[10.112660] (sbus_control) StdoutLine: {'line': b"writing list of installed files to '/home/bestway/bestway_ws/build/sbus_control/install.log'\n"}
+[10.120483] (-) TimerEvent: {}
+[10.179472] (lidar_distance) StdoutLine: {'line': b'running egg_info\n'}
+[10.194086] (lidar_distance) StdoutLine: {'line': b'creating ../../build/lidar_distance/lidar_distance.egg-info\n'}
+[10.194868] (lidar_distance) StdoutLine: {'line': b'writing ../../build/lidar_distance/lidar_distance.egg-info/PKG-INFO\n'}
+[10.196158] (lidar_distance) StdoutLine: {'line': b'writing dependency_links to ../../build/lidar_distance/lidar_distance.egg-info/dependency_links.txt\n'}
+[10.196514] (lidar_distance) StdoutLine: {'line': b'writing entry points to ../../build/lidar_distance/lidar_distance.egg-info/entry_points.txt\n'}
+[10.197067] (lidar_distance) StdoutLine: {'line': b'writing requirements to ../../build/lidar_distance/lidar_distance.egg-info/requires.txt\n'}
+[10.197249] (lidar_distance) StdoutLine: {'line': b'writing top-level names to ../../build/lidar_distance/lidar_distance.egg-info/top_level.txt\n'}
+[10.197600] (lidar_distance) StdoutLine: {'line': b"writing manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'\n"}
+[10.221880] (-) TimerEvent: {}
+[10.224025] (lidar_distance) StdoutLine: {'line': b"reading manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'\n"}
+[10.226172] (lidar_distance) StdoutLine: {'line': b"writing manifest file '../../build/lidar_distance/lidar_distance.egg-info/SOURCES.txt'\n"}
+[10.232107] (lidar_distance) StdoutLine: {'line': b'running build\n'}
+[10.232652] (lidar_distance) StdoutLine: {'line': b'running build_py\n'}
+[10.236460] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/lidar_distance/build\n'}
+[10.237096] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/lidar_distance/build/lib\n'}
+[10.237329] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance\n'}
+[10.237809] (lidar_distance) StdoutLine: {'line': b'copying lidar_distance/lidar_distance.py -> /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance\n'}
+[10.237987] (lidar_distance) StdoutLine: {'line': b'copying lidar_distance/__init__.py -> /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance\n'}
+[10.238182] (lidar_distance) StdoutLine: {'line': b'running install\n'}
+[10.238371] (lidar_distance) StdoutLine: {'line': b'running install_lib\n'}
+[10.259877] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance\n'}
+[10.263881] (lidar_distance) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance/lidar_distance.py -> /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance\n'}
+[10.265937] (lidar_distance) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/lidar_distance/build/lib/lidar_distance/__init__.py -> /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance\n'}
+[10.271235] (lidar_distance) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance/lidar_distance.py to lidar_distance.cpython-310.pyc\n'}
+[10.271454] (lidar_distance) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance/__init__.py to __init__.cpython-310.pyc\n'}
+[10.271657] (lidar_distance) StdoutLine: {'line': b'running install_data\n'}
+[10.271818] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index\n'}
+[10.271967] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index\n'}
+[10.272156] (lidar_distance) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index/packages\n'}
+[10.272348] (lidar_distance) StdoutLine: {'line': b'copying resource/lidar_distance -> /home/bestway/bestway_ws/install/lidar_distance/share/ament_index/resource_index/packages\n'}
+[10.272532] (lidar_distance) StdoutLine: {'line': b'copying package.xml -> /home/bestway/bestway_ws/install/lidar_distance/share/lidar_distance\n'}
+[10.274404] (lidar_distance) StdoutLine: {'line': b'running install_egg_info\n'}
+[10.287486] (lidar_distance) StdoutLine: {'line': b'Copying ../../build/lidar_distance/lidar_distance.egg-info to /home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages/lidar_distance-0.0.0-py3.10.egg-info\n'}
+[10.289801] (lidar_distance) StdoutLine: {'line': b'running install_scripts\n'}
+[10.324103] (-) TimerEvent: {}
+[10.429218] (-) TimerEvent: {}
+[10.467802] (sbus_control) CommandEnded: {'returncode': 0}
+[10.471439] (lidar_distance) StdoutLine: {'line': b'Installing lidar_distance script to /home/bestway/bestway_ws/install/lidar_distance/lib/lidar_distance\n'}
+[10.473741] (lidar_distance) StdoutLine: {'line': b"writing list of installed files to '/home/bestway/bestway_ws/build/lidar_distance/install.log'\n"}
+[10.529570] (-) TimerEvent: {}
+[10.635590] (-) TimerEvent: {}
+[10.651414] (sbus_control) JobEnded: {'identifier': 'sbus_control', 'rc': 0}
+[10.654766] (temperature_publisher) JobStarted: {'identifier': 'temperature_publisher'}
+[10.672075] (move_pos) StdoutLine: {'line': b'running egg_info\n'}
+[10.676625] (move_pos) StdoutLine: {'line': b'creating ../../build/move_pos/move_pos.egg-info\n'}
+[10.680281] (move_pos) StdoutLine: {'line': b'writing ../../build/move_pos/move_pos.egg-info/PKG-INFO\n'}
+[10.681533] (move_pos) StdoutLine: {'line': b'writing dependency_links to ../../build/move_pos/move_pos.egg-info/dependency_links.txt\n'}
+[10.681930] (move_pos) StdoutLine: {'line': b'writing entry points to ../../build/move_pos/move_pos.egg-info/entry_points.txt\n'}
+[10.682504] (move_pos) StdoutLine: {'line': b'writing requirements to ../../build/move_pos/move_pos.egg-info/requires.txt\n'}
+[10.682749] (move_pos) StdoutLine: {'line': b'writing top-level names to ../../build/move_pos/move_pos.egg-info/top_level.txt\n'}
+[10.687174] (move_pos) StdoutLine: {'line': b"writing manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'\n"}
+[10.692143] (auto_drive) StdoutLine: {'line': b'running egg_info\n'}
+[10.702966] (move_pos) StdoutLine: {'line': b"reading manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'\n"}
+[10.706672] (auto_drive) StdoutLine: {'line': b'creating ../../build/auto_drive/auto_drive.egg-info\n'}
+[10.709184] (move_pos) StdoutLine: {'line': b"writing manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'\n"}
+[10.709956] (auto_drive) StdoutLine: {'line': b'writing ../../build/auto_drive/auto_drive.egg-info/PKG-INFO\n'}
+[10.712949] (move_pos) StdoutLine: {'line': b'running build\n'}
+[10.713290] (move_pos) StdoutLine: {'line': b'running build_py\n'}
+[10.713496] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/move_pos/build\n'}
+[10.714334] (auto_drive) StdoutLine: {'line': b'writing dependency_links to ../../build/auto_drive/auto_drive.egg-info/dependency_links.txt\n'}
+[10.716641] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/move_pos/build/lib\n'}
+[10.716956] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos\n'}
+[10.717142] (auto_drive) StdoutLine: {'line': b'writing entry points to ../../build/auto_drive/auto_drive.egg-info/entry_points.txt\n'}
+[10.718143] (auto_drive) StdoutLine: {'line': b'writing requirements to ../../build/auto_drive/auto_drive.egg-info/requires.txt\n'}
+[10.718584] (auto_drive) StdoutLine: {'line': b'writing top-level names to ../../build/auto_drive/auto_drive.egg-info/top_level.txt\n'}
+[10.718971] (move_pos) StdoutLine: {'line': b'copying move_pos/move_pos.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos\n'}
+[10.722897] (move_pos) StdoutLine: {'line': b'copying move_pos/move_pos_v2.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos\n'}
+[10.723259] (move_pos) StdoutLine: {'line': b'copying move_pos/move_pos_v3.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos\n'}
+[10.728890] (move_pos) StdoutLine: {'line': b'copying move_pos/__init__.py -> /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos\n'}
+[10.729363] (auto_drive) StdoutLine: {'line': b"writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'\n"}
+[10.730925] (move_pos) StdoutLine: {'line': b'running install\n'}
+[10.734296] (move_pos) StdoutLine: {'line': b'running install_lib\n'}
+[10.735641] (-) TimerEvent: {}
+[10.738618] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos\n'}
+[10.739011] (move_pos) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/move_pos.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos\n'}
+[10.739199] (move_pos) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/move_pos_v2.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos\n'}
+[10.746048] (move_pos) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/move_pos_v3.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos\n'}
+[10.746457] (move_pos) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/move_pos/build/lib/move_pos/__init__.py -> /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos\n'}
+[10.752361] (move_pos) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/move_pos.py to move_pos.cpython-310.pyc\n'}
+[10.782476] (move_pos) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/move_pos_v2.py to move_pos_v2.cpython-310.pyc\n'}
+[10.792346] (move_pos) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/move_pos_v3.py to move_pos_v3.cpython-310.pyc\n'}
+[10.799058] (auto_drive) StdoutLine: {'line': b"reading manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'\n"}
+[10.807043] (temperature_publisher) JobProgress: {'identifier': 'temperature_publisher', 'progress': 'cmake'}
+[10.809617] (temperature_publisher) Command: {'cmd': ['/usr/bin/cmake', '/home/bestway/bestway_ws/src/temperature_publisher', '-DCMAKE_INSTALL_PREFIX=/home/bestway/bestway_ws/install/temperature_publisher'], 'cwd': '/home/bestway/bestway_ws/build/temperature_publisher', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'bestway'), ('SSH_CLIENT', '192.168.126.18 48442 22'), ('LC_TIME', 'zh_CN.UTF-8'), ('XDG_SESSION_TYPE', 'tty'), ('GIT_ASKPASS', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/'), ('BROWSER', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/bestway'), ('TERM_PROGRAM_VERSION', '1.103.2'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock'), ('ROS_PYTHON_VERSION', '3'), ('VSCODE_GIT_ASKPASS_MAIN', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('PYDEVD_DISABLE_FILE_VALIDATION', '1'), ('BUNDLED_DEBUGPY_PATH', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('COLCON_PREFIX_PATH', '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'bestway'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '17'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('DISPLAY', 'localhost:20.0'), ('VSCODE_DEBUGPY_ADAPTER_ENDPOINTS', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt'), ('LANG', 'zh_CN.UTF-8'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-964b17549a.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/vscode-ssh-auth-sock-162614507'), ('AMENT_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/home/bestway/bestway_ws/build/temperature_publisher'), ('SSH_CONNECTION', '192.168.126.18 48442 192.168.126.43 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble')]), 'shell': False}
+[10.811944] (move_pos) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos/__init__.py to __init__.cpython-310.pyc\n'}
+[10.812762] (move_pos) StdoutLine: {'line': b'running install_data\n'}
+[10.813608] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/move_pos/share/ament_index\n'}
+[10.814007] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index\n'}
+[10.814182] (move_pos) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index/packages\n'}
+[10.814339] (move_pos) StdoutLine: {'line': b'copying resource/move_pos -> /home/bestway/bestway_ws/install/move_pos/share/ament_index/resource_index/packages\n'}
+[10.830852] (auto_drive) StdoutLine: {'line': b"writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'\n"}
+[10.831325] (auto_drive) StdoutLine: {'line': b'running build\n'}
+[10.832152] (auto_drive) StdoutLine: {'line': b'running build_py\n'}
+[10.832348] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/auto_drive/build\n'}
+[10.833338] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/auto_drive/build/lib\n'}
+[10.835246] (move_pos) StdoutLine: {'line': b'copying package.xml -> /home/bestway/bestway_ws/install/move_pos/share/move_pos\n'}
+[10.835648] (move_pos) StdoutLine: {'line': b'running install_egg_info\n'}
+[10.835883] (-) TimerEvent: {}
+[10.837568] (move_pos) StdoutLine: {'line': b'Copying ../../build/move_pos/move_pos.egg-info to /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info\n'}
+[10.837946] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.838141] (auto_drive) StdoutLine: {'line': b'copying auto_drive/navigation_controller.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.838297] (move_pos) StdoutLine: {'line': b'running install_scripts\n'}
+[10.838445] (auto_drive) StdoutLine: {'line': b'copying auto_drive/search_fire copy.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.848799] (auto_drive) StdoutLine: {'line': b'copying auto_drive/auto_drive_node.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.852506] (auto_drive) StdoutLine: {'line': b'copying auto_drive/pose_printer.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.854458] (auto_drive) StdoutLine: {'line': b'copying auto_drive/pointcloud_to_2d_map.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.857562] (auto_drive) StdoutLine: {'line': b'copying auto_drive/__init__.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.859674] (auto_drive) StdoutLine: {'line': b'copying auto_drive/search_fire.py -> /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive\n'}
+[10.872436] (auto_drive) StdoutLine: {'line': b'running install\n'}
+[10.878223] (auto_drive) StdoutLine: {'line': b'running install_lib\n'}
+[10.894739] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.896403] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/navigation_controller.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.906385] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/search_fire copy.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.909069] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/auto_drive_node.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.912667] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/pose_printer.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.914091] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/pointcloud_to_2d_map.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.918435] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/__init__.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.919783] (auto_drive) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/auto_drive/build/lib/auto_drive/search_fire.py -> /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive\n'}
+[10.924745] (lidar_distance) CommandEnded: {'returncode': 0}
+[10.934563] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/navigation_controller.py to navigation_controller.cpython-310.pyc\n'}
+[10.937278] (-) TimerEvent: {}
+[10.992844] (lidar_distance) JobEnded: {'identifier': 'lidar_distance', 'rc': 0}
+[10.997048] (yuntai_control) JobStarted: {'identifier': 'yuntai_control'}
+[11.028343] (move_pos) StdoutLine: {'line': b'Installing move_pos_topic_node script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos\n'}
+[11.029740] (move_pos) StdoutLine: {'line': b'Installing move_pos_topic_node_v2 script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos\n'}
+[11.033621] (move_pos) StdoutLine: {'line': b'Installing move_pos_topic_node_v3 script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos\n'}
+[11.034041] (move_pos) StdoutLine: {'line': b"writing list of installed files to '/home/bestway/bestway_ws/build/move_pos/install.log'\n"}
+[11.037427] (-) TimerEvent: {}
+[11.079089] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire copy.py to search_fire copy.cpython-310.pyc\n'}
+[11.133985] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/auto_drive_node.py to auto_drive_node.cpython-310.pyc\n'}
+[11.137605] (-) TimerEvent: {}
+[11.187441] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/pose_printer.py to pose_printer.cpython-310.pyc\n'}
+[11.188744] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/pointcloud_to_2d_map.py to pointcloud_to_2d_map.cpython-310.pyc\n'}
+[11.214096] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/__init__.py to __init__.cpython-310.pyc\n'}
+[11.216656] (auto_drive) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive/search_fire.py to search_fire.cpython-310.pyc\n'}
+[11.237842] (-) TimerEvent: {}
+[11.307521] (auto_drive) StdoutLine: {'line': b'running install_data\n'}
+[11.308977] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index\n'}
+[11.309289] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index\n'}
+[11.309469] (auto_drive) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index/packages\n'}
+[11.310909] (auto_drive) StdoutLine: {'line': b'copying resource/auto_drive -> /home/bestway/bestway_ws/install/auto_drive/share/ament_index/resource_index/packages\n'}
+[11.312050] (auto_drive) StdoutLine: {'line': b'copying package.xml -> /home/bestway/bestway_ws/install/auto_drive/share/auto_drive\n'}
+[11.314454] (auto_drive) StdoutLine: {'line': b'running install_egg_info\n'}
+[11.325032] (auto_drive) StdoutLine: {'line': b'Copying ../../build/auto_drive/auto_drive.egg-info to /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info\n'}
+[11.338021] (-) TimerEvent: {}
+[11.378831] (auto_drive) StdoutLine: {'line': b'running install_scripts\n'}
+[11.438180] (-) TimerEvent: {}
+[11.539099] (-) TimerEvent: {}
+[11.540880] (temperature_publisher) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[11.584838] (auto_drive) StdoutLine: {'line': b'Installing auto_drive_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive\n'}
+[11.594212] (auto_drive) StdoutLine: {'line': b'Installing navigation_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive\n'}
+[11.595370] (auto_drive) StdoutLine: {'line': b'Installing pointcloud_printer_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive\n'}
+[11.598757] (auto_drive) StdoutLine: {'line': b'Installing pose_printer_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive\n'}
+[11.601960] (auto_drive) StdoutLine: {'line': b'Installing search_fire_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive\n'}
+[11.605349] (auto_drive) StdoutLine: {'line': b"writing list of installed files to '/home/bestway/bestway_ws/build/auto_drive/install.log'\n"}
+[11.639262] (-) TimerEvent: {}
+[11.742499] (-) TimerEvent: {}
+[11.843178] (-) TimerEvent: {}
+[11.944723] (-) TimerEvent: {}
+[12.045376] (-) TimerEvent: {}
+[12.148450] (-) TimerEvent: {}
+[12.249786] (-) TimerEvent: {}
+[12.304887] (temperature_publisher) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[12.345873] (temperature_publisher) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[12.349937] (-) TimerEvent: {}
+[12.450647] (-) TimerEvent: {}
+[12.551307] (-) TimerEvent: {}
+[12.652007] (-) TimerEvent: {}
+[12.752730] (-) TimerEvent: {}
+[12.853519] (-) TimerEvent: {}
+[12.897841] (temperature_publisher) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[12.930999] (temperature_publisher) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[12.933156] (temperature_publisher) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[12.935248] (temperature_publisher) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[12.953715] (-) TimerEvent: {}
+[12.967188] (temperature_publisher) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[13.053841] (-) TimerEvent: {}
+[13.157629] (-) TimerEvent: {}
+[13.258747] (-) TimerEvent: {}
+[13.321464] (temperature_publisher) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[13.348115] (temperature_publisher) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[13.350944] (temperature_publisher) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[13.352913] (temperature_publisher) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[13.358888] (-) TimerEvent: {}
+[13.374247] (temperature_publisher) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[13.459049] (-) TimerEvent: {}
+[13.559850] (-) TimerEvent: {}
+[13.579876] (auto_drive) CommandEnded: {'returncode': 0}
+[13.642018] (auto_drive) JobEnded: {'identifier': 'auto_drive', 'rc': 0}
+[13.643994] (move_pos) CommandEnded: {'returncode': 0}
+[13.660036] (-) TimerEvent: {}
+[13.675115] (move_pos) JobEnded: {'identifier': 'move_pos', 'rc': 0}
+[13.760193] (-) TimerEvent: {}
+[13.861534] (-) TimerEvent: {}
+[13.963268] (-) TimerEvent: {}
+[14.066245] (-) TimerEvent: {}
+[14.167818] (-) TimerEvent: {}
+[14.269322] (-) TimerEvent: {}
+[14.370202] (-) TimerEvent: {}
+[14.470853] (-) TimerEvent: {}
+[14.571506] (-) TimerEvent: {}
+[14.672377] (-) TimerEvent: {}
+[14.773056] (-) TimerEvent: {}
+[14.873842] (-) TimerEvent: {}
+[14.975118] (-) TimerEvent: {}
+[15.076051] (-) TimerEvent: {}
+[15.146463] (temperature_publisher) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[15.176209] (-) TimerEvent: {}
+[15.277064] (-) TimerEvent: {}
+[15.377959] (-) TimerEvent: {}
+[15.479529] (-) TimerEvent: {}
+[15.581572] (-) TimerEvent: {}
+[15.683590] (-) TimerEvent: {}
+[15.688703] (temperature_publisher) StdoutLine: {'line': b'-- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[15.783749] (-) TimerEvent: {}
+[15.886606] (-) TimerEvent: {}
+[15.988132] (-) TimerEvent: {}
+[16.041273] (temperature_publisher) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[16.065896] (temperature_publisher) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[16.088299] (-) TimerEvent: {}
+[16.103679] (temperature_publisher) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[16.186982] (temperature_publisher) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[16.189879] (-) TimerEvent: {}
+[16.291630] (-) TimerEvent: {}
+[16.312331] (temperature_publisher) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[16.391788] (-) TimerEvent: {}
+[16.495338] (-) TimerEvent: {}
+[16.579754] (temperature_publisher) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[16.595510] (-) TimerEvent: {}
+[16.596817] (temperature_publisher) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[16.678526] (yuntai_control) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/yuntai_control', 'build', '--build-base', '/home/bestway/bestway_ws/build/yuntai_control/build', 'install', '--record', '/home/bestway/bestway_ws/build/yuntai_control/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/bestway/bestway_ws/src/yuntai_control', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'bestway', 'SSH_CLIENT': '192.168.126.18 48442 22', 'LC_TIME': 'zh_CN.UTF-8', 'XDG_SESSION_TYPE': 'tty', 'GIT_ASKPASS': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/', 'BROWSER': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/bestway', 'TERM_PROGRAM_VERSION': '1.103.2', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js', 'LC_MONETARY': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_NODE': '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node', 'SSL_CERT_FILE': '/usr/lib/ssl/certs/ca-certificates.crt', 'PYDEVD_DISABLE_FILE_VALIDATION': '1', 'BUNDLED_DEBUGPY_PATH': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'COLCON_PREFIX_PATH': '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'bestway', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm-256color', 'XDG_SESSION_ID': '17', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand', 'LC_ADDRESS': 'zh_CN.UTF-8', 'XDG_RUNTIME_DIR': '/run/user/1000', 'SSL_CERT_DIR': '/usr/lib/ssl/certs', 'DISPLAY': 'localhost:20.0', 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS': '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt', 'LANG': 'zh_CN.UTF-8', 'LC_TELEPHONE': 'zh_CN.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'VSCODE_GIT_IPC_HANDLE': '/run/user/1000/vscode-git-964b17549a.sock', 'TERM_PROGRAM': 'vscode', 'SSH_AUTH_SOCK': '/run/user/1000/vscode-ssh-auth-sock-162614507', 'AMENT_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'zh_CN.UTF-8', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'zh_CN.UTF-8', 'LC_IDENTIFICATION': 'zh_CN.UTF-8', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/bestway/bestway_ws/build/yuntai_control', 'SSH_CONNECTION': '192.168.126.18 48442 192.168.126.43 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/bestway/bestway_ws/build/yuntai_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'zh_CN.UTF-8', 'LC_PAPER': 'zh_CN.UTF-8', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od'}, 'shell': False}
+[16.696249] (-) TimerEvent: {}
+[16.796860] (-) TimerEvent: {}
+[16.897509] (-) TimerEvent: {}
+[16.940592] (temperature_publisher) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[16.997690] (-) TimerEvent: {}
+[17.063314] (temperature_publisher) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[17.097826] (-) TimerEvent: {}
+[17.199698] (-) TimerEvent: {}
+[17.300858] (-) TimerEvent: {}
+[17.324863] (temperature_publisher) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[17.401015] (-) TimerEvent: {}
+[17.424660] (temperature_publisher) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[17.501178] (-) TimerEvent: {}
+[17.602058] (-) TimerEvent: {}
+[17.702993] (-) TimerEvent: {}
+[17.803867] (-) TimerEvent: {}
+[17.905437] (-) TimerEvent: {}
+[18.006163] (-) TimerEvent: {}
+[18.107053] (-) TimerEvent: {}
+[18.207943] (-) TimerEvent: {}
+[18.257745] (temperature_publisher) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[18.258715] (temperature_publisher) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[18.308094] (-) TimerEvent: {}
+[18.409401] (-) TimerEvent: {}
+[18.511066] (-) TimerEvent: {}
+[18.542772] (yuntai_control) StdoutLine: {'line': b'running egg_info\n'}
+[18.545524] (yuntai_control) StdoutLine: {'line': b'creating ../../build/yuntai_control/yuntai_control.egg-info\n'}
+[18.547073] (yuntai_control) StdoutLine: {'line': b'writing ../../build/yuntai_control/yuntai_control.egg-info/PKG-INFO\n'}
+[18.547459] (yuntai_control) StdoutLine: {'line': b'writing dependency_links to ../../build/yuntai_control/yuntai_control.egg-info/dependency_links.txt\n'}
+[18.548762] (yuntai_control) StdoutLine: {'line': b'writing entry points to ../../build/yuntai_control/yuntai_control.egg-info/entry_points.txt\n'}
+[18.549008] (yuntai_control) StdoutLine: {'line': b'writing requirements to ../../build/yuntai_control/yuntai_control.egg-info/requires.txt\n'}
+[18.549180] (yuntai_control) StdoutLine: {'line': b'writing top-level names to ../../build/yuntai_control/yuntai_control.egg-info/top_level.txt\n'}
+[18.549332] (yuntai_control) StdoutLine: {'line': b"writing manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'\n"}
+[18.558540] (yuntai_control) StdoutLine: {'line': b"reading manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'\n"}
+[18.566568] (yuntai_control) StdoutLine: {'line': b"writing manifest file '../../build/yuntai_control/yuntai_control.egg-info/SOURCES.txt'\n"}
+[18.567783] (yuntai_control) StdoutLine: {'line': b'running build\n'}
+[18.568579] (yuntai_control) StdoutLine: {'line': b'running build_py\n'}
+[18.569236] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/yuntai_control/build\n'}
+[18.569431] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/yuntai_control/build/lib\n'}
+[18.569592] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.570932] (yuntai_control) StdoutLine: {'line': b'copying yuntai_control/yuntai_search_node.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.571124] (yuntai_control) StdoutLine: {'line': b'copying yuntai_control/temperature_tracking_node.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.572287] (yuntai_control) StdoutLine: {'line': b'copying yuntai_control/temperature_tracking_node_v2.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.572525] (yuntai_control) StdoutLine: {'line': b'copying yuntai_control/yuntai_control_node.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.572688] (yuntai_control) StdoutLine: {'line': b'copying yuntai_control/__init__.py -> /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control\n'}
+[18.581245] (yuntai_control) StdoutLine: {'line': b'running install\n'}
+[18.581737] (yuntai_control) StdoutLine: {'line': b'running install_lib\n'}
+[18.583139] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.583512] (yuntai_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/yuntai_search_node.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.584708] (yuntai_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/temperature_tracking_node.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.585163] (yuntai_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/temperature_tracking_node_v2.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.585847] (yuntai_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/yuntai_control_node.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.586085] (yuntai_control) StdoutLine: {'line': b'copying /home/bestway/bestway_ws/build/yuntai_control/build/lib/yuntai_control/__init__.py -> /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control\n'}
+[18.587333] (yuntai_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/yuntai_search_node.py to yuntai_search_node.cpython-310.pyc\n'}
+[18.596339] (yuntai_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/temperature_tracking_node.py to temperature_tracking_node.cpython-310.pyc\n'}
+[18.598875] (yuntai_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/temperature_tracking_node_v2.py to temperature_tracking_node_v2.cpython-310.pyc\n'}
+[18.607613] (yuntai_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/yuntai_control_node.py to yuntai_control_node.cpython-310.pyc\n'}
+[18.609425] (yuntai_control) StdoutLine: {'line': b'byte-compiling /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control/__init__.py to __init__.cpython-310.pyc\n'}
+[18.611164] (-) TimerEvent: {}
+[18.618803] (yuntai_control) StdoutLine: {'line': b'running install_data\n'}
+[18.619738] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/yuntai_control/share/ament_index\n'}
+[18.621631] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/yuntai_control/share/ament_index/resource_index\n'}
+[18.621988] (yuntai_control) StdoutLine: {'line': b'creating /home/bestway/bestway_ws/install/yuntai_control/share/ament_index/resource_index/packages\n'}
+[18.622166] (yuntai_control) StdoutLine: {'line': b'copying resource/yuntai_control -> /home/bestway/bestway_ws/install/yuntai_control/share/ament_index/resource_index/packages\n'}
+[18.622328] (yuntai_control) StdoutLine: {'line': b'copying package.xml -> /home/bestway/bestway_ws/install/yuntai_control/share/yuntai_control\n'}
+[18.622479] (yuntai_control) StdoutLine: {'line': b'running install_egg_info\n'}
+[18.628175] (yuntai_control) StdoutLine: {'line': b'Copying ../../build/yuntai_control/yuntai_control.egg-info to /home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages/yuntai_control-0.0.0-py3.10.egg-info\n'}
+[18.639166] (yuntai_control) StdoutLine: {'line': b'running install_scripts\n'}
+[18.711345] (-) TimerEvent: {}
+[18.798971] (yuntai_control) StdoutLine: {'line': b'Installing temperature_tracking_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control\n'}
+[18.806245] (yuntai_control) StdoutLine: {'line': b'Installing temperature_tracking_node_v2 script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control\n'}
+[18.807427] (yuntai_control) StdoutLine: {'line': b'Installing yuntai_controller_node script to /home/bestway/bestway_ws/install/yuntai_control/lib/yuntai_control\n'}
+[18.808514] (yuntai_control) StdoutLine: {'line': b"writing list of installed files to '/home/bestway/bestway_ws/build/yuntai_control/install.log'\n"}
+[18.811472] (-) TimerEvent: {}
+[18.912708] (-) TimerEvent: {}
+[18.952246] (temperature_publisher) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[18.955127] (temperature_publisher) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[19.012830] (-) TimerEvent: {}
+[19.113563] (-) TimerEvent: {}
+[19.160797] (yuntai_control) CommandEnded: {'returncode': 0}
+[19.213724] (-) TimerEvent: {}
+[19.235126] (yuntai_control) JobEnded: {'identifier': 'yuntai_control', 'rc': 0}
+[19.313903] (-) TimerEvent: {}
+[19.415563] (-) TimerEvent: {}
+[19.517126] (-) TimerEvent: {}
+[19.619089] (-) TimerEvent: {}
+[19.720234] (-) TimerEvent: {}
+[19.739398] (temperature_publisher) StdoutLine: {'line': b'-- Configuring done\n'}
+[19.819399] (temperature_publisher) StdoutLine: {'line': b'-- Generating done\n'}
+[19.820420] (-) TimerEvent: {}
+[19.856008] (temperature_publisher) StdoutLine: {'line': b'-- Build files have been written to: /home/bestway/bestway_ws/build/temperature_publisher\n'}
+[19.920641] (-) TimerEvent: {}
+[19.953272] (temperature_publisher) CommandEnded: {'returncode': 0}
+[19.954494] (temperature_publisher) JobProgress: {'identifier': 'temperature_publisher', 'progress': 'build'}
+[19.954581] (temperature_publisher) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/bestway/bestway_ws/build/temperature_publisher', '--', '-j4', '-l4'], 'cwd': '/home/bestway/bestway_ws/build/temperature_publisher', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'bestway'), ('SSH_CLIENT', '192.168.126.18 48442 22'), ('LC_TIME', 'zh_CN.UTF-8'), ('XDG_SESSION_TYPE', 'tty'), ('GIT_ASKPASS', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/'), ('BROWSER', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/bestway'), ('TERM_PROGRAM_VERSION', '1.103.2'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock'), ('ROS_PYTHON_VERSION', '3'), ('VSCODE_GIT_ASKPASS_MAIN', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('PYDEVD_DISABLE_FILE_VALIDATION', '1'), ('BUNDLED_DEBUGPY_PATH', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('COLCON_PREFIX_PATH', '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'bestway'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '17'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('DISPLAY', 'localhost:20.0'), ('VSCODE_DEBUGPY_ADAPTER_ENDPOINTS', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt'), ('LANG', 'zh_CN.UTF-8'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-964b17549a.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/vscode-ssh-auth-sock-162614507'), ('AMENT_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/home/bestway/bestway_ws/build/temperature_publisher'), ('SSH_CONNECTION', '192.168.126.18 48442 192.168.126.43 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble')]), 'shell': False}
+[20.020817] (-) TimerEvent: {}
+[20.121511] (-) TimerEvent: {}
+[20.222408] (-) TimerEvent: {}
+[20.325618] (-) TimerEvent: {}
+[20.390483] (temperature_publisher) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o\x1b[0m\n'}
+[20.425837] (-) TimerEvent: {}
+[20.527586] (-) TimerEvent: {}
+[20.629948] (-) TimerEvent: {}
+[20.731579] (-) TimerEvent: {}
+[20.833926] (-) TimerEvent: {}
+[20.935438] (-) TimerEvent: {}
+[21.037005] (-) TimerEvent: {}
+[21.137948] (-) TimerEvent: {}
+[21.238847] (-) TimerEvent: {}
+[21.339777] (-) TimerEvent: {}
+[21.440663] (-) TimerEvent: {}
+[21.541536] (-) TimerEvent: {}
+[21.643123] (-) TimerEvent: {}
+[21.743768] (-) TimerEvent: {}
+[21.844742] (-) TimerEvent: {}
+[21.945378] (-) TimerEvent: {}
+[22.046271] (-) TimerEvent: {}
+[22.147123] (-) TimerEvent: {}
+[22.248119] (-) TimerEvent: {}
+[22.349039] (-) TimerEvent: {}
+[22.449961] (-) TimerEvent: {}
+[22.551973] (-) TimerEvent: {}
+[22.652643] (-) TimerEvent: {}
+[22.753346] (-) TimerEvent: {}
+[22.854918] (-) TimerEvent: {}
+[22.956656] (-) TimerEvent: {}
+[23.057367] (-) TimerEvent: {}
+[23.159779] (-) TimerEvent: {}
+[23.260708] (-) TimerEvent: {}
+[23.362261] (-) TimerEvent: {}
+[23.464718] (-) TimerEvent: {}
+[23.567236] (-) TimerEvent: {}
+[23.668821] (-) TimerEvent: {}
+[23.770454] (-) TimerEvent: {}
+[23.872126] (-) TimerEvent: {}
+[23.973734] (-) TimerEvent: {}
+[24.074384] (-) TimerEvent: {}
+[24.175075] (-) TimerEvent: {}
+[24.275763] (-) TimerEvent: {}
+[24.376443] (-) TimerEvent: {}
+[24.477089] (-) TimerEvent: {}
+[24.577785] (-) TimerEvent: {}
+[24.678441] (-) TimerEvent: {}
+[24.780224] (-) TimerEvent: {}
+[24.884164] (-) TimerEvent: {}
+[24.986807] (-) TimerEvent: {}
+[25.089342] (-) TimerEvent: {}
+[25.191167] (-) TimerEvent: {}
+[25.292800] (-) TimerEvent: {}
+[25.395354] (-) TimerEvent: {}
+[25.497051] (-) TimerEvent: {}
+[25.598820] (-) TimerEvent: {}
+[25.700497] (-) TimerEvent: {}
+[25.803289] (-) TimerEvent: {}
+[25.906823] (-) TimerEvent: {}
+[26.008412] (-) TimerEvent: {}
+[26.110756] (-) TimerEvent: {}
+[26.212653] (-) TimerEvent: {}
+[26.314211] (-) TimerEvent: {}
+[26.416567] (-) TimerEvent: {}
+[26.518202] (-) TimerEvent: {}
+[26.619796] (-) TimerEvent: {}
+[26.721624] (-) TimerEvent: {}
+[26.824240] (-) TimerEvent: {}
+[26.925803] (-) TimerEvent: {}
+[27.027391] (-) TimerEvent: {}
+[27.129145] (-) TimerEvent: {}
+[27.230786] (-) TimerEvent: {}
+[27.331479] (-) TimerEvent: {}
+[27.432182] (-) TimerEvent: {}
+[27.532858] (-) TimerEvent: {}
+[27.633836] (-) TimerEvent: {}
+[27.735452] (-) TimerEvent: {}
+[27.837163] (-) TimerEvent: {}
+[27.938960] (-) TimerEvent: {}
+[28.040664] (-) TimerEvent: {}
+[28.141364] (-) TimerEvent: {}
+[28.242333] (-) TimerEvent: {}
+[28.344900] (-) TimerEvent: {}
+[28.446610] (-) TimerEvent: {}
+[28.548332] (-) TimerEvent: {}
+[28.649968] (-) TimerEvent: {}
+[28.751543] (-) TimerEvent: {}
+[28.853086] (-) TimerEvent: {}
+[28.954609] (-) TimerEvent: {}
+[29.055353] (-) TimerEvent: {}
+[29.156262] (-) TimerEvent: {}
+[29.256942] (-) TimerEvent: {}
+[29.357610] (-) TimerEvent: {}
+[29.460003] (-) TimerEvent: {}
+[29.560726] (-) TimerEvent: {}
+[29.661407] (-) TimerEvent: {}
+[29.765808] (-) TimerEvent: {}
+[29.866455] (-) TimerEvent: {}
+[29.967119] (-) TimerEvent: {}
+[30.067795] (-) TimerEvent: {}
+[30.168740] (-) TimerEvent: {}
+[30.269638] (-) TimerEvent: {}
+[30.370565] (-) TimerEvent: {}
+[30.471225] (-) TimerEvent: {}
+[30.572995] (-) TimerEvent: {}
+[30.673735] (-) TimerEvent: {}
+[30.774433] (-) TimerEvent: {}
+[30.875121] (-) TimerEvent: {}
+[30.975824] (-) TimerEvent: {}
+[31.077494] (-) TimerEvent: {}
+[31.178446] (-) TimerEvent: {}
+[31.279400] (-) TimerEvent: {}
+[31.380501] (-) TimerEvent: {}
+[31.481524] (-) TimerEvent: {}
+[31.582591] (-) TimerEvent: {}
+[31.684201] (-) TimerEvent: {}
+[31.785970] (-) TimerEvent: {}
+[31.887692] (-) TimerEvent: {}
+[31.989317] (-) TimerEvent: {}
+[32.091142] (-) TimerEvent: {}
+[32.193782] (-) TimerEvent: {}
+[32.295427] (-) TimerEvent: {}
+[32.397170] (-) TimerEvent: {}
+[32.498903] (-) TimerEvent: {}
+[32.600536] (-) TimerEvent: {}
+[32.702174] (-) TimerEvent: {}
+[32.803913] (-) TimerEvent: {}
+[32.905459] (-) TimerEvent: {}
+[33.007379] (-) TimerEvent: {}
+[33.108962] (-) TimerEvent: {}
+[33.214660] (-) TimerEvent: {}
+[33.316232] (-) TimerEvent: {}
+[33.417825] (-) TimerEvent: {}
+[33.518793] (-) TimerEvent: {}
+[33.619776] (-) TimerEvent: {}
+[33.720698] (-) TimerEvent: {}
+[33.821448] (-) TimerEvent: {}
+[33.923278] (-) TimerEvent: {}
+[34.026018] (-) TimerEvent: {}
+[34.126938] (-) TimerEvent: {}
+[34.227859] (-) TimerEvent: {}
+[34.328559] (-) TimerEvent: {}
+[34.431944] (-) TimerEvent: {}
+[34.534369] (-) TimerEvent: {}
+[34.639946] (-) TimerEvent: {}
+[34.747737] (-) TimerEvent: {}
+[34.855060] (-) TimerEvent: {}
+[34.956675] (-) TimerEvent: {}
+[35.057607] (-) TimerEvent: {}
+[35.158578] (-) TimerEvent: {}
+[35.259202] (-) TimerEvent: {}
+[35.360108] (-) TimerEvent: {}
+[35.461433] (-) TimerEvent: {}
+[35.564123] (-) TimerEvent: {}
+[35.664880] (-) TimerEvent: {}
+[35.766027] (-) TimerEvent: {}
+[35.867015] (-) TimerEvent: {}
+[35.969528] (-) TimerEvent: {}
+[36.070537] (-) TimerEvent: {}
+[36.172047] (-) TimerEvent: {}
+[36.272887] (-) TimerEvent: {}
+[36.374601] (-) TimerEvent: {}
+[36.476597] (-) TimerEvent: {}
+[36.577918] (-) TimerEvent: {}
+[36.679009] (-) TimerEvent: {}
+[36.779856] (-) TimerEvent: {}
+[36.880656] (-) TimerEvent: {}
+[36.981760] (-) TimerEvent: {}
+[37.082860] (-) TimerEvent: {}
+[37.185185] (-) TimerEvent: {}
+[37.286501] (-) TimerEvent: {}
+[37.387521] (-) TimerEvent: {}
+[37.488593] (-) TimerEvent: {}
+[37.589598] (-) TimerEvent: {}
+[37.691598] (-) TimerEvent: {}
+[37.792641] (-) TimerEvent: {}
+[37.894578] (-) TimerEvent: {}
+[37.998109] (-) TimerEvent: {}
+[38.100221] (-) TimerEvent: {}
+[38.202510] (-) TimerEvent: {}
+[38.305440] (-) TimerEvent: {}
+[38.407335] (-) TimerEvent: {}
+[38.508960] (-) TimerEvent: {}
+[38.610628] (-) TimerEvent: {}
+[38.712192] (-) TimerEvent: {}
+[38.812898] (-) TimerEvent: {}
+[38.913564] (-) TimerEvent: {}
+[39.014937] (-) TimerEvent: {}
+[39.116285] (-) TimerEvent: {}
+[39.218372] (-) TimerEvent: {}
+[39.250102] (temperature_publisher) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable temperature_publisher\x1b[0m\n'}
+[39.318549] (-) TimerEvent: {}
+[39.419266] (-) TimerEvent: {}
+[39.519962] (-) TimerEvent: {}
+[39.620688] (-) TimerEvent: {}
+[39.721477] (-) TimerEvent: {}
+[39.817283] (temperature_publisher) StdoutLine: {'line': b'[100%] Built target temperature_publisher\n'}
+[39.821840] (-) TimerEvent: {}
+[39.850001] (temperature_publisher) CommandEnded: {'returncode': 0}
+[39.851788] (temperature_publisher) JobProgress: {'identifier': 'temperature_publisher', 'progress': 'install'}
+[39.884466] (temperature_publisher) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/bestway/bestway_ws/build/temperature_publisher'], 'cwd': '/home/bestway/bestway_ws/build/temperature_publisher', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'bestway'), ('SSH_CLIENT', '192.168.126.18 48442 22'), ('LC_TIME', 'zh_CN.UTF-8'), ('XDG_SESSION_TYPE', 'tty'), ('GIT_ASKPASS', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/home/bestway/fast_lio_ws/install/fast_lio/lib:/home/bestway/ws_livox/install/livox_ros_driver2/lib:/home/bestway/ZED_ws/install/zed_ipc/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_component/lib:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/lib:/home/bestway/ZED_ws/install/zed_rgb_convert/lib:/home/bestway/ZED_ws/install/zed_aruco_localization/lib:/home/bestway/ZED_ws/install/zed_components/lib:/home/bestway/ZED_ws/install/rviz_plugin_zed_od/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64/'), ('BROWSER', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/bestway'), ('TERM_PROGRAM_VERSION', '1.103.2'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-329a1ad3-dd75-4b36-b015-9f0725e56f2c.sock'), ('ROS_PYTHON_VERSION', '3'), ('VSCODE_GIT_ASKPASS_MAIN', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/extensions/git/dist/askpass-main.js'), ('LC_MONETARY', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_NODE', '/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/node'), ('SSL_CERT_FILE', '/usr/lib/ssl/certs/ca-certificates.crt'), ('PYDEVD_DISABLE_FILE_VALIDATION', '1'), ('BUNDLED_DEBUGPY_PATH', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/libs/debugpy'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('COLCON_PREFIX_PATH', '/home/bestway/fast_lio_ws/install:/home/bestway/ws_livox/install:/home/bestway/ZED_ws/install:/home/bestway/bestway_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'bestway'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm-256color'), ('XDG_SESSION_ID', '17'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/usr/local/cuda-12.6/bin:/home/bestway/.vscode-server/cli/servers/Stable-6f17636121051a53c88d3e605c491d22af2ba755/server/bin/remote-cli:/home/bestway/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/bestway/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/bundled/scripts/noConfigScripts:/home/bestway/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand'), ('LC_ADDRESS', 'zh_CN.UTF-8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('SSL_CERT_DIR', '/usr/lib/ssl/certs'), ('DISPLAY', 'localhost:20.0'), ('VSCODE_DEBUGPY_ADAPTER_ENDPOINTS', '/home/bestway/.vscode-server/extensions/ms-python.debugpy-2025.10.0-linux-arm64/.noConfigDebugAdapterEndpoints/endpoint-c8f6ffca73e0ca36.txt'), ('LANG', 'zh_CN.UTF-8'), ('LC_TELEPHONE', 'zh_CN.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/run/user/1000/vscode-git-964b17549a.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/run/user/1000/vscode-ssh-auth-sock-162614507'), ('AMENT_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'zh_CN.UTF-8'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'zh_CN.UTF-8'), ('LC_IDENTIFICATION', 'zh_CN.UTF-8'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/home/bestway/bestway_ws/build/temperature_publisher'), ('SSH_CONNECTION', '192.168.126.18 48442 192.168.126.43 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/bestway/fast_lio_ws/install/fast_lio/local/lib/python3.10/dist-packages:/home/bestway/bestway_ws/install/yuntai_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/sbus_control/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/lidar_distance/lib/python3.10/site-packages:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:/home/bestway/ws_livox/install/livox_ros_driver2/local/lib/python3.10/dist-packages:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'zh_CN.UTF-8'), ('LC_PAPER', 'zh_CN.UTF-8'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/bestway/fast_lio_ws/install/fast_lio:/home/bestway/bestway_ws/install/temperature_publisher:/home/bestway/ws_livox/install/livox_ros_driver2:/home/bestway/ZED_ws/install/zed_ros2:/home/bestway/ZED_ws/install/zed_robot_integration:/home/bestway/ZED_ws/install/zed_ipc:/home/bestway/ZED_ws/install/zed_multi_camera:/home/bestway/ZED_ws/install/zed_display_rviz2:/home/bestway/ZED_ws/install/zed_depth_to_laserscan:/home/bestway/ZED_ws/install/zed_wrapper:/home/bestway/ZED_ws/install/zed_tutorial_video:/home/bestway/ZED_ws/install/zed_tutorial_pos_tracking:/home/bestway/ZED_ws/install/zed_tutorial_depth:/home/bestway/ZED_ws/install/zed_topic_benchmark:/home/bestway/ZED_ws/install/zed_topic_benchmark_component:/home/bestway/ZED_ws/install/zed_topic_benchmark_interfaces:/home/bestway/ZED_ws/install/zed_rgb_convert:/home/bestway/ZED_ws/install/zed_aruco_localization:/home/bestway/ZED_ws/install/zed_components:/home/bestway/ZED_ws/install/rviz_plugin_zed_od:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble')]), 'shell': False}
+[39.905044] (temperature_publisher) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[39.906666] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher\n'}
+[39.910492] (temperature_publisher) StdoutLine: {'line': b'-- Set runtime path of "/home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher" to ""\n'}
+[39.911577] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/package_run_dependencies/temperature_publisher\n'}
+[39.912077] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/parent_prefix_path/temperature_publisher\n'}
+[39.913110] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.sh\n'}
+[39.913921] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.dsv\n'}
+[39.914198] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.sh\n'}
+[39.917433] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.dsv\n'}
+[39.917636] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.bash\n'}
+[39.918142] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.sh\n'}
+[39.918314] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.zsh\n'}
+[39.918463] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.dsv\n'}
+[39.918603] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.dsv\n'}
+[39.918742] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/packages/temperature_publisher\n'}
+[39.918881] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig.cmake\n'}
+[39.919462] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig-version.cmake\n'}
+[39.919727] (temperature_publisher) StdoutLine: {'line': b'-- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.xml\n'}
+[39.921982] (-) TimerEvent: {}
+[39.931795] (temperature_publisher) CommandEnded: {'returncode': 0}
+[39.969561] (temperature_publisher) JobEnded: {'identifier': 'temperature_publisher', 'rc': 0}
+[39.975230] (-) EventReactorShutdown: {}
