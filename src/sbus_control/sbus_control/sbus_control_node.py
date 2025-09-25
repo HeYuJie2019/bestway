@@ -64,7 +64,7 @@ class SbusControlNode(Node):
         super().__init__('sbus_control_node')
 
         # 获取参数
-        self.declare_parameter('port', '/dev/ttyUSB_SBUS')
+        self.declare_parameter('port', '/dev/ttyCH9344USB7')
         self.declare_parameter('baudrate', 115200)
 
         port = self.get_parameter('port').get_parameter_value().string_value
@@ -86,8 +86,8 @@ class SbusControlNode(Node):
             parity=serial.PARITY_EVEN,
             stopbits=serial.STOPBITS_TWO
         )
-        self.sbus_in = serial.Serial('/dev/ttySBUS_USB', 115200, timeout=0.01)
-        self.BOSS = None  # 默认不处于 BOSS 模式
+        self.sbus_in = serial.Serial('/dev/ttyCH9344USB6', 115200, timeout=0.01)
+        self.BOSS = True  # 默认不处于 BOSS 模式
 
         # 订阅 /cmd_vel 话题
         self.subscription = self.create_subscription(
