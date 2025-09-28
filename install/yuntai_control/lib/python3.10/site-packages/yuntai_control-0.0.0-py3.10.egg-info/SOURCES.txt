@@ -16,4 +16,6 @@ yuntai_control/__init__.py
 yuntai_control/temperature_tracking_node.py
 yuntai_control/temperature_tracking_node_v2.py
 yuntai_control/yuntai_control_node.py
+yuntai_control/yuntai_control_node_v2.py
+yuntai_control/yuntai_hardware_pwm_node.py
 yuntai_control/yuntai_search_node.py

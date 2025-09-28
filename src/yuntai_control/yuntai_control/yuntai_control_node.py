@@ -16,14 +16,14 @@ class ServoController:
         self.kit.servo[0].set_pulse_width_range(500, 2500)
         self.kit.servo[1].set_pulse_width_range(500, 2500)
         # 设置舵机的初始角度
-        self.kit.servo[0].angle = 81
+        self.kit.servo[0].angle = 90
         self.kit.servo[1].angle = 84
 
     def middle(self):
         """
         将两个舵机都设置为中间位置
         """
-        self.set_angle(0, 81)
+        self.set_angle(0, 90)
         self.set_angle(1, 84)
 
     def set_angle(self, servo_index, target_angle):
@@ -62,16 +62,16 @@ class ServoController:
         """
         设置舵机的位置，使用线性映射将软件设定范围映射到舵机实际范围
         :param servo_index: 舵机索引 (0 或 1)
-        :param position: 软件设定的位置 (0: -130~+130, 1: -90~+90)
+        :param position: 软件设定的位置 (0: -85~+85, 1: -90~+90)
         """
         if servo_index == 0:
-            # 舵机 0 的软件范围是 -123.56 到 +123.56，实际范围是 0 到 162，中心是 81
-            if position < -123.56 or position > 123.56:
+            # 舵机 0 的软件范围是 -85 到 +85，实际范围是 5 到 175，中心是 90
+            if position < -85 or position > 85:
                 raise ValueError("舵机 0 的位置超出范围")
-            # 映射公式：实际角度 = (位置 + 123.56) * (162 - 0) / (123.56 - (-123.56)) + 0
-            target_angle = (position + 123.56) * (162 - 0) / (123.56 - (-123.56)) + 0
-            # 调整中心点为81
-            target_angle = target_angle - 81 + 81
+            # 映射公式：实际角度 = (位置 + 85) * (175 - 5) / (85 - (-85)) + 5
+            target_angle = (-position + 85) * (175 - 5) / (85 - (-85)) + 5
+            # 调整中心点为90
+            target_angle = target_angle - 90 + 90
             self.set_angle(servo_index, target_angle)
         elif servo_index == 1:
             # 舵机 1 的软件范围是 -88 到 +88，实际范围是 0 到 168，中心是 84

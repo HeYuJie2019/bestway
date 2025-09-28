@@ -19,7 +19,7 @@ class YuntaiSearchNode(Node):
         self.current_vertical_angle = 0
 
         # 云台角度范围
-        self.horizontal_angle_limit = 120
+        self.horizontal_angle_limit = 90
         self.vertical_angle_limit = 88
 
         # 搜索模式参数

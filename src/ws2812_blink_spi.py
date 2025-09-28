@@ -10,7 +10,7 @@ WS2812 红蓝交替闪烁（SPI 方案，适配 Jetson Orin NX 等 Linux SBC）
 复位“低电平”通过追加若干个 0x00 字节实现（> 50us）。
 
 接线（默认 SPI0.0）：
-- MOSI -> WS2812 DIN
+- MOSI -> WS2812 DIN    pin 19
 - GND  -> WS2812 GND（与电源共地）
 - 5V   -> WS2812 VCC（建议外部 5V 供电）
 建议在数据线上串 300–470Ω 电阻、电源两端并联 ≥1000µF 电容。

@@ -1,3 +1,5 @@
+# 只水平搜索
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray, String, Bool, Int32, Float32
@@ -30,7 +32,7 @@ class TemperatureTrackingNode(Node):
         self.current_horizontal_angle = 0
 
         # 云台角度范围
-        self.horizontal_angle_limit = 120
+        self.horizontal_angle_limit = 80
 
         # 最大步长
         self.max_step_size = 10  # 最大每次调整的角度
@@ -39,7 +41,7 @@ class TemperatureTrackingNode(Node):
         self.temperature_threshold = 400
 
         # 搜索模式参数
-        self.search_step = 30  # 每次转动的角度
+        self.search_step = 20  # 每次转动的角度
         self.search_delay = 0.1  # 每次转动后的延时（秒）
         self.search_direction = 1 # 搜索方向（1：顺时针，-1：逆时针）
 

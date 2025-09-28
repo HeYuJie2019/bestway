@@ -23,6 +23,7 @@ setup(
             'sbus_control_node = sbus_control.sbus_control_node:main',
             'keyboard_control_node = sbus_control.keyboard_control_node:main',
             'serial_node = sbus_control.serial_node:main',
+            'ws2812_led_node = sbus_control.ws2812_led_node:main',
         ],
     },
 )

@@ -87,7 +87,7 @@ class SbusControlNode(Node):
             stopbits=serial.STOPBITS_TWO
         )
         self.sbus_in = serial.Serial('/dev/ttyCH9344USB6', 115200, timeout=0.01)
-        self.BOSS = True  # 默认不处于 BOSS 模式
+        self.BOSS = None  # 默认不处于 BOSS 模式
 
         # 订阅 /cmd_vel 话题
         self.subscription = self.create_subscription(

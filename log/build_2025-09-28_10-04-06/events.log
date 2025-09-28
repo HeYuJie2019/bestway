@@ -1,0 +1,52 @@
+[0.000000] (-) TimerEvent: {}
+[0.001146] (auto_drive) JobQueued: {'identifier': 'auto_drive', 'dependencies': OrderedDict()}
+[0.001528] (lidar_distance) JobQueued: {'identifier': 'lidar_distance', 'dependencies': OrderedDict()}
+[0.001881] (move_pos) JobQueued: {'identifier': 'move_pos', 'dependencies': OrderedDict()}
+[0.001995] (sbus_control) JobQueued: {'identifier': 'sbus_control', 'dependencies': OrderedDict()}
+[0.002073] (temperature_publisher) JobQueued: {'identifier': 'temperature_publisher', 'dependencies': OrderedDict()}
+[0.002147] (yuntai_control) JobQueued: {'identifier': 'yuntai_control', 'dependencies': OrderedDict()}
+[0.002216] (auto_drive) JobStarted: {'identifier': 'auto_drive'}
+[0.023631] (lidar_distance) JobStarted: {'identifier': 'lidar_distance'}
+[0.040378] (move_pos) JobStarted: {'identifier': 'move_pos'}
+[0.056770] (sbus_control) JobStarted: {'identifier': 'sbus_control'}
+[0.099197] (-) TimerEvent: {}
+[0.199816] (-) TimerEvent: {}
+[0.300477] (-) TimerEvent: {}
+[0.401121] (-) TimerEvent: {}
+[0.501770] (-) TimerEvent: {}
+[0.602393] (-) TimerEvent: {}
+[0.702976] (-) TimerEvent: {}
+[0.803841] (-) TimerEvent: {}
+[0.904522] (-) TimerEvent: {}
+[1.005184] (-) TimerEvent: {}
+[1.106070] (-) TimerEvent: {}
+[1.206708] (-) TimerEvent: {}
+[1.307394] (-) TimerEvent: {}
+[1.408126] (-) TimerEvent: {}
+[1.508775] (-) TimerEvent: {}
+[1.609416] (-) TimerEvent: {}
+[1.710053] (-) TimerEvent: {}
+[1.810693] (-) TimerEvent: {}
+[1.911339] (-) TimerEvent: {}
+[2.011975] (-) TimerEvent: {}
+[2.112727] (-) TimerEvent: {}
+[2.213370] (-) TimerEvent: {}
+[2.313986] (-) TimerEvent: {}
+[2.414616] (-) TimerEvent: {}
+[2.515284] (-) TimerEvent: {}
+[2.615917] (-) TimerEvent: {}
+[2.716660] (-) TimerEvent: {}
+[2.818073] (-) TimerEvent: {}
+[2.919259] (-) TimerEvent: {}
+[3.020413] (-) TimerEvent: {}
+[3.121072] (-) TimerEvent: {}
+[3.221739] (-) TimerEvent: {}
+[3.322427] (-) TimerEvent: {}
+[3.373055] (lidar_distance) StderrLine: {'line': b'Traceback (most recent call last):\n  File "/usr/lib/python3/dist-packages/colcon_parallel_executor/executor/parallel.py", line 75, in execute\n    loop.run_until_complete(future)\n  File "/usr/lib/python3.10/asyncio/base_events.py", line 636, in run_until_complete\n    self.run_forever()\n  File "/usr/lib/python3.10/asyncio/base_events.py", line 603, in run_forever\n    self._run_once()\n  File "/usr/lib/python3.10/asyncio/base_events.py", line 1871, in _run_once\n    event_list = self._selector.select(timeout)\n  File "/usr/lib/python3.10/selectors.py", line 469, in select\n    fd_event_list = self._selector.poll(timeout, max_ev)\nKeyboardInterrupt\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File "/usr/lib/python3/dist-packages/colcon_core/executor/__init__.py", line 91, in __call__\n    rc = await self.task(*args, **kwargs)\n  File "/usr/lib/python3/dist-packages/colcon_core/task/__init__.py", line 93, in __call__\n    return await task_method(*args, **kwargs)\n  File "/usr/lib/python3/dist-packages/colcon_ros/task/ament_python/build.py", line 102, in build\n    return await extension.build(additional_hooks=additional_hooks)\n  File "/usr/lib/python3/dist-packages/colcon_core/task/python/build.py", line 96, in build\n    available_commands = await self._get_available_commands(\n  File "/usr/lib/python3/dist-packages/colcon_core/task/python/build.py", line 194, in _get_available_commands\n    output = await check_output(\n  File "/usr/lib/python3/dist-packages/colcon_core/subprocess.py", line 129, in check_output\n    assert not rc, f\'Expected {args} to pass: {stderr_data}\'\nAssertionError: Expected [\'/usr/bin/python3\', \'-W\', \'ignore:setup.py install is deprecated\', \'-W\', \'ignore:easy_install command is deprecated\', \'setup.py\', \'--help-commands\'] to pass: Traceback (most recent call last):\n  File "/home/bestway/bestway_ws/src/lidar_distance/setup.py", line 1, in <module>\n    from setuptools import find_packages, setup\n  File "/usr/lib/python3/dist-packages/setuptools/__init__.py", line 16, in <module>\n    import setuptools.version\n  File "/usr/lib/python3/dist-packages/setuptools/version.py", line 1, in <module>\n    import pkg_resources\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 3267, in <module>\n    def _initialize_master_working_set():\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 3241, in _call_aside\n    f(*args, **kwargs)\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 3302, in _initialize_master_working_set\n    list(map(working_set.add_entry, sys.path))\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 613, in add_entry\n    for dist in find_distributions(entry, True):\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2077, in find_on_path\n    for dist in factory(fullpath):\n  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2135, in distributions_from_metadata\n    if len(os.listdir(path)) == 0:\nKeyboardInterrupt\n\n'}
+[3.375889] (lidar_distance) JobEnded: {'identifier': 'lidar_distance', 'rc': 'SIGINT'}
+[3.377488] (move_pos) JobEnded: {'identifier': 'move_pos', 'rc': 'SIGINT'}
+[3.379121] (auto_drive) JobEnded: {'identifier': 'auto_drive', 'rc': 'SIGINT'}
+[3.379993] (sbus_control) JobEnded: {'identifier': 'sbus_control', 'rc': 'SIGINT'}
+[3.389584] (temperature_publisher) JobSkipped: {'identifier': 'temperature_publisher'}
+[3.389800] (yuntai_control) JobSkipped: {'identifier': 'yuntai_control'}
+[3.389908] (-) EventReactorShutdown: {}

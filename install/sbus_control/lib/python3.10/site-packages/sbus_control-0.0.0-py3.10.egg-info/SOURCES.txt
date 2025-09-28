@@ -13,6 +13,7 @@ sbus_control/__init__.py
 sbus_control/keyboard_control_node.py
 sbus_control/sbus_control_node.py
 sbus_control/serial_node.py
+sbus_control/ws2812_led_node.py
 test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py
