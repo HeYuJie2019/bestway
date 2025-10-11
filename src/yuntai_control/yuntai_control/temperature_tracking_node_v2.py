@@ -32,10 +32,10 @@ class TemperatureTrackingNode(Node):
         self.current_horizontal_angle = 0
 
         # 云台角度范围
-        self.horizontal_angle_limit = 80
+        self.horizontal_angle_limit = 30
 
         # 最大步长
-        self.max_step_size = 10  # 最大每次调整的角度
+        self.max_step_size = 5  # 最大每次调整的角度
 
         # 温差阈值
         self.temperature_threshold = 400

@@ -19,7 +19,7 @@ class SerialNode(Node):
         # 声明参数
         # self.declare_parameter('port', '/dev/ttyTHS1')
         # self.declare_parameter('port', '/dev/ttyCH341USB1')
-        self.declare_parameter('port', '/dev/ttyCH9344USB0')
+        self.declare_parameter('port', '/dev/ttyCH9344USB5')
         self.declare_parameter('baudrate', 115200)
         self.declare_parameter('timeout', 1.0)
         

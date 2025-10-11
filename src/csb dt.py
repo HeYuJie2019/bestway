@@ -19,7 +19,7 @@ def parse_uart_frame(frame):
     return distance_raw
 
 def main():
-    port = '/dev/ttyCH9344USB3'
+    port = '/dev/ttyCH9344USB0'
     baudrate = 9600  # 根据实际设备设置   单头
     ser = serial.Serial(port, baudrate, timeout=0.5)
     print(f"打开串口 {port}，波特率 {baudrate}")
