@@ -47,7 +47,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher/temperature_publisher")
     file(RPATH_CHECK
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher/temperature_publisher"
-         RPATH "")
+         RPATH "/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64")
   endif()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher" TYPE EXECUTABLE FILES "/home/bestway/bestway_ws/build/temperature_publisher/temperature_publisher")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher/temperature_publisher" AND
@@ -55,11 +55,15 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher/temperature_publisher"
          OLD_RPATH "/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64:/opt/ros/humble/lib:"
-         NEW_RPATH "")
+         NEW_RPATH "/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/temperature_publisher/temperature_publisher")
     endif()
   endif()
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/temperature_publisher/environment" TYPE FILE FILES "/home/bestway/bestway_ws/build/temperature_publisher/temperature_publisher_library_path.dsv")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

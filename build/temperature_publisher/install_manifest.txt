@@ -1,4 +1,5 @@
 /home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher
+/home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/temperature_publisher_library_path.dsv
 /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/package_run_dependencies/temperature_publisher
 /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/parent_prefix_path/temperature_publisher
 /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.sh

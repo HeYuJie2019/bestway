@@ -1,0 +1,40 @@
+[0.192s] Invoking command in '/home/bestway/bestway_ws/build/temperature_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --build /home/bestway/bestway_ws/build/temperature_publisher -- -j4 -l4
+[0.531s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.605s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[1.968s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.996s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[2.046s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[2.129s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.290s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.532s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[2.543s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[3.069s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[3.935s] -- Configuring done
+[4.007s] -- Generating done
+[4.047s] -- Build files have been written to: /home/bestway/bestway_ws/build/temperature_publisher
+[4.336s] [35m[1mConsolidate compiler generated dependencies of target temperature_publisher[0m
+[4.466s] [ 50%] [32mBuilding CXX object CMakeFiles/temperature_publisher.dir/src/temperature_publisher.cpp.o[0m
+[29.452s] [100%] [32m[1mLinking CXX executable temperature_publisher[0m
+[30.168s] [100%] Built target temperature_publisher
+[30.200s] Invoked command in '/home/bestway/bestway_ws/build/temperature_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --build /home/bestway/bestway_ws/build/temperature_publisher -- -j4 -l4
+[30.229s] Invoking command in '/home/bestway/bestway_ws/build/temperature_publisher': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --install /home/bestway/bestway_ws/build/temperature_publisher
+[30.254s] -- Install configuration: ""
+[30.256s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher
+[30.263s] -- Set runtime path of "/home/bestway/bestway_ws/install/temperature_publisher/lib/temperature_publisher/temperature_publisher" to "/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64"
+[30.265s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/temperature_publisher_library_path.dsv
+[30.268s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/package_run_dependencies/temperature_publisher
+[30.268s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/parent_prefix_path/temperature_publisher
+[30.268s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.sh
+[30.268s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/ament_prefix_path.dsv
+[30.269s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.sh
+[30.269s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/environment/path.dsv
+[30.269s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.bash
+[30.269s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.sh
+[30.269s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.zsh
+[30.269s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/local_setup.dsv
+[30.269s] -- Installing: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.dsv
+[30.271s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/ament_index/resource_index/packages/temperature_publisher
+[30.271s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig.cmake
+[30.271s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/cmake/temperature_publisherConfig-version.cmake
+[30.271s] -- Up-to-date: /home/bestway/bestway_ws/install/temperature_publisher/share/temperature_publisher/package.xml
+[30.283s] Invoked command in '/home/bestway/bestway_ws/build/temperature_publisher' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/bestway/bestway_ws/install/yuntai_control:/home/bestway/bestway_ws/install/sbus_control:/home/bestway/bestway_ws/install/move_pos:/home/bestway/bestway_ws/install/lidar_distance:/home/bestway/bestway_ws/install/auto_drive:/opt/ros/humble /usr/bin/cmake --install /home/bestway/bestway_ws/build/temperature_publisher

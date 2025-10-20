@@ -41,7 +41,7 @@ class TemperatureTrackingNode(Node):
         self.temperature_threshold = 400
 
         # 搜索模式参数
-        self.search_step = 20  # 每次转动的角度
+        self.search_step = 10  # 每次转动的角度
         self.search_delay = 0.1  # 每次转动后的延时（秒）
         self.search_direction = 1 # 搜索方向（1：顺时针，-1：逆时针）
 

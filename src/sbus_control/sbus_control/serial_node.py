@@ -11,6 +11,8 @@ import subprocess
 import psutil
 import os
 import signal
+import threading
+from queue import Queue
 
 class SerialNode(Node):
     def __init__(self):
@@ -72,17 +74,37 @@ class SerialNode(Node):
         # 发布 /boss 话题
         self.boss_publisher = self.create_publisher(Int32, '/boss', 10)
         
-        # 定时器，用于发送坐标和读取数据
-        self.timer = self.create_timer(0.1, self.serial_communication)  # 改为100ms，降低发送频率
+        # 接收缓冲与帧队列（用于低延迟处理）
+        self.rx_buffer = bytearray()
+        self.frame_queue = Queue(maxsize=100)
+
+        # 定时器：发送坐标（缩短周期降低发送间隔，提高及时性）
+        self.timer = self.create_timer(0.05, self.serial_communication)  # 50ms
+
+        # 高频定时器：处理接收队列中的帧，避免阻塞主计时器
+        self.frame_timer = self.create_timer(0.01, self.process_frame_queue)  # 10ms
         
         # 添加发送锁，防止数据冲突
         self.sending_lock = False
-        
+
         # 添加03 00命令的时间锁定机制（6秒内不重复处理）
         self.last_03_00_time = None
         self.cmd_03_00_lock_duration = 6.0  # 6秒锁定时间
-        
+
+        # 添加01 00命令的时间记录（用于10秒后再次触发停止温度节点）
+        self.last_01_00_time = None
+        self.min_01_00_interval = 10.0  # 10秒间隔
+
         self.get_logger().info("串口节点已启动")
+
+        # 启动串口读线程（持续拉取数据，降低接收延迟）
+        self.reader_running = False
+        self.reader_thread = None
+        if self.serial_port and self.serial_port.is_open:
+            self.reader_running = True
+            self.reader_thread = threading.Thread(target=self.serial_reader_loop, name='serial_reader', daemon=True)
+            self.reader_thread.start()
+            self.get_logger().info("串口读线程已启动")
     
     def odometry_callback(self, msg):
         """
@@ -168,6 +190,10 @@ class SerialNode(Node):
         """
         读取串口数据并解析BOSS状态
         """
+        # 若读线程已开启，则由线程负责读取；此处直接返回，避免并发读取冲突
+        if getattr(self, 'reader_running', False):
+            return
+
         if not self.serial_port or not self.serial_port.is_open:
             return
         
@@ -186,6 +212,90 @@ class SerialNode(Node):
                 
         except Exception as e:
             self.get_logger().error(f"读取串口数据失败: {e}")
+
+    def serial_reader_loop(self):
+        """后台读线程：尽快读取串口数据并提取帧放入队列"""
+        while self.reader_running:
+            try:
+                if self.serial_port and self.serial_port.is_open:
+                    n = self.serial_port.in_waiting
+                    if n and n > 0:
+                        data = self.serial_port.read(n)
+                        if data:
+                            # 追加到流缓冲并提取帧
+                            self.rx_buffer.extend(data)
+                            self.extract_frames_from_rx_buffer()
+                    else:
+                        # 轻微休眠避免忙等
+                        time.sleep(0.005)
+                else:
+                    # 串口不可用时稍等，避免空转
+                    time.sleep(0.05)
+            except Exception as e:
+                # 保持线程健壮性
+                try:
+                    self.get_logger().warn(f"串口读线程异常: {e}")
+                except Exception:
+                    pass
+                time.sleep(0.02)
+
+    def extract_frames_from_rx_buffer(self):
+        """
+        在 rx_buffer 中按协议提取尽可能多的 6 字节帧并放入 frame_queue。
+        协议：AA BB | D1 D2 | CC DD
+        """
+        buf = self.rx_buffer
+        # 循环提取直到不足一帧或无有效头
+        while True:
+            if len(buf) < 6:
+                break
+            # 查找帧头 AA BB
+            header_pos = -1
+            for i in range(len(buf) - 5):
+                if buf[i] == 0xAA and buf[i + 1] == 0xBB:
+                    header_pos = i
+                    break
+            if header_pos < 0:
+                # 丢弃除最后1字节外的噪声，避免错过跨边界帧头
+                del buf[:max(0, len(buf) - 1)]
+                break
+            # 若剩余不足完整帧，等待更多数据
+            if header_pos + 6 > len(buf):
+                # 保留从 header_pos 开始的未完整部分
+                if header_pos > 0:
+                    del buf[:header_pos]
+                break
+            # 检查帧尾 CC DD
+            if buf[header_pos + 4] == 0xCC and buf[header_pos + 5] == 0xDD:
+                frame = bytes(buf[header_pos:header_pos + 6])
+                # 推入队列，满了则丢弃最旧或当前帧，这里选择丢弃当前并警告
+                try:
+                    self.frame_queue.put_nowait(frame)
+                except Exception:
+                    try:
+                        self.get_logger().warn("帧队列已满，丢弃一帧")
+                    except Exception:
+                        pass
+                # 移除已处理部分
+                del buf[:header_pos + 6]
+            else:
+                # 帧尾不正确，跳过当前帧头继续
+                del buf[:header_pos + 1]
+
+    def process_frame_queue(self):
+        """高频处理接收队列中的帧，快速触发命令响应"""
+        processed = 0
+        # 一次最多处理一定数量，避免长时间占用回调
+        while processed < 20 and not self.frame_queue.empty():
+            try:
+                frame = self.frame_queue.get_nowait()
+            except Exception:
+                break
+            try:
+                self.process_boss_frame(frame)
+            except Exception as e:
+                self.get_logger().error(f"处理队列帧失败: {e}")
+            processed += 1
     
     def parse_frames(self, data):
         """
@@ -362,6 +472,160 @@ class SerialNode(Node):
         self.get_logger().info("启动search_fire_node: ros2 run auto_drive search_fire_node")
         subprocess.Popen(['ros2', 'run', 'auto_drive', 'search_fire_node'])
 
+    def start_move_pos_node(self):
+        """启动 move_pos_topic_node_v2 节点"""
+        self.get_logger().info("启动move_pos_topic_node_v2: ros2 run move_pos move_pos_topic_node_v2")
+        subprocess.Popen(['ros2', 'run', 'move_pos', 'move_pos_topic_node_v2'])
+
+    def stop_move_pos_node(self):
+        """停止 move_pos_topic_node_v2 节点（彻底杀死所有相关进程）"""
+        killed_pids = []
+
+        # 精确搜索该节点相关的进程
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                if 'move_pos_topic_node_v2' in cmdline_str:
+                    if proc.info['pid'] not in killed_pids:
+                        killed_pids.append(proc.info['pid'])
+                        self.get_logger().info(f"找到move_pos_topic_node_v2相关进程: PID={proc.info['pid']}, CMD={cmdline_str}")
+            except Exception:
+                continue
+
+        for pid in killed_pids:
+            try:
+                self.get_logger().info(f"强制停止move_pos_topic_node_v2节点，PID={pid}")
+                process = psutil.Process(pid)
+
+                # 先杀子进程
+                try:
+                    children = process.children(recursive=True)
+                    for child in children:
+                        self.get_logger().info(f"杀死子进程，PID={child.pid}")
+                        child.kill()
+                        child.wait(timeout=2)
+                except Exception as e:
+                    self.get_logger().warn(f"杀死子进程失败: {e}")
+
+                # 再杀主进程
+                process.kill()
+                process.wait(timeout=5)
+                self.get_logger().info(f"move_pos_topic_node_v2进程PID={pid}已停止")
+
+            except psutil.TimeoutExpired:
+                self.get_logger().warn(f"move_pos_topic_node_v2进程PID={pid}停止超时，尝试强制杀死")
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except Exception as e:
+                    self.get_logger().error(f"强制杀死move_pos_topic_node_v2进程PID={pid}失败: {e}")
+            except psutil.NoSuchProcess:
+                self.get_logger().info(f"move_pos_topic_node_v2进程PID={pid}已不存在")
+            except Exception as e:
+                self.get_logger().error(f"停止move_pos_topic_node_v2进程PID={pid}失败: {e}")
+
+        if not killed_pids:
+            self.get_logger().info("move_pos_topic_node_v2未运行，无需停止")
+
+    def start_temperature_tracking_node(self):
+        """启动 temperature_tracking_node_v2 节点"""
+        self.get_logger().info("启动temperature_tracking_node_v2: ros2 run yuntai_control temperature_tracking_node_v2")
+        subprocess.Popen(['ros2', 'run', 'yuntai_control', 'temperature_tracking_node_v2'])
+
+    def stop_temperature_tracking_node(self):
+        """停止 temperature_tracking_node_v2 节点（彻底杀死所有相关进程）"""
+        killed_pids = []
+
+        # 精确搜索该节点相关的进程
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                if 'temperature_tracking_node_v2' in cmdline_str:
+                    if proc.info['pid'] not in killed_pids:
+                        killed_pids.append(proc.info['pid'])
+                        self.get_logger().info(f"找到temperature_tracking_node_v2相关进程: PID={proc.info['pid']}, CMD={cmdline_str}")
+            except Exception:
+                continue
+
+        for pid in killed_pids:
+            try:
+                self.get_logger().info(f"强制停止temperature_tracking_node_v2节点，PID={pid}")
+                process = psutil.Process(pid)
+
+                # 先杀子进程
+                try:
+                    children = process.children(recursive=True)
+                    for child in children:
+                        self.get_logger().info(f"杀死子进程，PID={child.pid}")
+                        child.kill()
+                        child.wait(timeout=2)
+                except Exception as e:
+                    self.get_logger().warn(f"杀死子进程失败: {e}")
+
+                # 再杀主进程
+                process.kill()
+                process.wait(timeout=5)
+                self.get_logger().info(f"temperature_tracking_node_v2进程PID={pid}已停止")
+
+            except psutil.TimeoutExpired:
+                self.get_logger().warn(f"temperature_tracking_node_v2进程PID={pid}停止超时，尝试强制杀死")
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except Exception as e:
+                    self.get_logger().error(f"强制杀死temperature_tracking_node_v2进程PID={pid}失败: {e}")
+            except psutil.NoSuchProcess:
+                self.get_logger().info(f"temperature_tracking_node_v2进程PID={pid}已不存在")
+            except Exception as e:
+                self.get_logger().error(f"停止temperature_tracking_node_v2进程PID={pid}失败: {e}")
+
+        if not killed_pids:
+            self.get_logger().info("temperature_tracking_node_v2未运行，无需停止")
+
+    def start_temperature_publisher_node(self):
+        """启动 temperature_publisher 节点"""
+        self.get_logger().info("启动temperature_publisher: ros2 run temperature_publisher temperature_publisher")
+        subprocess.Popen(['ros2', 'run', 'temperature_publisher', 'temperature_publisher'])
+
+    def stop_temperature_publisher_node(self):
+        """停止 temperature_publisher 节点（彻底杀死所有相关进程）"""
+        killed_pids = []
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline_str = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
+                if 'temperature_publisher' in cmdline_str:
+                    if proc.info['pid'] not in killed_pids:
+                        killed_pids.append(proc.info['pid'])
+                        self.get_logger().info(f"找到temperature_publisher相关进程: PID={proc.info['pid']}, CMD={cmdline_str}")
+            except Exception:
+                continue
+
+        for pid in killed_pids:
+            try:
+                self.get_logger().info(f"强制停止temperature_publisher节点，PID={pid}")
+                process = psutil.Process(pid)
+                try:
+                    for child in process.children(recursive=True):
+                        self.get_logger().info(f"杀死子进程，PID={child.pid}")
+                        child.kill()
+                        child.wait(timeout=2)
+                except Exception as e:
+                    self.get_logger().warn(f"杀死子进程失败: {e}")
+                process.kill()
+                process.wait(timeout=5)
+                self.get_logger().info(f"temperature_publisher进程PID={pid}已停止")
+            except psutil.TimeoutExpired:
+                self.get_logger().warn(f"temperature_publisher进程PID={pid}停止超时，尝试强制杀死")
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except Exception as e:
+                    self.get_logger().error(f"强制杀死temperature_publisher进程PID={pid}失败: {e}")
+            except psutil.NoSuchProcess:
+                self.get_logger().info(f"temperature_publisher进程PID={pid}已不存在")
+            except Exception as e:
+                self.get_logger().error(f"停止temperature_publisher进程PID={pid}失败: {e}")
+
+        if not killed_pids:
+            self.get_logger().info("temperature_publisher未运行，无需停止")
+
     def stop_search_fire_node(self):
         """停止search_fire_node节点（彻底杀死所有相关进程）"""
         killed_pids = []
@@ -507,22 +771,52 @@ class SerialNode(Node):
                     self.start_mapping_node()
             elif (data_byte1, data_byte2) == (0x01, 0x00):
                 boss_msg.data = 0
-                self.get_logger().info("收到01 00命令")
-                # search_fire_node管理：只在未运行时启动
-                if self.is_process_running('search_fire_node'):
-                    self.get_logger().info("search_fire_node已运行，忽略01 00命令")
+                self.get_logger().info("收到01 00命令（仅控制temperature_publisher）")
+                current_time = self.get_clock().now()
+                temp_pub_running = self.is_process_running('temperature_publisher') is not None
+
+                if not temp_pub_running:
+                    # 未运行则启动，并记录时间
+                    self.get_logger().info("temperature_publisher未运行，启动...")
+                    self.start_temperature_publisher_node()
+                    self.last_01_00_time = current_time
                 else:
-                    self.get_logger().info("search_fire_node未运行，启动...")
-                    self.start_search_fire_node()
+                    # 已在运行，仅当距离上次01 00 >= 10秒时才停止
+                    if self.last_01_00_time is None:
+                        # 缺少起始时间，则设定起始并忽略此次
+                        self.last_01_00_time = current_time
+                        self.get_logger().info("temperature_publisher已运行，但缺少上次时间标记，记录时间并忽略此次01 00")
+                    else:
+                        time_diff = (current_time - self.last_01_00_time).nanoseconds / 1e9
+                        if time_diff >= self.min_01_00_interval:
+                            self.get_logger().info("temperature_publisher已运行，满足10秒间隔，停止...")
+                            self.stop_temperature_publisher_node()
+                            # 更新时间标记为当前，以便下一次逻辑判定
+                            self.last_01_00_time = current_time
+                        else:
+                            self.get_logger().info(f"收到01 00但距离上次不足{self.min_01_00_interval}s（{time_diff:.1f}s），忽略")
             elif (data_byte1, data_byte2) == (0x02, 0x00):
                 boss_msg.data = 1
-                self.get_logger().info("收到02 00命令，停止search_fire_node")
+                # self.get_logger().info("收到02 00命令，停止search_fire_node")
+                self.get_logger().info("收到02 00命令")
                 # 停止search_fire_node节点
-                if self.is_process_running('search_fire_node'):
-                    self.get_logger().info("search_fire_node已运行，停止...")
-                    self.stop_search_fire_node()
-                else:
-                    self.get_logger().info("search_fire_node未运行，无需停止")
+                # if self.is_process_running('search_fire_node'):
+                #     self.get_logger().info("search_fire_node已运行，停止...")
+                #     self.stop_search_fire_node()
+                # else:
+                #     self.get_logger().info("search_fire_node未运行，无需停止")
+                # 停止move_pos_topic_node_v2
+                # if self.is_process_running('move_pos_topic_node_v2'):
+                #     self.get_logger().info("move_pos_topic_node_v2已运行，停止...")
+                #     self.stop_move_pos_node()
+                # else:
+                #     self.get_logger().info("move_pos_topic_node_v2未运行，无需停止")
+                # # 停止temperature_tracking_node_v2
+                # if self.is_process_running('temperature_tracking_node_v2'):
+                #     self.get_logger().info("temperature_tracking_node_v2已运行，停止...")
+                #     self.stop_temperature_tracking_node()
+                # else:
+                #     self.get_logger().info("temperature_tracking_node_v2未运行，无需停止")
             else:
                 boss_msg.data = -1
                 self.get_logger().warn(f"未知状态 ({data_byte1:02X} {data_byte2:02X})")
@@ -566,18 +860,30 @@ class SerialNode(Node):
             self.read_serial_data()
             return
         
-        # 发送坐标
-        if self.send_coordinates():
-            # 发送成功后等待更长时间，确保数据传输完成
-            time.sleep(0.05)
-        
-        # 读取数据
-        self.read_serial_data()
+        # 发送坐标（非阻塞，不再 sleep）
+        self.send_coordinates()
+
+        # 若未启用读线程，作为降级路径读取一次数据
+        if not getattr(self, 'reader_running', False):
+            self.read_serial_data()
     
     def destroy_node(self):
         """
         节点销毁时关闭串口
         """
+        # 停止读线程
+        try:
+            if getattr(self, 'reader_running', False):
+                self.reader_running = False
+                if getattr(self, 'reader_thread', None) is not None:
+                    self.reader_thread.join(timeout=1.0)
+                    self.get_logger().info("串口读线程已停止")
+        except Exception as e:
+            try:
+                self.get_logger().warn(f"停止串口读线程异常: {e}")
+            except Exception:
+                pass
+
         if self.serial_port and self.serial_port.is_open:
             self.serial_port.close()
             self.get_logger().info("串口已关闭")

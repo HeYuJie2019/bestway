@@ -265,6 +265,12 @@ PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 //Path to a program.
 Python3_EXECUTABLE:FILEPATH=/usr/bin/python3
 
+//Path to SDK include headers
+SDK_INCLUDE_DIR:PATH=/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/include
+
+//Path to SDK shared libraries
+SDK_LIB_DIR:PATH=/home/bestway/SV_NET_SDK_ARM_250424/demo/consoleDemo/lib/x64
+
 //Name of the computer/site where compile is being run
 SITE:STRING=ubuntu
 

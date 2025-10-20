@@ -1,0 +1,22 @@
+[Unit]
+Description=Wait for /yuntai_controller_node then run temperature_publisher
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=30
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=bestway
+WorkingDirectory=/home/bestway/bestway_ws
+Environment=TIMEOUT_SEC=0
+Environment=INTERVAL_SEC=2
+ExecStart=/home/bestway/bestway_ws/scripts/wait_for_node_then_run_temperature.sh /yuntai_controller_node
+Restart=on-failure
+RestartSec=3
+
+# Give the node a bit more time to stop cleanly
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

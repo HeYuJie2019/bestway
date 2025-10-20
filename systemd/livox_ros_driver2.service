@@ -1,0 +1,21 @@
+[Unit]
+Description=ROS2 Livox MID360 Driver
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=bestway
+Group=bestway
+Environment=ROS_DISTRO=humble
+Environment=START_DELAY=2
+WorkingDirectory=/home/bestway/bestway_ws
+ExecStart=/bin/bash -lc '/home/bestway/bestway_ws/scripts/start_livox.sh'
+Restart=on-failure
+RestartSec=3
+# Provide a longer timeout to allow DDP discovery
+TimeoutStartSec=60
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

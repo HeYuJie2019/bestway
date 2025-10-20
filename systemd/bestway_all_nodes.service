@@ -1,0 +1,19 @@
+[Unit]
+Description=Start ROS 2 all_nodes.launch.py
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bestway
+WorkingDirectory=/home/bestway/bestway_ws
+Environment=ROS_DISTRO=humble
+Environment=START_DELAY=5
+ExecStart=/bin/bash -lc '/home/bestway/bestway_ws/scripts/start_all_nodes.sh'
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/var/log/start_all_nodes.log
+StandardError=append:/var/log/start_all_nodes.log
+
+[Install]
+WantedBy=multi-user.target

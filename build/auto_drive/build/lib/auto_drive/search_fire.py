@@ -76,11 +76,11 @@ class AutoDriveNode(Node):
         # self.init_zed_camera()
 
         # 初始化状态
-        self.base_safe_distance = 0.85  # 基础安全距离，单位：米
+        self.base_safe_distance = 1.0  # 基础安全距离，单位：米
         self.base_speed = 1.5  # 基础速度，单位：米/秒
-        self.max_speed = 5.0  # 最大速度
+        self.max_speed = 3.0  # 最大速度
         self.max_safe_distance = 2.5  # 最大安全距离
-        self.safe_distance = 0.85  # 安全距离，单位：米
+        self.safe_distance = 1.0  # 安全距离，单位：米
         self.speed = 1.5  # 当前速度
         self.latest_distances = None  # 存储最新的激光雷达数据
         self.front_avg = 0.0  # 前方距离
