@@ -23,16 +23,16 @@ class PointCloudTo2DMap(Node):
         super().__init__('pointcloud_to_2d_map')
         
         # 声明参数
-        self.declare_parameter('input_topic', '/cloud_registered')
-        # self.declare_parameter('input_topic', '/Laser_map')
+        # self.declare_parameter('input_topic', '/cloud_registered')
+        self.declare_parameter('input_topic', '/Laser_map')
         self.declare_parameter('output_topic', '/map')
         self.declare_parameter('map_frame', 'map')
         self.declare_parameter('map_resolution', 0.05)  # 5cm分辨率
         self.declare_parameter('map_width', 2000)       # 地图宽度(像素)
         self.declare_parameter('map_height', 2000)      # 地图高度(像素)
-        self.declare_parameter('obstacle_z_min', -1.0)   # 障碍物最小高度
+        self.declare_parameter('obstacle_z_min', -0.3)   # 障碍物最小高度
         self.declare_parameter('obstacle_z_max', 1.0)   # 障碍物最大高度
-        self.declare_parameter('update_rate', 10.0)      # 降低更新频率减少闪烁
+        self.declare_parameter('update_rate', 50.0)      # 降低更新频率减少闪烁
         self.declare_parameter('inflation_radius', 0.15) # 膨胀半径
         self.declare_parameter('fast_mode', True)        # 快速模式，简化处理
         self.declare_parameter('skip_frames', 3)         # 增加跳帧减少更新
@@ -73,10 +73,14 @@ class PointCloudTo2DMap(Node):
             10
         )
         
+        # 使用transient_local QoS以便Nav2的static_layer能正确订阅
+        from rclpy.qos import QoSProfile, DurabilityPolicy
+        map_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        
         self.map_publisher = self.create_publisher(
             OccupancyGrid,
             self.output_topic,
-            1
+            map_qos
         )
         
         # 创建定时器进行地图更新

@@ -2,9 +2,8 @@
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped, Point, Quaternion
+from geometry_msgs.msg import PoseStamped, Point
 from nav_msgs.msg import OccupancyGrid, Odometry, Path
-from std_msgs.msg import Header
 import numpy as np
 import math
 from collections import deque
@@ -28,19 +27,11 @@ class SimpleNavigationController(Node):
         self.declare_parameter('control_frequency', 10.0) # 控制频率
         self.declare_parameter('obstacle_inflation_radius', 0.3) # 障碍物膨胀半径
         self.declare_parameter('max_planning_time', 5.0) # 最大规划时间
-        self.declare_parameter('stuck_detection_time', 3.0) # 卡住检测时间
-        self.declare_parameter('stuck_distance_threshold', 0.1) # 卡住距离阈值
         self.declare_parameter('path_smoothing_factor', 0.5) # 路径平滑因子
         self.declare_parameter('waypoint_spacing', 0.5) # 路径点间距
-        # 添加临时目标相关参数
-        self.declare_parameter('temp_goal_distance', 1.5) # 临时目标距离
+    # 添加临时目标相关参数（精简保留）
         self.declare_parameter('temp_goal_update_frequency', 2.0) # 临时目标更新频率
-        self.declare_parameter('lookahead_distance', 2.0) # 前瞻距离
-        self.declare_parameter('obstacle_avoidance_distance', 1.0) # 避障距离
-        self.declare_parameter('min_passage_width', 0.6) # 最小通道宽度
-        self.declare_parameter('max_temp_goal_distance', 3.0) # 最大临时目标距离
-        self.declare_parameter('min_temp_goal_distance', 0.5) # 最小临时目标距离
-        self.declare_parameter('robot_movement_threshold', 0.2) # 机器人移动检测阈值
+        self.declare_parameter('min_temp_goal_publish_distance', 0.5) # 发布临时目标的最小距离（避免目标太近被认为已到达）
         
         # 获取参数
         self.goal_tolerance = self.get_parameter('goal_tolerance').value
@@ -48,43 +39,45 @@ class SimpleNavigationController(Node):
         self.control_frequency = self.get_parameter('control_frequency').value
         self.obstacle_inflation_radius = self.get_parameter('obstacle_inflation_radius').value
         self.max_planning_time = self.get_parameter('max_planning_time').value
-        self.stuck_detection_time = self.get_parameter('stuck_detection_time').value
-        self.stuck_distance_threshold = self.get_parameter('stuck_distance_threshold').value
         self.path_smoothing_factor = self.get_parameter('path_smoothing_factor').value
         self.waypoint_spacing = self.get_parameter('waypoint_spacing').value
-        self.temp_goal_distance = self.get_parameter('temp_goal_distance').value
         self.temp_goal_update_frequency = self.get_parameter('temp_goal_update_frequency').value
-        self.lookahead_distance = self.get_parameter('lookahead_distance').value
-        self.obstacle_avoidance_distance = self.get_parameter('obstacle_avoidance_distance').value
-        self.min_passage_width = self.get_parameter('min_passage_width').value
-        self.max_temp_goal_distance = self.get_parameter('max_temp_goal_distance').value
-        self.min_temp_goal_distance = self.get_parameter('min_temp_goal_distance').value
-        self.robot_movement_threshold = self.get_parameter('robot_movement_threshold').value
+        self.min_temp_goal_publish_distance = self.get_parameter('min_temp_goal_publish_distance').value
+        # 新的队列化临时目标参数
+        self.declare_parameter('temp_goal_spacing', 0.5)  # 临时目标之间最小间距（m）
+        self.declare_parameter('temp_path_safety_distance', 0.3)  # 路径到障碍物最小距离（m）
+        self.declare_parameter('goal_reached_distance', 0.3)  # 到达最终目标阈值（m）
+        self.temp_goal_spacing = self.get_parameter('temp_goal_spacing').value
+        self.temp_path_safety_distance = self.get_parameter('temp_path_safety_distance').value
+        self.goal_reached_distance = self.get_parameter('goal_reached_distance').value
+
+        # 队列生成鲁棒性参数
+        self.declare_parameter('allow_partial_temp_queue', True)  # 若部分点无效，是否保留已验证的前缀，不整段失败
+        self.declare_parameter('temp_queue_adjust_backoff_ratio', 0.2)  # 回退比例（相对 spacing）
+        self.declare_parameter('temp_queue_adjust_max_steps', 5)  # 最大回退步数
+        self.declare_parameter('temp_queue_min_spacing_factor', 0.8)  # 允许的最小间距因子
+        self.declare_parameter('temp_queue_lateral_offset_max', 0.5)  # 横向最大偏移（m）
+        self.declare_parameter('temp_queue_lateral_offset_step', 0.1)  # 横向偏移步长（m）
+        self.allow_partial_temp_queue = self.get_parameter('allow_partial_temp_queue').value
+        self.temp_queue_adjust_backoff_ratio = float(self.get_parameter('temp_queue_adjust_backoff_ratio').value)
+        self.temp_queue_adjust_max_steps = int(self.get_parameter('temp_queue_adjust_max_steps').value)
+        self.temp_queue_min_spacing_factor = float(self.get_parameter('temp_queue_min_spacing_factor').value)
+        self.temp_queue_lateral_offset_max = float(self.get_parameter('temp_queue_lateral_offset_max').value)
+        self.temp_queue_lateral_offset_step = float(self.get_parameter('temp_queue_lateral_offset_step').value)
+
+        # 全局临时目标队列和地图更新标志
+        self.temp_goal_queue = deque()
+        self.map_updated = False
+        self.last_goal_coords = None
         
         # 状态变量
         self.current_pose = None
         self.goal_pose = None
         self.occupancy_grid = None
         self.is_navigating = False
-        self.path = []
-        self.current_path_index = 0
         
-        # 控制状态
-        self.control_state = "IDLE"  # IDLE, NAVIGATING, REACHED, STUCK
-        self.last_control_time = time.time()
-        self.last_temp_goal_time = time.time()  # 上次发布临时目标的时间
         self.current_temp_goal = None  # 当前临时目标
         
-        # 机器人移动检测
-        self.last_position = None
-        self.last_position_check_time = time.time()
-        self.temp_goal_retry_count = 0  # 临时目标重试次数
-        self.max_temp_goal_retries = 3  # 最大重试次数
-        
-        # 卡住检测
-        self.position_history = deque(maxlen=int(self.stuck_detection_time * self.control_frequency))
-        self.last_replan_time = 0.0
-        self.replan_cooldown = 2.0  # 重新规划冷却时间
         
         # 地图处理
         self.inflated_map = None
@@ -118,13 +111,13 @@ class SimpleNavigationController(Node):
             10
         )
         
-        # 创建路径发布者用于可视化
-        self.path_publisher = self.create_publisher(
+        # 创建临时目标队列路径发布者
+        self.temp_goal_path_publisher = self.create_publisher(
             Path,
-            '/path',
+            '/temp_goal_path',
             10
         )
-        
+
         # 创建机器人轨迹发布者
         self.trajectory_publisher = self.create_publisher(
             Path,
@@ -135,35 +128,37 @@ class SimpleNavigationController(Node):
         # 机器人轨迹
         self.robot_trajectory = Path()
         self.robot_trajectory.header.frame_id = "map"
-        
-        # 创建定时器
-        timer_period = 1.0 / self.temp_goal_update_frequency
+
+        # 创建定时器：使用更高的控制频率以提升响应与切换流畅度
+        eff_freq = max(float(self.control_frequency), float(self.temp_goal_update_frequency))
+        timer_period = 1.0 / eff_freq
         self.control_timer = self.create_timer(timer_period, self.control_loop)
         
         self.get_logger().info('Simple Navigation Controller started - Enhanced Version')
         self.get_logger().info(f'Goal tolerance: {self.goal_tolerance} m')
-        self.get_logger().info(f'Min passage width: {self.min_passage_width} m')
-        self.get_logger().info(f'Temp goal distance range: {self.min_temp_goal_distance}-{self.max_temp_goal_distance} m')
         self.get_logger().info(f'Temp goal update frequency: {self.temp_goal_update_frequency} Hz')
-        self.get_logger().info(f'Lookahead distance: {self.lookahead_distance} m')
-        self.get_logger().info(f'Obstacle avoidance distance: {self.obstacle_avoidance_distance} m')
-        self.get_logger().info(f'Robot movement threshold: {self.robot_movement_threshold} m')
+        self.get_logger().info(f'Min temp goal publish distance: {self.min_temp_goal_publish_distance} m')
+        self.get_logger().info(f'Temp goal spacing: {self.temp_goal_spacing} m')
+        self.get_logger().info(f'Temp path safety distance: {self.temp_path_safety_distance} m')
+        self.get_logger().info(f'Goal reached distance: {self.goal_reached_distance} m')
+        self.get_logger().info(f'Allow partial temp queue: {self.allow_partial_temp_queue}')
+        self.get_logger().info(f'Queue adjust backoff ratio: {self.temp_queue_adjust_backoff_ratio}')
+        self.get_logger().info(f'Queue adjust max steps: {self.temp_queue_adjust_max_steps}')
+        self.get_logger().info(f'Queue min spacing factor: {self.temp_queue_min_spacing_factor}')
+        self.get_logger().info(f'Queue lateral offset max: {self.temp_queue_lateral_offset_max} m')
+        self.get_logger().info(f'Queue lateral offset step: {self.temp_queue_lateral_offset_step} m')
         
     def goal_callback(self, msg: PoseStamped):
         """目标点回调函数"""
         self.goal_pose = msg.pose
         self.is_navigating = True
-        self.current_path_index = 0
-        self.control_state = "NAVIGATING"
         self.current_temp_goal = None  # 重置临时目标
-        
+
         goal_x = self.goal_pose.position.x
         goal_y = self.goal_pose.position.y
-        
+
         self.get_logger().info(f'New goal received: ({goal_x:.2f}, {goal_y:.2f})')
-        
-        # 简单路径规划
-        self.plan_path()
+        # 不在回调中单独规划/发布路径，交由控制循环基于队列处理
         
     def odom_callback(self, msg: Odometry):
         """里程计回调函数"""
@@ -198,6 +193,8 @@ class SimpleNavigationController(Node):
         """地图回调函数"""
         self.occupancy_grid = msg
         self.inflated_map = self.inflate_obstacles(msg)
+        # 标记地图更新，可能需要重新生成临时目标队列
+        self.map_updated = True
     
     def inflate_obstacles(self, occupancy_grid: OccupancyGrid) -> np.ndarray:
         """膨胀障碍物以提供安全距离"""
@@ -232,19 +229,7 @@ class SimpleNavigationController(Node):
         
         return inflated
         
-    def quaternion_to_yaw(self, quat: Quaternion) -> float:
-        """四元数转偏航角"""
-        siny_cosp = 2 * (quat.w * quat.z + quat.x * quat.y)
-        cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.z * quat.z)
-        return math.atan2(siny_cosp, cosy_cosp)
     
-    def normalize_angle(self, angle: float) -> float:
-        """角度归一化到[-π, π]"""
-        while angle > math.pi:
-            angle -= 2 * math.pi
-        while angle < -math.pi:
-            angle += 2 * math.pi
-        return angle
     
     def distance_to_goal(self) -> float:
         """计算到目标点的距离"""
@@ -579,6 +564,24 @@ class SimpleNavigationController(Node):
             path_msg.poses.append(pose_stamped)
         
         self.path_publisher.publish(path_msg)
+
+    def publish_temp_goal_queue_path(self):
+        """将当前临时目标队列发布为 Path，便于 RViz 可视化"""
+        path_msg = Path()
+        path_msg.header.frame_id = "map"
+        path_msg.header.stamp = self.get_clock().now().to_msg()
+
+        for x, y in list(self.temp_goal_queue):
+            pose_stamped = PoseStamped()
+            pose_stamped.header.frame_id = "map"
+            pose_stamped.header.stamp = path_msg.header.stamp
+            pose_stamped.pose.position.x = x
+            pose_stamped.pose.position.y = y
+            pose_stamped.pose.position.z = 0.0
+            pose_stamped.pose.orientation.w = 1.0
+            path_msg.poses.append(pose_stamped)
+
+        self.temp_goal_path_publisher.publish(path_msg)
     
     def detect_stuck(self) -> bool:
         """检测机器人是否卡住"""
@@ -622,36 +625,21 @@ class SimpleNavigationController(Node):
         return None
     
     def check_temp_goal_safety(self, temp_x: float, temp_y: float) -> bool:
-        """检查临时目标点是否安全 - 实用版本"""
+        """简化版安全检查：
+        - 点安全：临时点与障碍物的最小安全距离 >= temp_path_safety_distance
+        - 线安全：机器人当前位置到临时点的直线段具备相同安全边距
+        """
         if self.current_pose is None:
             return False
-        
+
         current_x = self.current_pose.position.x
         current_y = self.current_pose.position.y
-        
-        # 使用基本的安全边距检查临时目标点
-        basic_safety_margin = self.obstacle_avoidance_distance * 0.9  # 进一步减少安全边距
-        
-        # 检查临时目标点本身是否安全
-        if not self.is_point_safe_with_margin(temp_x, temp_y, basic_safety_margin):
-            return False
-        
-        # 简化路径检查：只检查到临时目标80%的距离
-        distance_to_temp = math.sqrt((temp_x - current_x)**2 + (temp_y - current_y)**2)
-        if distance_to_temp > 1.5:  # 只对较远的目标进行路径检查
-            path_safety_margin = self.obstacle_avoidance_distance * 0.7  # 进一步减少路径安全边距
-            check_distance = distance_to_temp * 0.8  # 只检查80%的路径
-            
-            # 计算检查点
-            direction_x = (temp_x - current_x) / distance_to_temp
-            direction_y = (temp_y - current_y) / distance_to_temp
-            check_x = current_x + direction_x * check_distance
-            check_y = current_y + direction_y * check_distance
-            
-            if not self.is_point_safe_with_margin(check_x, check_y, path_safety_margin):
-                return False
-        
-        return True
+
+        margin = float(self.temp_path_safety_distance)
+        return (
+            self.is_point_safe_with_margin(temp_x, temp_y, margin) and
+            self.is_path_clear_with_margin(current_x, current_y, temp_x, temp_y, margin)
+        )
     
     def is_point_safe_with_margin(self, x: float, y: float, safety_margin: float) -> bool:
         """检查点是否安全（带安全边距）- 实用版本"""
@@ -815,6 +803,7 @@ class SimpleNavigationController(Node):
     
     def find_safe_temp_goal(self, target_x: float, target_y: float) -> Optional[Tuple[float, float]]:
         """寻找安全的临时目标点 - 新的智能算法"""
+        # 旧逻辑保留但不再作为主流程使用
         if self.current_pose is None:
             return None
         
@@ -840,6 +829,290 @@ class SimpleNavigationController(Node):
         
         # 如果直接方向不行，尝试多个角度偏移
         return self.find_temp_goal_with_angle_search(current_x, current_y, target_angle, dynamic_temp_distance)
+
+    def sample_path_into_waypoints(self, path_points: List[Tuple[float, float]], spacing: float) -> List[Tuple[float, float]]:
+        """把一段路径（路径点列表）按 spacing 进行采样，返回采样后的 waypoint 列表（包含起点和终点）。
+        间距尽量接近 spacing，且不会低于 spacing（除终点外）。"""
+        if not path_points:
+            return []
+
+        waypoints: List[Tuple[float, float]] = []
+        # 使用路径的第一个点作为起点
+        waypoints.append(path_points[0])
+
+        for i in range(1, len(path_points)):
+            p0 = path_points[i-1]
+            p1 = path_points[i]
+            dx = p1[0] - p0[0]
+            dy = p1[1] - p0[1]
+            seg_len = math.hypot(dx, dy)
+            if seg_len <= 1e-6:
+                continue
+
+            # 计算该段需要多少等分（尽量保证每段长度不小于 spacing）
+            num = max(1, int(math.floor(seg_len / spacing)))
+            for k in range(1, num + 1):
+                t = k / num
+                x = p0[0] + t * dx
+                y = p0[1] + t * dy
+                # 只有当与上一个采样点距离不小于 spacing - 1e-6 才添加
+                if math.hypot(x - waypoints[-1][0], y - waypoints[-1][1]) + 1e-6 >= spacing:
+                    waypoints.append((x, y))
+
+        # 确保终点存在
+        if math.hypot(waypoints[-1][0] - path_points[-1][0], waypoints[-1][1] - path_points[-1][1]) > 1e-6:
+            waypoints.append(path_points[-1])
+
+        return waypoints
+
+    def generate_temp_goal_queue(self, goal_x: float, goal_y: float) -> List[Tuple[float, float]]:
+        """根据当前位姿和地图生成完整的临时目标点队列，满足间距和安全距离要求。
+        返回生成的点列表（不含机器人当前位置）。"""
+        self.get_logger().info('Generating full temp goal queue...')
+
+        if self.current_pose is None:
+            self.get_logger().warn('Cannot generate temp goals: current_pose unknown')
+            return []
+
+        if self.occupancy_grid is None or self.inflated_map is None:
+            self.get_logger().warn('Cannot generate temp goals: map not available')
+            return []
+
+        start_x = self.current_pose.position.x
+        start_y = self.current_pose.position.y
+
+        # 如果直接连线满足安全与可通行性，则直接从直线生成
+        if self.is_path_clear_with_margin(start_x, start_y, goal_x, goal_y, self.temp_path_safety_distance):
+            # 直接从起点到终点按 spacing 采样
+            total_dx = goal_x - start_x
+            total_dy = goal_y - start_y
+            total_dist = math.hypot(total_dx, total_dy)
+            if total_dist < 1e-6:
+                return []
+
+            n_segments = max(1, int(math.floor(total_dist / self.temp_goal_spacing)))
+            points = []
+            for k in range(1, n_segments + 1):
+                t = k / n_segments
+                x = start_x + t * total_dx
+                y = start_y + t * total_dy
+                points.append((x, y))
+
+            # 确保最后一个点为最终目标
+            if math.hypot(points[-1][0] - goal_x, points[-1][1] - goal_y) > 1e-6:
+                points.append((goal_x, goal_y))
+
+            # 过滤每个点是否在安全区内
+            filtered = []
+            prev = (start_x, start_y)
+            for p in points:
+                if not self.is_point_safe_with_margin(p[0], p[1], self.temp_path_safety_distance):
+                    self.get_logger().warn(f'Point {p} too close to obstacle, abort generation')
+                    return []
+                if not self.is_path_clear_with_margin(prev[0], prev[1], p[0], p[1], self.temp_path_safety_distance):
+                    self.get_logger().warn(f'Segment {prev}->{p} not safe, abort generation')
+                    return []
+                filtered.append(p)
+                prev = p
+
+            return filtered
+
+        # 否则尝试使用 A* 规划一条路径，然后对路径采样
+        path_points = self.astar_planning(start_x, start_y, goal_x, goal_y)
+        if not path_points:
+            self.get_logger().warn('A* failed to find path for temp goal queue generation')
+            # 尝试退化为单步前进目标
+            fallback = self._find_safe_progress_point((start_x, start_y), (goal_x, goal_y))
+            if fallback is not None:
+                self.get_logger().warn('Using fallback single progress point due to A* failure')
+                return [fallback]
+            return []
+
+        # 平滑并采样路径
+        smoothed = self.smooth_path(path_points)
+        sampled = self.sample_path_into_waypoints(smoothed, self.temp_goal_spacing)
+
+        # 验证采样点与相邻连线的安全性（带回退与部分保留）
+        validated: List[Tuple[float, float]] = []
+        prev = (start_x, start_y)
+        min_spacing = max(0.05, self.temp_goal_spacing * self.temp_queue_min_spacing_factor)
+        backoff_step = max(0.02, self.temp_goal_spacing * self.temp_queue_adjust_backoff_ratio)
+
+        def try_lateral_offsets(base_prev: Tuple[float, float], base_p: Tuple[float, float]) -> Optional[Tuple[float, float]]:
+            """围绕 prev->p 方向，在 p 附近做横向偏移搜索，返回第一个安全候选点。"""
+            px, py = base_prev
+            tx, ty = base_p
+            vx = tx - px
+            vy = ty - py
+            seg_len = math.hypot(vx, vy)
+            if seg_len < 1e-6:
+                return None
+            ux, uy = vx / seg_len, vy / seg_len
+            # 法向
+            nx, ny = -uy, ux
+            # 以偏移距离从小到大、左右交替搜索
+            max_off = self.temp_queue_lateral_offset_max
+            step = max(1e-3, self.temp_queue_lateral_offset_step)
+            k = 1
+            off = step
+            while off <= max_off + 1e-9:
+                for s in (1, -1):
+                    cx = tx + s * nx * off
+                    cy = ty + s * ny * off
+                    # 保证与 prev 的最小间距
+                    if math.hypot(cx - px, cy - py) + 1e-6 < min_spacing:
+                        continue
+                    if self.is_point_safe_with_margin(cx, cy, self.temp_path_safety_distance) and \
+                       self.is_path_clear_with_margin(px, py, cx, cy, self.temp_path_safety_distance):
+                        return (cx, cy)
+                k += 1
+                off = k * step
+            return None
+
+        for idx, p in enumerate(sampled):
+            # 跳过可能等于起点的点
+            if math.hypot(p[0]-prev[0], p[1]-prev[1]) < 1e-6:
+                prev = p
+                continue
+
+            ok_point = self.is_point_safe_with_margin(p[0], p[1], self.temp_path_safety_distance)
+            ok_seg = self.is_path_clear_with_margin(prev[0], prev[1], p[0], p[1], self.temp_path_safety_distance)
+
+            candidate = p
+            # 若点或段不安全，尝试沿 prev->p 方向回退若干
+            if not (ok_point and ok_seg):
+                dir_x = p[0] - prev[0]
+                dir_y = p[1] - prev[1]
+                seg_len = math.hypot(dir_x, dir_y)
+                if seg_len > 1e-6:
+                    dir_x /= seg_len
+                    dir_y /= seg_len
+                adjusted = False
+                for step in range(1, self.temp_queue_adjust_max_steps + 1):
+                    new_len = seg_len - step * backoff_step
+                    # 保证与 prev 的距离不低于 min_spacing（避免过密）
+                    if new_len < min_spacing:
+                        break
+                    cand_x = prev[0] + dir_x * new_len
+                    cand_y = prev[1] + dir_y * new_len
+                    if self.is_point_safe_with_margin(cand_x, cand_y, self.temp_path_safety_distance) and \
+                       self.is_path_clear_with_margin(prev[0], prev[1], cand_x, cand_y, self.temp_path_safety_distance):
+                        candidate = (cand_x, cand_y)
+                        adjusted = True
+                        break
+                if not adjusted:
+                    # 尝试横向偏移在 p 附近寻找安全候选
+                    lateral = try_lateral_offsets(prev, p)
+                    if lateral is not None:
+                        candidate = lateral
+                        adjusted = True
+                if not adjusted:
+                    # 如果无法调整该点
+                    if self.allow_partial_temp_queue and validated:
+                        self.get_logger().warn(f'Sampled point {p} invalid; keep partial queue with {len(validated)} waypoints')
+                        break
+                    else:
+                        self.get_logger().warn(f'Sampled point {p} invalid and no partial allowed; abort generation')
+                        return []
+
+            # 通过验证，加入队列
+            validated.append(candidate)
+            prev = candidate
+
+        # 确保最后一个点是最终目标
+        if validated and math.hypot(validated[-1][0]-goal_x, validated[-1][1]-goal_y) > 1e-3:
+            # 对最终段也做一次安全验证/回退
+            p = (goal_x, goal_y)
+            ok_point = self.is_point_safe_with_margin(p[0], p[1], self.temp_path_safety_distance)
+            ok_seg = self.is_path_clear_with_margin(prev[0], prev[1], p[0], p[1], self.temp_path_safety_distance)
+            candidate = p
+            if not (ok_point and ok_seg):
+                dir_x = p[0] - prev[0]
+                dir_y = p[1] - prev[1]
+                seg_len = math.hypot(dir_x, dir_y)
+                if seg_len > 1e-6:
+                    dir_x /= seg_len
+                    dir_y /= seg_len
+                adjusted = False
+                for step in range(1, self.temp_queue_adjust_max_steps + 1):
+                    new_len = seg_len - step * backoff_step
+                    if new_len < min_spacing:
+                        break
+                    cand_x = prev[0] + dir_x * new_len
+                    cand_y = prev[1] + dir_y * new_len
+                    if self.is_point_safe_with_margin(cand_x, cand_y, self.temp_path_safety_distance) and \
+                       self.is_path_clear_with_margin(prev[0], prev[1], cand_x, cand_y, self.temp_path_safety_distance):
+                        candidate = (cand_x, cand_y)
+                        adjusted = True
+                        break
+                if not adjusted:
+                    # 尝试横向偏移
+                    lateral = try_lateral_offsets(prev, p)
+                    if lateral is not None:
+                        candidate = lateral
+                        adjusted = True
+                if not adjusted:
+                    if self.allow_partial_temp_queue and validated:
+                        self.get_logger().warn('Final goal segment invalid; keep partial queue')
+                    else:
+                        self.get_logger().warn('Final goal segment invalid and no partial allowed; returning empty')
+                        return []
+            validated.append(candidate)
+
+        # 若没有任何有效点，尝试单步前进点作为兜底
+        if not validated:
+            fallback = self._find_safe_progress_point((start_x, start_y), (goal_x, goal_y))
+            if fallback is not None:
+                self.get_logger().warn('Validated queue empty; using fallback single progress point')
+                return [fallback]
+            return []
+
+        return validated
+
+    def _find_safe_progress_point(self, start: Tuple[float, float], goal: Tuple[float, float]) -> Optional[Tuple[float, float]]:
+        """从 start 朝 goal 方向寻找一个安全的前进点（>=最小发布距离），支持横向偏移兜底。
+        优先距离：使用 max(min_temp_goal_publish_distance, temp_goal_spacing)。
+        若直线不安全，按横向偏移逐步搜索。
+        返回找到的 (x,y) 或 None。
+        """
+        if self.inflated_map is None or self.occupancy_grid is None:
+            return None
+
+        sx, sy = start
+        gx, gy = goal
+        vx = gx - sx
+        vy = gy - sy
+        dist = math.hypot(vx, vy)
+        if dist < 1e-6:
+            return None
+        ux, uy = vx / dist, vy / dist
+
+        d = max(float(self.min_temp_goal_publish_distance), float(self.temp_goal_spacing))
+        d = min(d, max(0.5, dist))
+        cx = sx + ux * d
+        cy = sy + uy * d
+
+        # 直线候选
+        if self.is_point_safe_with_margin(cx, cy, self.temp_path_safety_distance) and \
+           self.is_path_clear_with_margin(sx, sy, cx, cy, self.temp_path_safety_distance):
+            return (cx, cy)
+
+        # 横向偏移搜索
+        nx, ny = -uy, ux
+        max_off = self.temp_queue_lateral_offset_max
+        step = max(1e-3, self.temp_queue_lateral_offset_step)
+        k = 1
+        off = step
+        while off <= max_off + 1e-9:
+            for s in (1, -1):
+                tx = cx + s * nx * off
+                ty = cy + s * ny * off
+                if self.is_point_safe_with_margin(tx, ty, self.temp_path_safety_distance) and \
+                   self.is_path_clear_with_margin(sx, sy, tx, ty, self.temp_path_safety_distance):
+                    return (tx, ty)
+            k += 1
+            off = k * step
+        return None
     
     def calculate_dynamic_temp_goal_distance(self, target_x: float, target_y: float) -> float:
         """动态计算临时目标距离 - 空旷地带距离更远"""
@@ -1116,6 +1389,68 @@ class SimpleNavigationController(Node):
         self.last_temp_goal_time = time.time()
         
         self.get_logger().info(f'Published temp goal: ({temp_x:.2f}, {temp_y:.2f})')
+
+    def _ensure_head_min_distance(self, min_dist: float) -> bool:
+        """确保队列头部目标与机器人距离不小于 min_dist。
+        策略：
+        - 连续跳过所有小于 min_dist 的头部点（若后续存在且可行）；
+        - 若无法跳过，则尝试用从机器人位置沿头部方向的 min_dist 点替换队列头（需安全且连线安全）；
+        - 若最终队列为空则返回 False。
+        修改 self.temp_goal_queue 并在变更后发布可视化 Path。
+        """
+        if not self.temp_goal_queue or self.current_pose is None:
+            return False
+
+        robot_x = self.current_pose.position.x
+        robot_y = self.current_pose.position.y
+
+        changed = False
+        while self.temp_goal_queue:
+            hx, hy = self.temp_goal_queue[0]
+            dist = math.hypot(hx - robot_x, hy - robot_y)
+            if dist + 1e-6 >= min_dist:
+                break
+
+            # 有第二个点且更远，优先跳过当前头
+            if len(self.temp_goal_queue) >= 2:
+                sx, sy = self.temp_goal_queue[1]
+                sdist = math.hypot(sx - robot_x, sy - robot_y)
+                # 检查到第二个点的路径安全
+                path_ok = self.is_path_clear_with_margin(robot_x, robot_y, sx, sy, self.temp_path_safety_distance)
+                if sdist + 1e-6 >= min_dist and path_ok:
+                    self.temp_goal_queue.popleft()
+                    changed = True
+                    continue
+
+            # 尝试将头部替换为沿机器人->头部方向的 min_dist 点
+            dx = hx - robot_x
+            dy = hy - robot_y
+            seg = math.hypot(dx, dy)
+            if seg < 1e-6:
+                # 点与机器人重合，直接丢弃该点
+                self.temp_goal_queue.popleft()
+                changed = True
+                continue
+            ux, uy = dx / seg, dy / seg
+            nx = robot_x + ux * min_dist
+            ny = robot_y + uy * min_dist
+            # 安全检查
+            point_ok = self.is_point_safe_with_margin(nx, ny, self.temp_path_safety_distance)
+            path_ok = self.is_path_clear_with_margin(robot_x, robot_y, nx, ny, self.temp_path_safety_distance)
+            if point_ok and path_ok:
+                # 替换队列头
+                self.temp_goal_queue[0] = (nx, ny)
+                changed = True
+                break
+            else:
+                # 无法替换，只能移除当前头部继续尝试
+                self.temp_goal_queue.popleft()
+                changed = True
+
+        if changed:
+            self.publish_temp_goal_queue_path()
+
+        return bool(self.temp_goal_queue)
     
     def recovery_behavior(self):
         """恢复行为：重新规划路径"""
@@ -1133,107 +1468,112 @@ class SimpleNavigationController(Node):
         self.last_replan_time = time.time()
     
     def control_loop(self):
-        """主控制循环 - 基于新的智能临时目标点导航"""
-        if not self.is_navigating or self.current_pose is None:
+        """主控制循环 - 使用全局临时目标队列导航"""
+        if not self.is_navigating or self.current_pose is None or self.goal_pose is None:
             return
-        
+
         current_time = time.time()
-        
-        # 检查是否到达最终目标
+
+        # 检查是否到达最终目标（使用更严格的到达阈值）
         distance_to_final_goal = self.distance_to_goal()
-        if distance_to_final_goal < self.goal_tolerance:
+        if distance_to_final_goal <= self.goal_reached_distance:
             self.is_navigating = False
             self.control_state = "REACHED"
-            self.reset_temp_goal_retry()
-            self.get_logger().info('Goal reached!')
+            self.temp_goal_queue.clear()
+            self.current_temp_goal = None
+            self.get_logger().info('Final goal reached!')
             return
-        
-        # 检查机器人是否在移动
-        robot_is_moving = self.check_robot_movement()
-        
-        # 如果机器人没有移动且有临时目标，增加重试计数
-        if not robot_is_moving and self.current_temp_goal is not None:
-            self.increment_temp_goal_retry()
-            if self.temp_goal_retry_count >= self.max_temp_goal_retries:
-                self.get_logger().warn(f'Max temp goal retries reached ({self.max_temp_goal_retries}), replanning path')
-                self.plan_path()
-                self.reset_temp_goal_retry()
-                self.last_replan_time = current_time
+
+        goal_x = self.goal_pose.position.x
+        goal_y = self.goal_pose.position.y
+
+        # 如果最终目标发生变化，重新生成队列
+        if self.last_goal_coords != (goal_x, goal_y):
+            self.get_logger().info('Goal changed: regenerating temp goal queue')
+            self.temp_goal_queue.clear()
+            new_points = self.generate_temp_goal_queue(goal_x, goal_y)
+            for p in new_points:
+                self.temp_goal_queue.append(p)
+            # 发布队列 Path 以便可视化
+            self.publish_temp_goal_queue_path()
+            self.last_goal_coords = (goal_x, goal_y)
+            self.map_updated = False
+            # 立即发布第一个临时目标（如果存在且满足最小距离要求0.5m）
+            if self.temp_goal_queue:
+                if self._ensure_head_min_distance(max(0.5, self.min_temp_goal_publish_distance)):
+                    nx, ny = self.temp_goal_queue[0]
+                    self.publish_temp_goal(nx, ny)
+            return
+
+        # 如果地图更新，验证现有队列是否仍然安全；若不安全则重新生成
+        if self.map_updated and self.temp_goal_queue:
+            self.get_logger().info('Map updated: validating existing temp goal queue')
+            prev = (self.current_pose.position.x, self.current_pose.position.y)
+            valid = True
+            for p in list(self.temp_goal_queue):
+                if not self.is_point_safe_with_margin(p[0], p[1], self.temp_path_safety_distance) or \
+                   not self.is_path_clear_with_margin(prev[0], prev[1], p[0], p[1], self.temp_path_safety_distance):
+                    valid = False
+                    break
+                prev = p
+
+            if not valid:
+                self.get_logger().info('Existing temp goal queue invalidated by map changes; regenerating')
+                self.temp_goal_queue.clear()
+                new_points = self.generate_temp_goal_queue(goal_x, goal_y)
+                for p in new_points:
+                    self.temp_goal_queue.append(p)
+                # 发布新的队列 Path
+                self.publish_temp_goal_queue_path()
+                self.map_updated = False
+                if self.temp_goal_queue:
+                    nx, ny = self.temp_goal_queue[0]
+                    self.publish_temp_goal(nx, ny)
                 return
-        
-        # 卡住检测
-        if self.detect_stuck() and current_time - self.last_replan_time > self.replan_cooldown:
-            self.control_state = "STUCK"
-            self.recovery_behavior()
-            return
-        
-        # 更新当前路径索引（基于机器人位置）
-        self.update_path_index()
-        
-        # 确定下一个临时目标
-        next_temp_goal = None
-        
-        if self.path:
-            self.get_logger().info(f'Path has {len(self.path)} waypoints, current index: {self.current_path_index}')
-            # 使用路径上的前瞻点
-            lookahead_point = self.get_lookahead_point_on_path()
-            if lookahead_point:
-                self.get_logger().info(f'Found lookahead point: ({lookahead_point[0]:.2f}, {lookahead_point[1]:.2f})')
-                next_temp_goal = self.find_safe_temp_goal(lookahead_point[0], lookahead_point[1])
             else:
-                self.get_logger().warn('No lookahead point found on path')
-        else:
-            self.get_logger().warn('No path available for navigation')
-        
-        if next_temp_goal is None:
-            self.get_logger().info('Path method failed, trying direct goal approach')
-            # 如果路径方法失败，直接朝向最终目标
-            next_temp_goal = self.find_safe_temp_goal(
-                self.goal_pose.position.x, 
-                self.goal_pose.position.y
-            )
-        
-        # 发布临时目标
-        if next_temp_goal:
-            temp_x, temp_y = next_temp_goal
-            
-            # 检查是否需要更新临时目标
-            should_update = True
-            if self.current_temp_goal:
-                # 计算与当前临时目标的距离
-                current_temp_x, current_temp_y = self.current_temp_goal
-                distance_to_current_temp = math.sqrt(
-                    (temp_x - current_temp_x)**2 + (temp_y - current_temp_y)**2
-                )
-                
-                # 计算机器人到当前临时目标的距离
-                robot_to_current_temp = math.sqrt(
-                    (current_temp_x - self.current_pose.position.x)**2 + 
-                    (current_temp_y - self.current_pose.position.y)**2
-                )
-                
-                # 如果新目标与当前目标很接近，机器人正在移动，且机器人还没到达当前目标，则不更新
-                if (distance_to_current_temp < 1.0 and 
-                    robot_to_current_temp > 0.8 and  # 机器人还没到达当前目标
-                    robot_is_moving):  # 机器人正在移动
-                    should_update = False
-            
-            if should_update:
-                self.publish_temp_goal(temp_x, temp_y)
-                self.reset_temp_goal_retry()  # 重置重试计数
-                openness = self.calculate_area_openness(self.current_pose.position.x, self.current_pose.position.y, 2.0)
-                self.get_logger().info(f'Published temp goal: ({temp_x:.2f}, {temp_y:.2f}), area openness: {openness:.2f}, retry count reset')
-        else:
-            # 没有找到安全的临时目标，重新规划
-            if current_time - self.last_replan_time > self.replan_cooldown:
-                distance_to_goal = math.sqrt(
-                    (self.goal_pose.position.x - self.current_pose.position.x)**2 + 
-                    (self.goal_pose.position.y - self.current_pose.position.y)**2
-                )
-                self.get_logger().warn(f'No safe temp goal found (distance to goal: {distance_to_goal:.2f}m), replanning path')
-                self.plan_path()
-                self.reset_temp_goal_retry()
-                self.last_replan_time = current_time
+                # 队列仍然有效，清除地图更新标志
+                self.map_updated = False
+
+        # 如果当前没有临时目标，尝试从队列取出并发布
+        if self.current_temp_goal is None and self.temp_goal_queue:
+            if self._ensure_head_min_distance(max(0.5, self.min_temp_goal_publish_distance)):
+                nx, ny = self.temp_goal_queue[0]
+                self.publish_temp_goal(nx, ny)
+
+        # 检查机器人到当前临时目标的距离，满足切换条件则切换到下一个
+        if self.current_temp_goal is not None:
+            robot_x = self.current_pose.position.x
+            robot_y = self.current_pose.position.y
+            curr_x, curr_y = self.current_temp_goal
+            dist = math.hypot(curr_x - robot_x, curr_y - robot_y)
+            # 切换阈值：固定为 0.5m，更快切换
+            if dist <= 0.5:
+                # 弹出当前目标（如果队列头与当前目标一致）
+                if self.temp_goal_queue and math.hypot(self.temp_goal_queue[0][0] - curr_x, self.temp_goal_queue[0][1] - curr_y) < 1e-3:
+                    self.temp_goal_queue.popleft()
+                    # 队列变化，更新可视化 Path
+                    self.publish_temp_goal_queue_path()
+
+                # 发布下一个目标或最终目标
+                if self.temp_goal_queue:
+                    # 确保新目标与机器人至少0.5m
+                    if self._ensure_head_min_distance(max(0.5, self.min_temp_goal_publish_distance)):
+                        nx, ny = self.temp_goal_queue[0]
+                        self.publish_temp_goal(nx, ny)
+                else:
+                    # 队列为空，优先尝试发布最终目标（若安全）；否则退化为单步前进点
+                    if self.check_temp_goal_safety(goal_x, goal_y):
+                        self.publish_temp_goal(goal_x, goal_y)
+                        # 清空队列 Path 可视化（发布空 Path）
+                        self.publish_temp_goal_queue_path()
+                    else:
+                        fallback = self._find_safe_progress_point((robot_x, robot_y), (goal_x, goal_y))
+                        if fallback is not None:
+                            fx, fy = fallback
+                            self.get_logger().warn('Final goal unsafe; using fallback progress point')
+                            self.publish_temp_goal(fx, fy)
+                        else:
+                            self.get_logger().warn('Final goal not safe to publish; waiting for map updates')
     
     def update_path_index(self):
         """更新当前路径索引"""

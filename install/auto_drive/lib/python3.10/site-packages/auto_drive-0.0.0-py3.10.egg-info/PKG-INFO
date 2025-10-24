@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: auto-drive
 Version: 0.0.0
-Summary: TODO: Package description
+Summary: Auto drive package with online SLAM navigation
 Home-page: UNKNOWN
 Maintainer: bestway
 Maintainer-email: 19858193124@163.com

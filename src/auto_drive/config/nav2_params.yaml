@@ -1,0 +1,78 @@
+# Nav2参数配置文件
+# 用于全局路径规划
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: False
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /Odometry
+    bt_loop_duration: 10
+    default_server_timeout: 20
+
+planner_server:
+  ros__parameters:
+    use_sim_time: False
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: true
+      allow_unknown: true
+
+# Costmap配置 - 用于路径规划
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: False
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.3  # 机器人半径(m) - 增大以提高安全性
+      resolution: 0.05
+      track_unknown_space: true
+      rolling_window: false  # 使用静态全局地图
+      width: 100  # 代价地图宽度(米) - 匹配您的地图
+      height: 100  # 代价地图高度(米)
+      origin_x: -50.0  # 地图原点X（地图中心）
+      origin_y: -50.0  # 地图原点Y
+      plugins: ["static_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+        map_topic: /map
+        enabled: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 5.0  # 增大成本缩放因子
+        inflation_radius: 0.7  # 膨胀半径(m) - 从0.55增大到0.7
+        inflate_unknown: false  # 不膨胀未知区域
+        enabled: true
+      always_send_full_costmap: True
+      
+# 替代的Smac规划器配置（如果需要）
+# planner_server:
+#   ros__parameters:
+#     use_sim_time: False
+#     planner_plugins: ["GridBased"]
+#     GridBased:
+#       plugin: "nav2_smac_planner/SmacPlanner2D"
+#       tolerance: 0.5
+#       downsample_costmap: false
+#       downsampling_factor: 1
+#       allow_unknown: true
+#       max_iterations: 1000000
+#       max_on_approach_iterations: 1000
+#       max_planning_time: 5.0
+#       motion_model_for_search: "DUBIN"
+#       angle_quantization_bins: 72
+#       analytic_expansion_ratio: 3.5
+#       analytic_expansion_max_length: 3.0
+#       minimum_turning_radius: 0.40
+#       reverse_penalty: 2.0
+#       change_penalty: 0.0
+#       non_straight_penalty: 1.2
+#       cost_penalty: 2.0
+#       retrospective_penalty: 0.015
+#       lookup_table_size: 20.0
+#       cache_obstacle_heuristic: false
+#       smooth_path: True

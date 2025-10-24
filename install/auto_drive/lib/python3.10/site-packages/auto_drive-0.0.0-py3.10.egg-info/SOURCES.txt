@@ -11,10 +11,15 @@ setup.py
 auto_drive/__init__.py
 auto_drive/auto_drive_node.py
 auto_drive/navigation_controller.py
+auto_drive/navigation_node.py
+auto_drive/odom_to_baselink_publisher.py
 auto_drive/pointcloud_to_2d_map.py
 auto_drive/pose_printer.py
 auto_drive/search_fire copy.py
 auto_drive/search_fire.py
+config/nav2_params.yaml
+launch/full_navigation.launch.py
+launch/nav2_navigation.launch.py
 resource/auto_drive
 test/test_copyright.py
 test/test_flake8.py

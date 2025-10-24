@@ -1,7 +1,11 @@
 [console_scripts]
 auto_drive_node = auto_drive.auto_drive_node:main
+laser_map_builder_node = auto_drive.laser_map_builder:main
 navigation_controller = auto_drive.navigation_controller:main
+navigation_node = auto_drive.navigation_node:main
+odom_to_baselink_publisher = auto_drive.odom_to_baselink_publisher:main
 pointcloud_to_2d_map = auto_drive.pointcloud_to_2d_map:main
 pose_printer_node = auto_drive.pose_printer:main
-search_fire_node = auto_drive.search_fire:main
+search_fire = auto_drive.search_fire:main
+simple_map_converter = auto_drive.simple_map_converter:main
 

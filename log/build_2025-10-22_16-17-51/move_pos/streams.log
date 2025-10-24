@@ -1,0 +1,23 @@
+[7.441s] Invoking command in '/home/bestway/bestway_ws/src/move_pos': PYTHONPATH=/home/bestway/bestway_ws/build/move_pos/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/move_pos build --build-base /home/bestway/bestway_ws/build/move_pos/build install --record /home/bestway/bestway_ws/build/move_pos/install.log --single-version-externally-managed install_data
+[9.061s] running egg_info
+[9.064s] writing ../../build/move_pos/move_pos.egg-info/PKG-INFO
+[9.065s] writing dependency_links to ../../build/move_pos/move_pos.egg-info/dependency_links.txt
+[9.067s] writing entry points to ../../build/move_pos/move_pos.egg-info/entry_points.txt
+[9.069s] writing requirements to ../../build/move_pos/move_pos.egg-info/requires.txt
+[9.071s] writing top-level names to ../../build/move_pos/move_pos.egg-info/top_level.txt
+[9.077s] reading manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'
+[9.083s] writing manifest file '../../build/move_pos/move_pos.egg-info/SOURCES.txt'
+[9.083s] running build
+[9.083s] running build_py
+[9.083s] running install
+[9.084s] running install_lib
+[9.089s] running install_data
+[9.091s] running install_egg_info
+[9.101s] removing '/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info' (and everything under it)
+[9.103s] Copying ../../build/move_pos/move_pos.egg-info to /home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages/move_pos-0.0.0-py3.10.egg-info
+[9.114s] running install_scripts
+[9.467s] Installing move_pos_topic_node script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos
+[9.472s] Installing move_pos_topic_node_v2 script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos
+[9.476s] Installing move_pos_topic_node_v3 script to /home/bestway/bestway_ws/install/move_pos/lib/move_pos
+[9.486s] writing list of installed files to '/home/bestway/bestway_ws/build/move_pos/install.log'
+[10.005s] Invoked command in '/home/bestway/bestway_ws/src/move_pos' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/move_pos/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/move_pos/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/move_pos build --build-base /home/bestway/bestway_ws/build/move_pos/build install --record /home/bestway/bestway_ws/build/move_pos/install.log --single-version-externally-managed install_data

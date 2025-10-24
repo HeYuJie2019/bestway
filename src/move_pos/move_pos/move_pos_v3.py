@@ -197,8 +197,8 @@ class GoToPoseTopicNode(Node):
 
     def control_loop(self):
         # PID参数
-        linear_kp = 1.8
-        linear_ki = 0.0
+        linear_kp = 2.0
+        linear_ki = 0.01
         linear_kd = 0.5
         angular_kp = 5.0
         angular_ki = 0.0
@@ -265,7 +265,7 @@ class GoToPoseTopicNode(Node):
             angle_error = angle_to_goal - yaw
             angle_error = (angle_error + math.pi) % (2 * math.pi) - math.pi
             front_distance = self.get_front_distance()
-            base_safe_distance = 1.2
+            base_safe_distance = 1.0
             max_safe_distance = 3.0
             speed_factor = abs(self.current_speed) / 20.0
             safe_distance = base_safe_distance + speed_factor * (max_safe_distance - base_safe_distance)
@@ -337,7 +337,7 @@ class GoToPoseTopicNode(Node):
             prev_angular_error = angular_error
             linear_speed = max(min(linear_speed, 4.0), -4.0)
             self.current_speed = linear_speed
-            angular_speed = max(min(angular_speed, 6.0), -6.0)
+            angular_speed = max(min(angular_speed, 4.0), -4.0)
             
             twist = Twist()
             if abs(angle_error) > 0.45:
