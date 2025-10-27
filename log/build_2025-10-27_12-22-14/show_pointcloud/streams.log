@@ -1,0 +1,42 @@
+[1.854s] Invoking command in '/home/bestway/bestway_ws/src/show_pointcloud': PYTHONPATH=/home/bestway/bestway_ws/build/show_pointcloud/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/show_pointcloud build --build-base /home/bestway/bestway_ws/build/show_pointcloud/build install --record /home/bestway/bestway_ws/build/show_pointcloud/install.log --single-version-externally-managed install_data
+[2.467s] running egg_info
+[2.468s] creating ../../build/show_pointcloud/show_pointcloud.egg-info
+[2.469s] writing ../../build/show_pointcloud/show_pointcloud.egg-info/PKG-INFO
+[2.470s] writing dependency_links to ../../build/show_pointcloud/show_pointcloud.egg-info/dependency_links.txt
+[2.470s] writing entry points to ../../build/show_pointcloud/show_pointcloud.egg-info/entry_points.txt
+[2.470s] writing requirements to ../../build/show_pointcloud/show_pointcloud.egg-info/requires.txt
+[2.470s] writing top-level names to ../../build/show_pointcloud/show_pointcloud.egg-info/top_level.txt
+[2.471s] writing manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+[2.474s] reading manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+[2.476s] writing manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+[2.476s] running build
+[2.476s] running build_py
+[2.477s] creating /home/bestway/bestway_ws/build/show_pointcloud/build
+[2.477s] creating /home/bestway/bestway_ws/build/show_pointcloud/build/lib
+[2.477s] creating /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+[2.477s] copying show_pointcloud/pointcloud_server.py -> /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+[2.477s] copying show_pointcloud/__init__.py -> /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+[2.478s] running install
+[2.479s] running install_lib
+[2.481s] creating /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+[2.481s] copying /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud/pointcloud_server.py -> /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+[2.481s] copying /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud/__init__.py -> /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+[2.483s] byte-compiling /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud/pointcloud_server.py to pointcloud_server.cpython-310.pyc
+[2.486s] byte-compiling /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud/__init__.py to __init__.cpython-310.pyc
+[2.486s] running install_data
+[2.487s] creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index
+[2.487s] creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index
+[2.487s] creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index/packages
+[2.487s] copying resource/show_pointcloud -> /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index/packages
+[2.488s] copying package.xml -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud
+[2.488s] creating /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/launch
+[2.488s] copying launch/start_visualization.launch.py -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/launch
+[2.488s] creating /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+[2.488s] copying web/test.html -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+[2.488s] copying web/index.html -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+[2.489s] running install_egg_info
+[2.492s] Copying ../../build/show_pointcloud/show_pointcloud.egg-info to /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud-0.0.1-py3.10.egg-info
+[2.494s] running install_scripts
+[2.542s] Installing pointcloud_server script to /home/bestway/bestway_ws/install/show_pointcloud/lib/show_pointcloud
+[2.543s] writing list of installed files to '/home/bestway/bestway_ws/build/show_pointcloud/install.log'
+[2.619s] Invoked command in '/home/bestway/bestway_ws/src/show_pointcloud' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/show_pointcloud/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/show_pointcloud build --build-base /home/bestway/bestway_ws/build/show_pointcloud/build install --record /home/bestway/bestway_ws/build/show_pointcloud/install.log --single-version-externally-managed install_data

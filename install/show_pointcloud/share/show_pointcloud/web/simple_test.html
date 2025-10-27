@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .connected { background: #d4edda; color: #155724; }
+        .disconnected { background: #f8d7da; color: #721c24; }
+        .connecting { background: #fff3cd; color: #856404; }
+        .info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 WebSocket连接测试</h1>
+        
+        <div class="info">
+            <strong>当前页面信息:</strong><br>
+            URL: <span id="currentUrl"></span><br>
+            Hostname: <span id="detectedHostname"></span><br>
+            WebSocket URL: <span id="wsUrl"></span>
+        </div>
+        
+        <div id="status" class="status connecting">准备连接</div>
+        
+        <div class="info">
+            <strong>统计信息:</strong><br>
+            连接尝试: <span id="connectAttempts">0</span><br>
+            配置消息: <span id="configCount">0</span><br>
+            数据消息: <span id="dataCount">0</span><br>
+            最后消息: <span id="lastMessage">无</span>
+        </div>
+        
+        <button onclick="connect()">🔌 连接</button>
+        <button onclick="disconnect()">❌ 断开</button>
+        <button onclick="clearLog()">🗑️ 清除日志</button>
+        
+        <h3>📝 连接日志</h3>
+        <div id="log" class="log">准备开始测试...\n</div>
+    </div>
+
+    <script>
+        let ws = null;
+        let connectAttempts = 0;
+        let configCount = 0;
+        let dataCount = 0;
+
+        // 页面加载时获取信息
+        window.onload = function() {
+            const currentUrl = window.location.href;
+            let hostname = window.location.hostname;
+            
+            // 如果hostname为空，尝试从URL提取
+            if (!hostname) {
+                const match = currentUrl.match(/https?:\/\/([^:\/]+)/);
+                hostname = match ? match[1] : 'localhost';
+            }
+            
+            const wsUrl = `ws://${hostname}:9000`;
+            
+            document.getElementById('currentUrl').textContent = currentUrl;
+            document.getElementById('detectedHostname').textContent = hostname;
+            document.getElementById('wsUrl').textContent = wsUrl;
+            
+            log(`页面加载完成`);
+            log(`检测到的hostname: ${hostname}`);
+            log(`将要连接的WebSocket: ${wsUrl}`);
+            
+            // 自动开始连接
+            setTimeout(connect, 1000);
+        };
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateStatus(text, className) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = text;
+            statusElement.className = 'status ' + className;
+        }
+
+        function connect() {
+            const hostname = document.getElementById('detectedHostname').textContent;
+            const wsUrl = `ws://${hostname}:9000`;
+            
+            connectAttempts++;
+            document.getElementById('connectAttempts').textContent = connectAttempts;
+            
+            log(`=== 连接尝试 #${connectAttempts} ===`);
+            log(`目标地址: ${wsUrl}`);
+            updateStatus('连接中...', 'connecting');
+            
+            try {
+                ws = new WebSocket(wsUrl);
+                log('WebSocket对象创建成功');
+                
+                ws.onopen = function() {
+                    log('✅ WebSocket连接成功!');
+                    updateStatus('已连接', 'connected');
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        
+                        if (data.type === 'config') {
+                            configCount++;
+                            document.getElementById('configCount').textContent = configCount;
+                            log(`📋 收到配置消息 #${configCount}`);
+                            log(`  - max_points: ${data.max_points}`);
+                            log(`  - enable_full_cloud: ${data.enable_full_cloud}`);
+                        } else if (data.type === 'update') {
+                            dataCount++;
+                            document.getElementById('dataCount').textContent = dataCount;
+                            const pointCount = data.pointcloud && data.pointcloud.points ? data.pointcloud.points.length : 0;
+                            log(`📊 收到数据消息 #${dataCount} (${pointCount} 点)`);
+                        }
+                        
+                        document.getElementById('lastMessage').textContent = new Date().toLocaleTimeString();
+                        
+                    } catch (e) {
+                        log(`❌ 解析消息失败: ${e.message}`);
+                    }
+                };
+                
+                ws.onerror = function(error) {
+                    log(`❌ WebSocket错误: ${error}`);
+                    log(`  错误类型: ${typeof error}`);
+                    updateStatus('连接错误', 'disconnected');
+                };
+                
+                ws.onclose = function(event) {
+                    log(`🔌 连接关闭:`);
+                    log(`  代码: ${event.code}`);
+                    log(`  原因: ${event.reason || '无'}`);
+                    log(`  是否正常: ${event.wasClean}`);
+                    updateStatus(`连接关闭 (${event.code})`, 'disconnected');
+                    
+                    // 5秒后自动重连
+                    if (event.code !== 1000) {  // 不是正常关闭
+                        log('⏰ 5秒后自动重连...');
+                        setTimeout(connect, 5000);
+                    }
+                };
+                
+            } catch (e) {
+                log(`❌ 创建WebSocket失败: ${e.message}`);
+                updateStatus('创建失败', 'disconnected');
+            }
+        }
+
+        function disconnect() {
+            if (ws) {
+                log('🔌 手动断开连接');
+                ws.close(1000, '用户主动断开');
+                ws = null;
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+            connectAttempts = 0;
+            configCount = 0;
+            dataCount = 0;
+            document.getElementById('connectAttempts').textContent = '0';
+            document.getElementById('configCount').textContent = '0';
+            document.getElementById('dataCount').textContent = '0';
+            document.getElementById('lastMessage').textContent = '无';
+        }
+    </script>
+</body>
+</html>

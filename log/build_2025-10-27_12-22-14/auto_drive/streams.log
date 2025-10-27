@@ -1,0 +1,29 @@
+[4.431s] Invoking command in '/home/bestway/bestway_ws/src/auto_drive': PYTHONPATH=/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/auto_drive build --build-base /home/bestway/bestway_ws/build/auto_drive/build install --record /home/bestway/bestway_ws/build/auto_drive/install.log --single-version-externally-managed install_data
+[5.128s] running egg_info
+[5.130s] writing ../../build/auto_drive/auto_drive.egg-info/PKG-INFO
+[5.132s] writing dependency_links to ../../build/auto_drive/auto_drive.egg-info/dependency_links.txt
+[5.133s] writing entry points to ../../build/auto_drive/auto_drive.egg-info/entry_points.txt
+[5.134s] writing requirements to ../../build/auto_drive/auto_drive.egg-info/requires.txt
+[5.134s] writing top-level names to ../../build/auto_drive/auto_drive.egg-info/top_level.txt
+[5.140s] reading manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[5.143s] writing manifest file '../../build/auto_drive/auto_drive.egg-info/SOURCES.txt'
+[5.144s] running build
+[5.144s] running build_py
+[5.146s] running install
+[5.147s] running install_lib
+[5.153s] running install_data
+[5.154s] running install_egg_info
+[5.160s] removing '/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info' (and everything under it)
+[5.166s] Copying ../../build/auto_drive/auto_drive.egg-info to /home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages/auto_drive-0.0.0-py3.10.egg-info
+[5.176s] running install_scripts
+[5.262s] Installing auto_drive_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.269s] Installing laser_map_builder_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.270s] Installing navigation_controller script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.271s] Installing navigation_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.272s] Installing odom_to_baselink_publisher script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.273s] Installing pointcloud_to_2d_map script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.274s] Installing pose_printer_node script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.275s] Installing search_fire script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.276s] Installing simple_map_converter script to /home/bestway/bestway_ws/install/auto_drive/lib/auto_drive
+[5.278s] writing list of installed files to '/home/bestway/bestway_ws/build/auto_drive/install.log'
+[5.466s] Invoked command in '/home/bestway/bestway_ws/src/auto_drive' returned '0': PYTHONPATH=/home/bestway/bestway_ws/build/auto_drive/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bestway/bestway_ws/install/auto_drive/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/auto_drive build --build-base /home/bestway/bestway_ws/build/auto_drive/build install --record /home/bestway/bestway_ws/build/auto_drive/install.log --single-version-externally-managed install_data

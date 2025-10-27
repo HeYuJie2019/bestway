@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FAST-LIO 实时点云显示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+        }
+        
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            max-width: 300px;
+        }
+        
+        #info h2 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #4CAF50;
+        }
+        
+        #info .status {
+            margin: 5px 0;
+        }
+        
+        .connected {
+            color: #4CAF50;
+        }
+        
+        .disconnected {
+            color: #f44336;
+        }
+        
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:active {
+            background: #3d8b40;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 600px) {
+            #info {
+                font-size: 12px;
+                padding: 10px;
+                max-width: 250px;
+            }
+            
+            #controls {
+                bottom: 10px;
+                padding: 10px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>连接服务器中...</div>
+    </div>
+    
+    <div id="info">
+        <h2>📡 FAST-LIO 点云显示</h2>
+        <div class="status">
+            连接状态: <span id="status" class="disconnected">未连接</span>
+        </div>
+        <div class="status">
+            点云数量: <span id="pointCount">0</span>
+        </div>
+        <div class="status">
+            显示模式: <span id="displayMode">-</span>
+        </div>
+        <div class="status">
+            FPS: <span id="fps">0</span>
+        </div>
+        <div class="status">
+            位置: <span id="position">-</span>
+        </div>
+    </div>
+    
+    <div id="controls">
+        <button id="resetView">重置视角</button>
+        <button id="toggleColor">切换颜色</button>
+        <button id="clearMap">清除地图</button>
+    </div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        
+        // Three.js 场景设置
+        let scene, camera, renderer, controls;
+        let pointCloud;  // 点云对象
+        let ws;
+        let frameCount = 0;
+        let lastTime = Date.now();
+        let colorMode = 0; // 0: 高度着色, 1: 距离着色, 2: 单色
+        
+        // 获取服务器地址
+        const hostname = window.location.hostname || 'localhost';
+        const wsPort = 9000;
+        
+        // 调试信息
+        console.log('=== PointCloud Viewer Starting ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Hostname:', hostname);
+        console.log('WebSocket URL will be: ws://' + hostname + ':' + wsPort);
+        console.log('==================================');
+        
+        function init() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // 创建相机
+            const container = document.getElementById('container');
+            camera = new THREE.PerspectiveCamera(
+                75,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                1000
+            );
+            // 调整相机位置 - 从上方俯视
+            camera.position.set(0, 10, 0);
+            camera.lookAt(0, 0, 0);
+            camera.up.set(0, 0, 1);  // 设置Z轴为上方向
+            
+            // 创建渲染器
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // 添加控制器
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 1;
+            controls.maxDistance = 500;
+            controls.target.set(0, 0, 0);
+            
+            // 添加坐标轴 (红色=X, 绿色=Y, 蓝色=Z)
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+            
+            // 添加网格 (XY平面)
+            const gridHelper = new THREE.GridHelper(100, 100);
+            gridHelper.rotation.x = Math.PI / 2; // 旋转90度使其在XY平面
+            gridHelper.material.opacity = 0.2;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+            
+            // 添加环境光
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            // 添加方向光
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight.position.set(10, 10, 10);
+            scene.add(directionalLight);
+            
+            // 创建点云对象
+            const geometry = new THREE.BufferGeometry();
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                opacity: 0.9,
+                transparent: true
+            });
+            pointCloud = new THREE.Points(geometry, material);
+            scene.add(pointCloud);
+            
+            // 窗口大小调整
+            window.addEventListener('resize', onWindowResize, false);
+            
+            // 按钮事件
+            document.getElementById('resetView').addEventListener('click', resetView);
+            document.getElementById('toggleColor').addEventListener('click', toggleColorMode);
+            document.getElementById('clearMap').addEventListener('click', clearMap);
+            
+            // 连接WebSocket
+            connectWebSocket();
+            
+            // 开始动画循环
+            animate();
+        }
+        
+        function connectWebSocket() {
+            const wsUrl = `ws://${hostname}:${wsPort}`;
+            console.log('Connecting to WebSocket:', wsUrl);
+            
+            try {
+                ws = new WebSocket(wsUrl);
+            } catch (e) {
+                console.error('Failed to create WebSocket:', e);
+                document.getElementById('status').textContent = '连接失败';
+                document.getElementById('status').className = 'disconnected';
+                setTimeout(connectWebSocket, 5000);
+                return;
+            }
+            
+            ws.onopen = () => {
+                console.log('WebSocket connected successfully!');
+                document.getElementById('status').textContent = '已连接';
+                document.getElementById('status').className = 'connected';
+                document.getElementById('loading').style.display = 'none';
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'config') {
+                        console.log('Received config:', data);
+                        // 显示配置信息
+                        const mode = data.enable_full_cloud ? 
+                            '完整点云' : 
+                            `采样显示 (1/${data.downsample_factor})`;
+                        document.getElementById('displayMode').textContent = mode;
+                    } else if (data.type === 'update') {
+                        updatePointCloud(data);
+                    }
+                } catch (e) {
+                    console.error('Error parsing message:', e);
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                console.error('Error details - hostname:', hostname, 'port:', wsPort);
+                document.getElementById('status').textContent = '连接错误';
+                document.getElementById('status').className = 'disconnected';
+            };
+            
+            ws.onclose = (event) => {
+                console.log('WebSocket disconnected. Code:', event.code, 'Reason:', event.reason);
+                document.getElementById('status').textContent = '断开连接';
+                document.getElementById('status').className = 'disconnected';
+                document.getElementById('loading').style.display = 'block';
+                
+                // 5秒后重连
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+        
+        function updatePointCloud(data) {
+            let totalPoints = 0;
+            
+            // 更新点云
+            if (data.pointcloud && data.pointcloud.points && data.pointcloud.points.length > 0) {
+                const points = data.pointcloud.points;
+                const positions = new Float32Array(points.length * 3);
+                const colors = new Float32Array(points.length * 3);
+                
+                for (let i = 0; i < points.length; i++) {
+                    const point = points[i];
+                    positions[i * 3] = point[0];
+                    positions[i * 3 + 1] = point[1];
+                    positions[i * 3 + 2] = point[2];
+                    
+                    const color = getPointColor(point);
+                    colors[i * 3] = color.r;
+                    colors[i * 3 + 1] = color.g;
+                    colors[i * 3 + 2] = color.b;
+                }
+                
+                pointCloud.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                pointCloud.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                pointCloud.geometry.attributes.position.needsUpdate = true;
+                pointCloud.geometry.attributes.color.needsUpdate = true;
+                
+                totalPoints = points.length;
+            }
+            
+            // 更新信息显示
+            document.getElementById('pointCount').textContent = totalPoints;
+            
+            if (data.odom) {
+                const pos = data.odom.position;
+                document.getElementById('position').textContent = 
+                    `(${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)})`;
+            }
+            
+            frameCount++;
+        }
+        
+        function getPointColor(point) {
+            const [x, y, z] = point;
+            
+            if (colorMode === 0) {
+                // 高度着色
+                const height = z;
+                const normalized = Math.max(0, Math.min(1, (height + 5) / 10)); // 高度范围 -5 到 5
+                return {
+                    r: Math.max(0, Math.min(1, normalized)),
+                    g: Math.max(0, Math.min(1, (1 - Math.abs(normalized - 0.5) * 2))),
+                    b: Math.max(0, Math.min(1, (1 - normalized)))
+                };
+            } else if (colorMode === 1) {
+                // 距离着色
+                const dist = Math.sqrt(x * x + y * y + z * z);
+                const normalized = Math.min(1, dist / 50);
+                return {
+                    r: normalized,
+                    g: (1 - normalized),
+                    b: 0.5
+                };
+            } else {
+                // 单色
+                return { r: 0, g: 1.0, b: 0 };
+            }
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            controls.update();
+            renderer.render(scene, camera);
+            
+            // 更新FPS
+            const currentTime = Date.now();
+            if (currentTime - lastTime > 1000) {
+                document.getElementById('fps').textContent = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+        
+        function onWindowResize() {
+            const container = document.getElementById('container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+        
+        function resetView() {
+            camera.position.set(0, 10, 0);
+            camera.up.set(0, 0, 1);
+            camera.lookAt(0, 0, 0);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+        
+        function toggleColorMode() {
+            colorMode = (colorMode + 1) % 3;
+            const modes = ['高度着色', '距离着色', '单色'];
+            console.log('Color mode:', modes[colorMode]);
+        }
+        
+        function clearMap() {
+            // 清除点云
+            if (pointCloud.geometry) {
+                pointCloud.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+                pointCloud.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(0), 3));
+            }
+            console.log('Point cloud cleared');
+        }
+        
+        // 初始化
+        init();
+        
+        // 暴露到全局作用域供调试
+        window.THREE = THREE;
+        window.scene = scene;
+        window.camera = camera;
+    </script>
+</body>
+</html>

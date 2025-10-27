@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket 测试</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>WebSocket 连接测试</h1>
+    <div id="status">正在连接...</div>
+    <div id="messages"></div>
+    
+    <script>
+        const hostname = window.location.hostname || 'localhost';
+        const wsUrl = `ws://${hostname}:9000`;
+        
+        document.getElementById('status').innerHTML = `
+            <p>当前页面URL: ${window.location.href}</p>
+            <p>主机名: ${hostname}</p>
+            <p>WebSocket地址: ${wsUrl}</p>
+            <p>连接状态: <span id="connStatus">连接中...</span></p>
+        `;
+        
+        console.log('尝试连接到:', wsUrl);
+        
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+            console.log('连接成功!');
+            document.getElementById('connStatus').textContent = '已连接 ✓';
+            document.getElementById('connStatus').style.color = 'green';
+        };
+        
+        ws.onmessage = (event) => {
+            console.log('收到消息:', event.data);
+            const msgDiv = document.createElement('div');
+            msgDiv.textContent = '收到: ' + event.data.substring(0, 100);
+            document.getElementById('messages').appendChild(msgDiv);
+        };
+        
+        ws.onerror = (error) => {
+            console.error('WebSocket错误:', error);
+            document.getElementById('connStatus').textContent = '错误 ✗';
+            document.getElementById('connStatus').style.color = 'red';
+        };
+        
+        ws.onclose = (event) => {
+            console.log('连接关闭:', event.code, event.reason);
+            document.getElementById('connStatus').textContent = '已断开';
+            document.getElementById('connStatus').style.color = 'orange';
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+running egg_info
+creating ../../build/show_pointcloud/show_pointcloud.egg-info
+writing ../../build/show_pointcloud/show_pointcloud.egg-info/PKG-INFO
+writing dependency_links to ../../build/show_pointcloud/show_pointcloud.egg-info/dependency_links.txt
+writing entry points to ../../build/show_pointcloud/show_pointcloud.egg-info/entry_points.txt
+writing requirements to ../../build/show_pointcloud/show_pointcloud.egg-info/requires.txt
+writing top-level names to ../../build/show_pointcloud/show_pointcloud.egg-info/top_level.txt
+writing manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+reading manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+writing manifest file '../../build/show_pointcloud/show_pointcloud.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/bestway/bestway_ws/build/show_pointcloud/build
+creating /home/bestway/bestway_ws/build/show_pointcloud/build/lib
+creating /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+copying show_pointcloud/pointcloud_server.py -> /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+copying show_pointcloud/__init__.py -> /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud
+running install
+running install_lib
+creating /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+copying /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud/pointcloud_server.py -> /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+copying /home/bestway/bestway_ws/build/show_pointcloud/build/lib/show_pointcloud/__init__.py -> /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud
+byte-compiling /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud/pointcloud_server.py to pointcloud_server.cpython-310.pyc
+byte-compiling /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index
+creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index
+creating /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index/packages
+copying resource/show_pointcloud -> /home/bestway/bestway_ws/install/show_pointcloud/share/ament_index/resource_index/packages
+copying package.xml -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud
+creating /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/launch
+copying launch/start_visualization.launch.py -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/launch
+creating /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+copying web/test.html -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+copying web/index.html -> /home/bestway/bestway_ws/install/show_pointcloud/share/show_pointcloud/web
+running install_egg_info
+Copying ../../build/show_pointcloud/show_pointcloud.egg-info to /home/bestway/bestway_ws/install/show_pointcloud/lib/python3.10/site-packages/show_pointcloud-0.0.1-py3.10.egg-info
+running install_scripts
+Installing pointcloud_server script to /home/bestway/bestway_ws/install/show_pointcloud/lib/show_pointcloud
+writing list of installed files to '/home/bestway/bestway_ws/build/show_pointcloud/install.log'

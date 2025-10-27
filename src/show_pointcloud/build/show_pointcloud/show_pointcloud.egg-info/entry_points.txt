@@ -1,0 +1,3 @@
+[console_scripts]
+pointcloud_server = show_pointcloud.pointcloud_server:main
+
