@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>终极调试测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        h1 { color: #333; }
+        .result { background: #1e1e1e; color: #ddd; padding: 15px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .error { color: #ff6b6b; }
+        .success { color: #51cf66; }
+        input { padding: 8px; width: 400px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 终极调试测试</h1>
+        
+        <div>
+            <label>API地址: </label>
+            <input type="text" id="apiUrl" value="http://127.0.0.1:9001/api/config">
+            <button onclick="testFetch()">使用Fetch测试</button>
+            <button onclick="testXHR()">使用XMLHttpRequest测试</button>
+            <button onclick="testCurl()">显示curl命令</button>
+        </div>
+        
+        <h3>测试结果:</h3>
+        <div class="result" id="result">等待测试...</div>
+    </div>
+
+    <script>
+        function log(message, isError = false) {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = isError ? 'error' : 'success';
+            result.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            result.scrollTop = result.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('result').innerHTML = '';
+        }
+        
+        async function testFetch() {
+            clearLog();
+            const url = document.getElementById('apiUrl').value;
+            
+            log(`=== 使用Fetch API测试 ===`);
+            log(`URL: ${url}`);
+            log(`开始测试...`);
+            
+            try {
+                log('调用 fetch()...');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                log(`✅ 收到响应!`);
+                log(`状态码: ${response.status} ${response.statusText}`);
+                log(`响应类型: ${response.type}`);
+                log(`URL: ${response.url}`);
+                
+                // 显示响应头
+                log(`\n响应头:`);
+                response.headers.forEach((value, key) => {
+                    log(`  ${key}: ${value}`);
+                });
+                
+                // 读取响应体
+                log(`\n正在读取响应体...`);
+                const text = await response.text();
+                log(`原始响应: ${text.substring(0, 500)}`);
+                
+                try {
+                    const json = JSON.parse(text);
+                    log(`JSON解析成功: ${JSON.stringify(json, null, 2)}`);
+                } catch (e) {
+                    log(`JSON解析失败: ${e.message}`, true);
+                }
+                
+            } catch (error) {
+                log(`\n❌ 请求失败!`, true);
+                log(`错误类型: ${error.name}`, true);
+                log(`错误消息: ${error.message}`, true);
+                log(`错误堆栈:\n${error.stack}`, true);
+                
+                if (error.name === 'AbortError') {
+                    log(`请求超时 (5秒)`, true);
+                } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    log(`\n可能的原因:`, true);
+                    log(`1. CORS策略阻止`, true);
+                    log(`2. 网络连接问题`, true);
+                    log(`3. 服务器未响应`, true);
+                    log(`4. 混合内容问题 (http vs https)`, true);
+                }
+            }
+        }
+        
+        function testXHR() {
+            clearLog();
+            const url = document.getElementById('apiUrl').value;
+            
+            log(`=== 使用XMLHttpRequest测试 ===`);
+            log(`URL: ${url}`);
+            
+            const xhr = new XMLHttpRequest();
+            
+            xhr.onreadystatechange = function() {
+                log(`readyState变化: ${xhr.readyState}`);
+                
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    log(`\n最终状态: ${xhr.status}`);
+                    
+                    if (xhr.status === 0) {
+                        log(`❌ 状态码为0 - 可能是CORS错误或网络错误`, true);
+                    } else if (xhr.status >= 200 && xhr.status < 300) {
+                        log(`✅ 请求成功!`);
+                        log(`响应头: ${xhr.getAllResponseHeaders()}`);
+                        log(`响应体: ${xhr.responseText.substring(0, 500)}`);
+                    } else {
+                        log(`❌ HTTP错误: ${xhr.status}`, true);
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
+                log(`❌ xhr.onerror 触发 - 网络错误`, true);
+            };
+            
+            xhr.ontimeout = function() {
+                log(`❌ xhr.ontimeout 触发 - 请求超时`, true);
+            };
+            
+            xhr.onload = function() {
+                log(`✅ xhr.onload 触发`);
+            };
+            
+            try {
+                log(`调用 xhr.open()...`);
+                xhr.open('GET', url, true);
+                
+                log(`设置请求头...`);
+                xhr.setRequestHeader('Accept', 'application/json');
+                
+                log(`调用 xhr.send()...`);
+                xhr.timeout = 5000;
+                xhr.send();
+                
+            } catch (error) {
+                log(`❌ XHR异常: ${error.message}`, true);
+                log(`错误堆栈:\n${error.stack}`, true);
+            }
+        }
+        
+        function testCurl() {
+            clearLog();
+            const url = document.getElementById('apiUrl').value;
+            
+            log(`=== curl命令测试 ===`);
+            log(`\n在终端中运行以下命令:`);
+            log(`\ncurl -v -H "Origin: http://127.0.0.1:8002" "${url}"`);
+            log(`\n或者:`);
+            log(`\ncurl -v -H "Accept: application/json" "${url}"`);
+            log(`\n或测试CORS预检:`);
+            log(`\ncurl -X OPTIONS -H "Origin: http://127.0.0.1:8002" -H "Access-Control-Request-Method: GET" -v "${url}"`);
+        }
+        
+        // 页面加载时显示环境信息
+        window.addEventListener('load', () => {
+            log(`=== 环境信息 ===`);
+            log(`User Agent: ${navigator.userAgent}`);
+            log(`当前URL: ${window.location.href}`);
+            log(`协议: ${window.location.protocol}`);
+            log(`主机: ${window.location.host}`);
+            log(`\n自动测试将在2秒后开始...`);
+            
+            setTimeout(() => {
+                testFetch();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

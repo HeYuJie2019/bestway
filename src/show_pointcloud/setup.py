@@ -24,7 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'pointcloud_server = show_pointcloud.pointcloud_server:main',
+            'pointcloud_flask_server = show_pointcloud.pointcloud_flask_server:main',
         ],
     },
 )

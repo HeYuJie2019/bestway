@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-启动文件：启动点云可视化服务
-包括：ROS2节点 + HTTP服务器
+启动文件：启动点云可视化服务（HTTP轮询版）
+包括：Flask HTTP API服务器 + 静态文件服务器
+适用于遥控器系统和WebSocket不兼容的环境
 """
 
 from launch import LaunchDescription
@@ -17,34 +18,51 @@ def generate_launch_description():
     web_dir = os.path.join(pkg_dir, 'web')
     
     return LaunchDescription([
-        LogInfo(msg='Starting PointCloud Web Visualization...'),
+        LogInfo(msg='========================================'),
+        LogInfo(msg='Starting FAST-LIO PointCloud Visualization (HTTP Polling)'),
+        LogInfo(msg='========================================'),
         LogInfo(msg=f'Web files directory: {web_dir}'),
         
-        # 启动ROS2节点（WebSocket服务器）
+        # 启动Flask HTTP API服务器（端口9001）
         Node(
             package='show_pointcloud',
-            executable='pointcloud_server',
-            name='pointcloud_web_server',
+            executable='pointcloud_flask_server',
+            name='pointcloud_http_api_server',
             output='screen',
             parameters=[{
-                'websocket_port': 9000,
+                'http_port': 9001,
                 'max_points': 50000,
                 'downsample_factor': 5,
-                'update_rate': 10.0
+                'update_rate': 10.0,
+                'enable_full_cloud': False
             }]
         ),
         
-        # 启动HTTP服务器
+        # 启动静态文件HTTP服务器（端口8002）
         ExecuteProcess(
-            cmd=['python3', '-m', 'http.server', '8000'],
+            cmd=['python3', '-m', 'http.server', '8002'],
             cwd=web_dir,
             output='screen',
             shell=False
         ),
         
-        LogInfo(msg='======================================'),
-        LogInfo(msg='PointCloud Visualization Server Started!'),
-        LogInfo(msg='Open in browser: http://<your-ip>:8000'),
-        LogInfo(msg='WebSocket port: 9000'),
-        LogInfo(msg='======================================'),
+        LogInfo(msg=''),
+        LogInfo(msg='========================================'),
+        LogInfo(msg='✅ PointCloud Visualization Servers Started!'),
+        LogInfo(msg='========================================'),
+        LogInfo(msg='📊 HTTP API服务器: http://<your-ip>:9001/api'),
+        LogInfo(msg='   - GET /api/config  - 获取配置'),
+        LogInfo(msg='   - GET /api/status  - 获取状态'),
+        LogInfo(msg='   - GET /api/data    - 获取点云数据'),
+        LogInfo(msg=''),
+        LogInfo(msg='🌐 Web界面:'),
+        LogInfo(msg='   - http://<your-ip>:8002/http_polling_3d.html (3D可视化)'),
+        LogInfo(msg='   - http://<your-ip>:8002/debug_polling.html (调试版)'),
+        LogInfo(msg='   - http://<your-ip>:8002/ultimate_test.html (API测试)'),
+        LogInfo(msg=''),
+        LogInfo(msg='📱 适用于：'),
+        LogInfo(msg='   - 安卓手机浏览器'),
+        LogInfo(msg='   - 遥控器系统转发'),
+        LogInfo(msg='   - WebSocket不兼容环境'),
+        LogInfo(msg='========================================'),
     ])

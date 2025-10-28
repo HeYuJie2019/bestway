@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP轮询调试版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .info-box { background: #e7f3ff; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .log-box { background: #1e1e1e; color: #ddd; padding: 15px; border-radius: 4px; height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+        .log-entry { padding: 2px 0; border-bottom: 1px solid #333; }
+        .log-error { color: #ff6b6b; }
+        .log-success { color: #51cf66; }
+        .log-info { color: #74c0fc; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .status { display: inline-block; padding: 5px 10px; border-radius: 3px; font-weight: bold; margin-left: 10px; }
+        .status.connected { background: #51cf66; color: white; }
+        .status.disconnected { background: #ff6b6b; color: white; }
+        .status.connecting { background: #ffd43b; color: black; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 HTTP轮询调试版</h1>
+        
+        <div class="info-box">
+            <div><strong>当前页面:</strong> <span id="currentUrl">-</span></div>
+            <div><strong>检测主机:</strong> <span id="detectedHost">-</span></div>
+            <div><strong>API地址:</strong> <span id="apiUrl">-</span></div>
+            <div><strong>连接状态:</strong> <span id="status" class="status connecting">准备中</span></div>
+            <div><strong>请求计数:</strong> <span id="requestCount">0</span></div>
+            <div><strong>成功/失败:</strong> <span id="successCount">0</span> / <span id="failCount">0</span></div>
+        </div>
+        
+        <div>
+            <button onclick="startPolling()">开始轮询</button>
+            <button onclick="stopPolling()">停止轮询</button>
+            <button onclick="testOnce()">单次测试</button>
+            <button onclick="clearLog()">清除日志</button>
+        </div>
+        
+        <h2 style="margin-top: 20px;">调试日志</h2>
+        <div class="log-box" id="logBox"></div>
+    </div>
+
+    <script>
+        let pollingInterval = null;
+        let requestCount = 0;
+        let successCount = 0;
+        let failCount = 0;
+        
+        // 获取服务器地址
+        const currentUrl = window.location.href;
+        const hostname = window.location.hostname || 'localhost';
+        const apiPort = 9001;
+        const baseUrl = `http://${hostname}:${apiPort}/api`;
+        
+        // 更新页面信息
+        document.getElementById('currentUrl').textContent = currentUrl;
+        document.getElementById('detectedHost').textContent = hostname;
+        document.getElementById('apiUrl').textContent = baseUrl;
+        
+        function log(message, type = 'info') {
+            const logBox = document.getElementById('logBox');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+            const icon = type === 'error' ? '❌' : (type === 'success' ? '✅' : 'ℹ️');
+            
+            entry.textContent = `[${timestamp}] ${icon} ${message}`;
+            logBox.appendChild(entry);
+            
+            // 自动滚动到底部
+            logBox.scrollTop = logBox.scrollHeight;
+            
+            // 同时输出到控制台
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function updateStatus(text, className) {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.className = `status ${className}`;
+        }
+        
+        async function fetchAPI(endpoint) {
+            const url = `${baseUrl}${endpoint}`;
+            requestCount++;
+            document.getElementById('requestCount').textContent = requestCount;
+            
+            log(`发起请求: ${url}`, 'info');
+            
+            const startTime = Date.now();
+            
+            try {
+                log('正在发送fetch请求...', 'info');
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
+                const latency = Date.now() - startTime;
+                log(`收到响应: HTTP ${response.status} ${response.statusText} (${latency}ms)`, 'info');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                log('正在解析JSON...', 'info');
+                const data = await response.json();
+                
+                log(`成功获取数据: ${JSON.stringify(data).substring(0, 100)}...`, 'success');
+                log(`完整响应: ${JSON.stringify(data, null, 2)}`, 'info');
+                
+                successCount++;
+                document.getElementById('successCount').textContent = successCount;
+                updateStatus('已连接', 'connected');
+                
+                return { success: true, data, latency };
+                
+            } catch (error) {
+                const latency = Date.now() - startTime;
+                log(`请求失败 (${latency}ms): ${error.name}`, 'error');
+                log(`错误消息: ${error.message}`, 'error');
+                log(`错误堆栈: ${error.stack}`, 'error');
+                
+                failCount++;
+                document.getElementById('failCount').textContent = failCount;
+                updateStatus('连接失败', 'disconnected');
+                
+                return { success: false, error, latency };
+            }
+        }
+        
+        async function testOnce() {
+            log('=== 开始单次测试 ===', 'info');
+            
+            // 测试配置端点
+            log('测试 /config 端点...', 'info');
+            const configResult = await fetchAPI('/config');
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // 测试状态端点
+            log('测试 /status 端点...', 'info');
+            const statusResult = await fetchAPI('/status');
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // 测试数据端点
+            log('测试 /data 端点...', 'info');
+            const dataResult = await fetchAPI('/data');
+            
+            if (dataResult.success && dataResult.data.pointcloud) {
+                log(`点云数据包含 ${dataResult.data.pointcloud.points.length} 个点`, 'success');
+            }
+            
+            log('=== 单次测试完成 ===', 'info');
+        }
+        
+        function startPolling() {
+            if (pollingInterval) {
+                log('轮询已经在运行中', 'info');
+                return;
+            }
+            
+            log('=== 开始HTTP轮询 ===', 'info');
+            updateStatus('连接中...', 'connecting');
+            
+            // 立即执行一次
+            fetchAPI('/data');
+            
+            // 每秒轮询一次
+            pollingInterval = setInterval(() => {
+                fetchAPI('/data');
+            }, 1000);
+            
+            log('轮询已启动 (1秒间隔)', 'success');
+        }
+        
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+                log('轮询已停止', 'info');
+                updateStatus('已断开', 'disconnected');
+            } else {
+                log('没有运行中的轮询', 'info');
+            }
+        }
+        
+        function clearLog() {
+            document.getElementById('logBox').innerHTML = '';
+            log('日志已清除', 'info');
+        }
+        
+        // 页面加载时自动测试一次
+        window.addEventListener('load', () => {
+            log('=== 页面加载完成 ===', 'info');
+            log(`浏览器: ${navigator.userAgent}`, 'info');
+            log(`当前协议: ${window.location.protocol}`, 'info');
+            log(`当前主机: ${window.location.host}`, 'info');
+            
+            setTimeout(() => {
+                log('准备进行初始化测试...', 'info');
+                testOnce();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

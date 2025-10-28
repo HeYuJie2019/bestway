@@ -12,6 +12,7 @@ setup.py
 launch/start_visualization.launch.py
 resource/show_pointcloud
 show_pointcloud/__init__.py
-show_pointcloud/pointcloud_server.py
-web/debug.html
+show_pointcloud/pointcloud_flask_server.py
+web/debug_polling.html
 web/index.html
+web/ultimate_test.html
